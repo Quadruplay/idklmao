@@ -1,0 +1,26 @@
+@font-face {
+    font-family: consolas;
+    src: url(./CONSOLA.TTF);
+}
+
+@font-face {
+    font-family: pixel;
+    src: url(./pixel.ttf);
+}
+
+body {
+    background-color: #000;
+    margin: 5px;
+    padding: 0;
+    text-wrap: nowrap;
+    overflow: hidden;
+}
+
+div {
+    font-family: pixel;
+    transform: scaleY(2);
+}
+
+span {
+    font-size: 50%;
+}
