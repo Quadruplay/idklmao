@@ -993,6 +993,13 @@ async function game() {
     while (!(health <= 0) && !(deck.length === 0 && board.every(card => card === undefined))) {
         drawCard();
         await sleep(600);
+        if (board.some(card => card?.value === "king" && card?.suit === "heart")) {
+            board.forEach(card => {
+                if (card) {
+                    card.tapped = false;
+                }
+            });
+        }
         await heroTurn();
     }
     function renderGame() {
