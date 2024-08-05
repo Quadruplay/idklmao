@@ -608,9 +608,7 @@ async function pause() {
 
 function clearLines(start, end) {
     for (let i = start; i < end; i++) {
-        lines[i].forEach((char, j) => {
-            char.textContent = nbsp;
-        });
+        clearLine(i);
     }
 }
 
@@ -998,7 +996,8 @@ async function game() {
         await heroTurn();
     }
     function renderGame() {
-        clearScreen();
+        clearLines(0, 37);
+        moveTo(0, 0);
         opponentCastle.forEach((text, index) => {
             let row = text.clone()
             .replace("W", String(Math.floor(deck.length / 10)))
@@ -1135,24 +1134,29 @@ async function game() {
                     break;
                 case 13:
                     row
+                    .join("  ")
                     .join((board.some(card => (card?.value === "king" && card?.suit === "cup")) && discard.length ? discard : deck).at(-1)
                     ? ammoCard[0].clone()
                     : ammoBlank[0])
                     break;
                 case 14:
                     row
+                    .join("  ")
                     .join((board.some(card => (card?.value === "king" && card?.suit === "cup")) && discard.length ? discard : deck).at(-1)
                     ? ammoCard[1].clone().replace("X", ammoMap[(board.some(card => (card?.value === "king" && card?.suit === "cup")) && discard.length ? discard : deck).at(-1).value])
                     : ammoBlank[1])
                     break;
                 case 15:
                     row
+                    .join("  ")
                     .join((board.some(card => (card?.value === "king" && card?.suit === "cup")) && discard.length ? discard : deck).at(-1)
                     ? ammoCard[2].clone().replace("Y", ...(suits[(board.some(card => (card?.value === "king" && card?.suit === "cup")) && discard.length ? discard : deck).at(-1).suit]))
                     : ammoBlank[2])
                     break;
                 case 16:
-                    row.join((board.some(card => (card?.value === "king" && card?.suit === "cup")) && discard.length ? discard : deck).at(-1)
+                    row
+                    .join("  ")
+                    .join((board.some(card => (card?.value === "king" && card?.suit === "cup")) && discard.length ? discard : deck).at(-1)
                     ? ammoCard[3].clone()
                     : ammoBlank[3])
                     break;
@@ -1273,6 +1277,7 @@ async function game() {
     function heroTurn() {
         return new Promise(async resolve => {
             moveTo(0, 44);
+            clearLines(44, 60);
             print(turn === 1 ? hero1 + "'s turn!" : hero2 + "'s turn!");
             for (let i = 0; i < 4; i++) {
                 let row = new specialText();
@@ -1287,6 +1292,15 @@ async function game() {
                 if (item) {
                     choices.push(ammoMap[item].toLowerCase());
                     if (item === 1) {
+                        if ((turn === 1 ? hero1 : hero2) === "Necromancer") {
+                            if (Object.values(ammo1).reduce((acc, val) => acc + val, 0) + Object.values(ammo2).reduce((acc, val) => acc + val, 0) < 3) {
+                                choices.pop();
+                            }
+                        } else {
+                            if (Object.values(ammo1).reduce((acc, val) => acc + val, 0) + Object.values(ammo2).reduce((acc, val) => acc + val, 0) < 1) {
+                                choices.pop();
+                            }
+                        }
                         choices.push("1");
                     }
                 }
@@ -1305,6 +1319,8 @@ async function game() {
             }
             switch (input) {
                 case 'a':
+                    await specialAttack(turn === 1 ? hero1 : hero2);
+                    renderGame();
                     break;
                 case 's':
                     break;
@@ -1319,6 +1335,13 @@ async function game() {
                     break;
             }
             await pause();
+            if ((turn === 1 ? hero1Deck : hero2Deck).reduce((acc, val) => acc + val, 0) === 0) {
+                if (turn === 1) {
+                    hero1Deck = [1,2,3];
+                } else {
+                    hero2Deck = [1,2,3];
+                }
+            }
             turn = 3 - turn;
             resolve();
         });
@@ -1408,11 +1431,89 @@ async function game() {
                     ammoMax = Infinity;
                     break;
             }
+            let ammo = await chooseAmmo(ammoMin, ammoMax);
+            switch (hero) {
+                case "Fire Mage":
+                    for (let i = 0; i < 5; i++) {
+                        if (board[9 - i]) {
+                            board[9 - i].tapped = true;
+                        } else if (board[i]) {
+                            board[i].tapped = true;
+                        }
+                    }
+                    break;
+                case "Archer":
+                    {
+                        let roll = Math.floor(Math.random() * 6) + 1;
+                        let target = await chooseTarget("Choose a row to shoot with a triple arrow for " + valueMap[ammo[0]] + " + " + roll + " damage", "row");
+                        if (target !== 0) {
+                            if (board[10 - target]) {
+                                attack(10 - target, valueMap[ammo[0]] + roll, true);
+                            } else if (board[target - 1]) {
+                                attack(target - 1, valueMap[ammo[0]] + roll, true);
+                            }
+                        }
+                        if (board[9 - target]) {
+                            attack(9 - target, valueMap[ammo[0]] + roll, true);
+                        } else if (board[target]) {
+                            attack(target, valueMap[ammo[0]] + roll, true);
+                        }
+                        if (target !== 4) {
+                            if (board[8 - target]) {
+                                attack(8 - target, valueMap[ammo[0]] + roll, true);
+                            } else if (board[target + 1]) {
+                                attack(target + 1, valueMap[ammo[0]] + roll, true);
+                            }
+                        }
+                    }
+                    break;
+
+            }
             resolve();
         });
     }
     function chooseAmmo(min, max) {
-
+        return new Promise(async resolve => {
+            moveTo(0, 44);
+            clearLines(44, 54);
+            min !== max
+            ? print("Choose " + min + " to " + max + " ammo cards:")
+            : min === 1
+            ? print("Choose 1 ammo card:")
+            : print("Choose " + min + " ammo cards:");
+            let chosen = [];
+            while (chosen.length < max && (Object.values(ammo1).some(card => card) || Object.values(ammo2).some(card => card))) {
+                renderAmmo();
+                print("Chosen: " + chosen.map(card => ammoMap[card]).join(", "));
+                let input = '';
+                let inputs = [];
+                Object.keys(ammo1).forEach((key) => {
+                    if (ammo1[key] || ammo2[key]) {
+                        inputs.push(ammoMap[key]);
+                    }
+                });
+                print(JSON.stringify(inputs) + ": Choose an ammo card");
+                if (chosen.length >= min) {
+                    inputs.push('s');
+                    print("[S]: Stop");
+                }
+                inputs = inputs.map(input => input.toLowerCase());
+                while (!inputs.includes(input)) {
+                    input = await getInput();
+                }
+                if (input === 's') {
+                    break;
+                } else {
+                    chosen.push(input);
+                    if (ammo1[input]) {
+                        ammo1[input] = false;
+                    } else {
+                        ammo2[input] = false;
+                    }
+                }
+            }
+            resolve(chosen);
+        });
     }
 }
 
