@@ -2015,14 +2015,14 @@ async function game() {
                     break;
                 case "The Hermit":
                     {
-                        Object.keys(ammo1).forEach(key => {
-                            ammo1[key] = false;
-                            ammo2[key] = false;
-                        });
                         board.forEach((card, i) => {
                             if (card) {
                                 attack(i, valueMap[card.value]);
                             }
+                        });
+                        Object.keys(ammo1).forEach(key => {
+                            ammo1[key] = false;
+                            ammo2[key] = false;
                         });
                     }
                     break;
