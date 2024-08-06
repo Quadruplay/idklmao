@@ -1000,7 +1000,7 @@ let health;
 let maxHealth;
 let shields;
 let deckSize;
-let board = [];
+let board = [undefined].multiply(10);
 let discard = [];
 let ammo1 = {
     4: false,
@@ -1161,6 +1161,12 @@ async function game() {
     maxHealth = health;
     shields = unlocks.shields;
     deckSize = deck.length;
+    board = [undefined].multiply(10);
+    discard = [];
+    Object.keys(ammo1).forEach(key => {
+        ammo1[key] = false;
+        ammo2[key] = false;
+    });
     let turn = 1;
     let hero1Deck = [1,2,3];
     let hero2Deck = [1,2,3];
