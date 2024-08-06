@@ -56,6 +56,33 @@ let colors = {
 let lastColor = 'white';
 let lastBackground = 'black';
 
+let currency = {
+    'heart': 0,
+    'diamond': 0,
+    'club': 0,
+    'spade': 0,
+    'cup': 0,
+    'shield': 0
+}
+if (localStorage.getItem('currency')) {
+    currency = JSON.parse(localStorage.getItem('currency'));
+} else {
+    localStorage.setItem('currency', JSON.stringify(currency));
+}
+
+let unlocks = {
+    'medium': false,
+    'hard': false,
+    'health': 0,
+    'shields': 0,
+    'fool': 0
+}
+if (localStorage.getItem('unlocks')) {
+    unlocks = JSON.parse(localStorage.getItem('unlocks'));
+} else {
+    localStorage.setItem('unlocks', JSON.stringify(unlocks));
+}
+
 function print(text, color = lastColor, background = lastBackground) {
     lastColor = colors[color] || color;
     lastBackground = colors[background] || background;
@@ -552,45 +579,6 @@ const hpNo = [" ", "black", "black"];
 
 let suits = {heart, spade, diamond, club, shield, cup};
 
-let special = {
-    "Fire Mage": [
-        new specialText(["┌─┐"], ['black'], ['white']),
-        new specialText(["│ │"], ['black'], ['white']),
-        new specialText(["│","█","│"], ['black',"cyan","black"], ['white']),
-        new specialText(["└─┘"], ['black'], ['white']),
-    ],
-    "Archer": [
-        new specialText(["┌─┐"], ['black'], ['white']),
-        new specialText(["│ │"], ['black'], ['white']),
-        new specialText(["│","█","│"], ['black',"cyan","black"], ['white']),
-        new specialText(["└─┘"], ['black'], ['white']),
-    ],
-    "Warhammer Wielder": [
-        new specialText(["┌─┐"], ['black'], ['white']),
-        new specialText(["│ │"], ['black'], ['white']),
-        new specialText(["│","█","│"], ['black',"cyan","black"], ['white']),
-        new specialText(["└─┘"], ['black'], ['white']),
-    ],
-    "Crossbowman": [
-        new specialText(["┌─┐"], ['black'], ['white']),
-        new specialText(["│ │"], ['black'], ['white']),
-        new specialText(["│","█","│"], ['black',"cyan","black"], ['white']),
-        new specialText(["└─┘"], ['black'], ['white']),
-    ],
-    "Necromancer": [
-        new specialText(["┌─┐"], ['black'], ['white']),
-        new specialText(["│ │"], ['black'], ['white']),
-        new specialText(["│","█","│"], ['black',"cyan","black"], ['white']),
-        new specialText(["└─┘"], ['black'], ['white']),
-    ],
-    "Knight": [
-        new specialText(["┌─┐"], ['black'], ['white']),
-        new specialText(["│ │"], ['black'], ['white']),
-        new specialText(["│","█","│"], ['black',"cyan","black"], ['white']),
-        new specialText(["└─┘"], ['black'], ['white']),
-    ],
-}
-
 let deck = [];
 async function getInput() {
     return new Promise(resolve => {
@@ -619,17 +607,22 @@ async function menu() {
     printSpecial(new specialText([" ABF DESCENT XYZ "], ["black"], ["white"]).replace("A", ...heart).replace("B", ...spade).replace("F", ...diamond).replace("X", ...club).replace("Y", ...shield).replace("Z", ...cup));
     print("▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀");
     print("[S]tart");
+    print("[U]nlocks");
     print("[I]nstructions");
     print("[C]redits");
     print("[Q]uit");
 
     let input = '';
-    while (input !== 's' && input !== 'i' && input !== 'c' && input !== 'q') {
+    let inputs = ['s', 'u', 'i', 'c', 'q'];
+    while (!inputs.includes(input)) {
         input = await getInput();
     }
     switch (input) {
         case 's':
             chooseDifficulty();
+            break;
+        case 'u':
+            shop();
             break;
         case 'i':
             instructions();
@@ -642,6 +635,165 @@ async function menu() {
             break;
     }
 };
+
+async function shop() {
+    localStorage.setItem("currency", JSON.stringify(currency));
+    localStorage.setItem("unlocks", JSON.stringify(unlocks));
+    clearScreen();
+    printSpecial(new specialText(["Resources: "+currency.heart+" A  "+currency.spade+" B "+currency.diamond+" C  "+currency.club+" D  "+currency.shield+" E  "+currency.cup+" F"], ["white"], ["black"]).replace("A", ...heart).replace("B", ...spade).replace("C", ...diamond).replace("D", ...club).replace("E", ...shield).replace("F", ...cup));
+    let inputs = ['b'];
+    if (!unlocks.medium) {
+        print("");
+        printSpecial(new specialText(["[M]: Unlock medium difficulty.                         2 A  +  2 B"], ["white"], ["black"]).replace("A", ...heart).replace("B", ...spade));
+        inputs.push('m');
+    }
+    if (!unlocks.hard) {
+        print("");
+        printSpecial(new specialText(["[H]: Unlock hard difficulty.                           2 A  +  2 B  +  2 C  +  2 D"], ["white"], ["black"]).replace("A", ...heart).replace("B", ...spade).replace("C", ...diamond).replace("D", ...club));
+        inputs.push('h');
+    }
+    if (unlocks.fool !== 2) {
+        print("");
+        switch (unlocks.fool) {
+            case 0:
+                printSpecial(new specialText(["[F]: Have the first hero start with the Fool arcana.   1 A  +  1 B  +  1 C"], ["white"], ["black"]).replace("A", ...heart).replace("B", ...diamond).replace("C", ...shield));
+                break;
+            case 1:
+                printSpecial(new specialText(["[F]: Have the second hero start with the Fool arcana.  1 A  +  1 B  +  1 C"], ["white"], ["black"]).replace("A", ...spade).replace("B", ...club).replace("C", ...cup));
+                break;
+        }
+        inputs.push('f');
+    }
+    if (unlocks.health !== 4) {
+        print("");
+        switch (unlocks.health) {
+            case 0:
+                printSpecial(new specialText(["[D]: Start with 5 health.                              1 A"], ["white"], ["black"]).replace("A", ...heart));
+                break;
+            case 1:
+                printSpecial(new specialText(["[D]: Start with 6 health.                              1 A"], ["white"], ["black"]).replace("A", ...spade));
+                break;
+            case 2:
+                printSpecial(new specialText(["[D]: Start with 7 health.                              1 A"], ["white"], ["black"]).replace("A", ...diamond));
+                break;
+            case 3:
+                printSpecial(new specialText(["[D]: Start with 8 health.                              1 A"], ["white"], ["black"]).replace("A", ...club));
+                break;
+        }
+        inputs.push('d');
+    } else if (unlocks.shields !== 2) {
+        print("");
+        switch (unlocks.shields) {
+            case 0:
+                printSpecial(new specialText(["[D]: Start with 1 shield.                              1 A"], ["white"], ["black"]).replace("A", ...shield));
+                break;
+            case 1:
+                printSpecial(new specialText(["[D]: Start with 2 shields.                             1 A"], ["white"], ["black"]).replace("A", ...cup));
+                break;
+        }
+        inputs.push('d');
+    }
+    if (inputs.length === 1) {
+        print("");
+        print("Nothing left to unlock.");
+        await pause();
+        menu();
+    } else {
+        print("");
+        print("[B]ack");
+        let input = '';
+        while (!inputs.includes(input)) {
+            input = await getInput();
+        }
+        switch (input) {
+            case 'b':
+                menu();
+                break;
+            case 'm':
+                if (currency.heart >= 2 && currency.spade >= 2) {
+                    currency.heart -= 2;
+                    currency.spade -= 2;
+                    unlocks.medium = true;
+                }
+                shop();
+                break;
+            case 'h':
+                if (currency.heart >= 2 && currency.spade >= 2 && currency.diamond >= 2 && currency.club >= 2) {
+                    currency.heart -= 2;
+                    currency.spade -= 2;
+                    currency.diamond -= 2;
+                    currency.club -= 2;
+                    unlocks.hard = true;
+                }
+                shop();
+                break;
+            case 'f':
+                if (unlocks.fool === 0) {
+                    if (currency.heart >= 1 && currency.diamond >= 1 && currency.shield >= 1) {
+                        currency.heart -= 1;
+                        currency.diamond -= 1;
+                        currency.shield -= 1;
+                        unlocks.fool = 1;
+                    }
+                } else {
+                    if (currency.spade >= 1 && currency.club >= 1 && currency.cup >= 1) {
+                        currency.spade -= 1;
+                        currency.club -= 1;
+                        currency.cup -= 1;
+                        unlocks.fool = 2;
+                    }
+                }
+                shop();
+                break;
+            case 'd':
+                if (unlocks.health !== 4) {
+                    switch (unlocks.health) {
+                        case 0:
+                            if (currency.heart >= 1) {
+                                currency.heart -= 1;
+                                unlocks.health++;
+                            }
+                            break;
+                        case 1:
+                            if (currency.spade >= 1) {
+                                currency.spade -= 1;
+                                unlocks.health++;
+                            }
+                            break;
+                        case 2:
+                            if (currency.diamond >= 1) {
+                                currency.diamond -= 1;
+                                unlocks.health++;
+                            }
+                            break;
+                        case 3:
+                            if (currency.club >= 1) {
+                                currency.club -= 1;
+                                unlocks.health++;
+                            }
+                            break;
+                    }
+                } else {
+                    switch (unlocks.shields) {
+                        case 0:
+                            if (currency.shield >= 1) {
+                                currency.shield -= 1;
+                                unlocks.shields++;
+                            }
+                            break;
+                        case 1:
+                            if (currency.cup >= 1) {
+                                currency.cup -= 1;
+                                unlocks.shields++;
+                            }
+                            break;
+                        }
+                }
+                shop();
+                break;
+        }
+    }
+}
 
 async function credits() {
     clearScreen();
@@ -666,11 +818,14 @@ async function chooseDifficulty() {
     clearScreen();
     print("Choose difficulty:");
     print("[E]asy");
-    print("[M]edium");
-    print("[H]ard");
+    if (unlocks.medium) print("[M]edium");
+    if (unlocks.hard) print("[H]ard");
     print("[B]ack");
     let input = '';
-    while (input !== 'e' && input !== 'm' && input !== 'h' && input !== 'b') {
+    let inputs = ['e', 'b'];
+    if (unlocks.medium) inputs.push('m');
+    if (unlocks.hard) inputs.push('h');
+    while (!inputs.includes(input)) {
         input = await getInput();
     }
     switch (input) {
@@ -879,6 +1034,7 @@ let ammoMap = {
     knight: "N",
     queen: "Q",
     king: "K",
+    priest: "Ω"
 }
 let invAmmoMap = {
     "A": 1,
@@ -896,6 +1052,8 @@ let invAmmoMap = {
     "N": "knight",
     "Q": "queen",
     "K": "king",
+    "Ω": "priest",
+    "0": "priest"
 }
 let symbolMap = {
     "Fire Mage": heart,
@@ -904,6 +1062,14 @@ let symbolMap = {
     "Crossbowman": diamond,
     "Necromancer": cup,
     "Knight": shield,
+}
+let suitNameMap = {
+    "Fire Mage": "heart",
+    "Archer": "spade",
+    "Warhammer Wielder": "club",
+    "Crossbowman": "diamond",
+    "Necromancer": "cup",
+    "Knight": "shield",
 }
 
 let valueMap = {
@@ -921,6 +1087,7 @@ let valueMap = {
     knight: 11,
     queen: 12,
     king: 13,
+    priest: 0
 }
 
 const classAbilityDesc = {
@@ -961,8 +1128,8 @@ const arcanaDesc = {
     2: "Fill hand with Aces",
     3: "Draw a Queen to your hand",
     4: "Draw a King to your hand",
-    5: "Draw an Angel to your hand",
-    6: "Heal 2 health",
+    5: "Draw a Priest to your hand",
+    6: "Heal 2 health up to a maximum of 8",
     7: "Push all enemies 4 spaces back",
     8: "Fill hand with 3s",
     9: "Kill all enemies on board and lose all ammo cards",
@@ -970,8 +1137,8 @@ const arcanaDesc = {
     11: "Kill the amount of weakest enemies equal to the amount of lost health",
     12: "Flip the board",
     13: "Kill 1 chosen enemy",
-    14: "Gain 1 shield",
-    15: "Gain 2 shields at the cost of 1 health",
+    14: "Gain 1 shield up to a maximum of 4",
+    15: "Gain 2 shields up to a maximum of 4 at the cost of 1 health",
     16: "Kill 2 random enemies",
     17: "Tap all enemies",
     18: "Stop enemies spawning for 2 turns",
@@ -981,17 +1148,19 @@ const arcanaDesc = {
 }
 
 async function game() {
-    health = difficulty === 'e' ? 4 : 8;
+    health = 4 + unlocks.health;
     maxHealth = health;
-    shields = difficulty === 'h' ? 2 : 0;
+    shields = unlocks.shields;
     deckSize = deck.length;
     let turn = 1;
     let hero1Deck = [1,2,3];
     let hero2Deck = [1,2,3];
-    let arcana1 = 0;
-    let arcana2 = 0;
+    let arcana1 = unlocks.fool > 0 ? 1 : 0;
+    let arcana2 = unlocks.fool > 1 ? 1 : 0;
+    let kingKilled = false;
     while (!(health <= 0) && !(deck.length === 0 && board.every(card => card === undefined))) {
         drawCard();
+        kingKilled = false;
         await sleep(600);
         if (board.some(card => card?.value === "king" && card?.suit === "heart")) {
             board.forEach(card => {
@@ -999,6 +1168,47 @@ async function game() {
                     card.tapped = false;
                 }
             });
+            renderGame();
+            print("The King of War is healing all the enemies through their anger");
+            await pause();
+        }
+        if (board.some(card => card?.value === "king" && card?.suit === "spade")) {
+            renderGame();
+            print("The King of Conquest is empowering all the enemies making them deal more damage to your castle");
+            await pause();
+        }
+        if (board.some(card => card?.value === "king" && card?.suit === "diamond")) {
+            renderGame();
+            print("The King of Famine is making ammo cards harder to come by");
+            await pause();
+        }
+        if (board.some(card => card?.value === "king" && card?.suit === "club")) {
+            let cardRemoved = false;
+            Object.keys(ammo1).forEach(key => {
+                if (cardRemoved) return;
+                if (ammo1[key]) {
+                    ammo1[key] = false;
+                    discard.push({value: key, suit: suitNameMap[hero1], tapped: true});
+                    cardRemoved = true;
+                } else if (ammo2[key]) {
+                    ammo2[key] = false;
+                    discard.push({value: key, suit: suitNameMap[hero2], tapped: true});
+                    cardRemoved = true;
+                }
+            });
+            renderGame();
+            print("The King of Pestilence is making ammo cards break more easily");
+            await pause();
+        }
+        if (board.some(card => card?.value === "king" && card?.suit === "shield")) {
+            renderGame();
+            print("The King of Madness is making it harder to get control of the board");
+            await pause();
+        }
+        if (board.some(card => card?.value === "king" && card?.suit === "cup")) {
+            renderGame();
+            print("The King of Death is making already dead enemies come back to life");
+            await pause();
         }
         await heroTurn();
     }
@@ -1209,6 +1419,53 @@ async function game() {
                     row.join(blank[index]);
                 }
             }
+            switch (index) {
+                case 0:
+                    row.join(" A - 1");
+                    break;
+                case 1:
+                    row.join(" 2 - 2");
+                    break;
+                case 2:
+                    row.join(" 3 - 3");
+                    break;
+                case 3:
+                    row.join(" 4 - 4");
+                    break;
+                case 4:
+                    row.join(" 5 - 5");
+                    break;
+                case 5:
+                    row.join(" 6 - 6");
+                    break;
+                case 6:
+                    row.join(" 7 - 7");
+                    break;
+                case 7:
+                    row.join(" 8 - 8");
+                    break;
+                case 8:
+                    row.join(" 9 - 9");
+                    break;
+                case 9:
+                    row.join(" T - 10");
+                    break;
+                case 10:
+                    row.join(" P - 10");
+                    break;
+                case 11:
+                    row.join(" N - 11");
+                    break;
+                case 12:
+                    row.join(" Q - 12");
+                    break;
+                case 13:
+                    row.join(" K - 13");
+                    break;
+                case 14:
+                    row.join(" Ω - amount of ammo cards");
+                    break;
+            }
             printSpecial(row);
         });
         renderAmmo();
@@ -1284,7 +1541,7 @@ async function game() {
     function heroTurn() {
         return new Promise(async resolve => {
             moveTo(0, 44);
-            clearLines(44, 60);
+            clearLines(43, 60);
             print(turn === 1 ? hero1 + "'s turn!" : hero2 + "'s turn!");
             for (let i = 0; i < 4; i++) {
                 let row = new specialText();
@@ -1308,40 +1565,63 @@ async function game() {
                                 choices.pop();
                             }
                         }
+                        if (board.some(card => card?.value === "king" && card?.suit === "shield")) {
+                            if (choices.at(-1) === "a") {
+                                choices.pop();
+                            }
+                        }
                         choices.push("1");
                     }
                 }
             });
+            choices = choices.map(choice => choice === "Ω".toLowerCase() ? "0" : choice);
             (turn === 1 ? arcana1 : arcana2) > 0 && choices.push("s");
             choices.forEach(choice => {
                 choice === "a"
                 ?print("["+choice.toUpperCase()+"]: " + classAbilityDesc[turn === 1 ? hero1 : hero2])
                 :choice === "s"
                 ?print("["+choice.toUpperCase()+"]: " + String((turn === 1 ? arcana1 : arcana2) - 1) + "-" + arcanaNames[(turn === 1 ? arcana1 : arcana2) - 1] + " - " + arcanaDesc[(turn === 1 ? arcana1 : arcana2) - 1])
-                :print("["+choice.toUpperCase()+"]: " + "Attack for " + valueMap[choice] + " + 1d6 damage");
+                :choice === "0"
+                ?print("["+choice.toUpperCase()+"]: " + "Attack for " + Object.values(ammo1).reduce((p, c) => p + c, Object.values(ammo2).reduce((p, c) => p + c, 0)) + " + 1d6 damage")
+                :print("["+choice.toUpperCase()+"]: " + "Attack for " + valueMap[invAmmoMap[choice.toUpperCase()]] + " + 1d6 damage");
             });
             let input = '';
-            while (!choices.includes(input)) {
-                input = await getInput();
-            }
-            switch (input) {
-                case 'a':
-                    await specialAttack(turn === 1 ? hero1 : hero2);
-                    renderGame();
-                    break;
-                case 's':
-                    break;
-                default:
-                    with(turn === 1 ? hero1Deck : hero2Deck) {
-                        multiply(1)[indexOf(invAmmoMap[input.toUpperCase()])] = false;
-                    }
-                    let damage = valueMap[invAmmoMap[input.toUpperCase()]];
-                    let roll = Math.floor(Math.random() * 6) + 1;
-                    let target = await chooseTarget("Choose a target to attack for " + damage + " + " + roll + " damage", "single");
-                    attack(target, damage + roll);
-                    break;
-            }
-            await pause();
+                while (!choices.includes(input)) {
+                    input = await getInput();
+                }
+                switch (input) {
+                    case 'a':
+                        with(turn === 1 ? hero1Deck : hero2Deck) {
+                            multiply(1)[indexOf(1)] = false;
+                        }
+                        await specialAttack(turn === 1 ? hero1 : hero2);
+                        renderGame();
+                        break;
+                    case 's':
+                        await useArcana(arcanaNames[(turn === 1 ? arcana1 : arcana2) - 1]);
+                        break;
+                    default:
+                        with(turn === 1 ? hero1Deck : hero2Deck) {
+                            multiply(1)[indexOf(invAmmoMap[input.toUpperCase()])] = false;
+                        }
+                        let damage = valueMap[invAmmoMap[input.toUpperCase()]];
+                        if (input === "0") {
+                            with(turn === 1 ? hero1Deck : hero2Deck) {
+                                multiply(1)[indexOf(0)] = false;
+                            }
+                            damage = Object.values(ammo1).reduce((p, c) => p + c, Object.values(ammo2).reduce((p, c) => p + c, 0));
+                        }
+                        let roll = Math.floor(Math.random() * 6) + 1;
+                        let target = await chooseTarget("Choose a target to attack for " + damage + " + " + roll + " damage", "single");
+                        attack(target, damage + roll);
+                        break;
+                }
+                await pause();
+                if (kingKilled) {
+                    currency[kingKilled]++;
+                    localStorage.setItem("currency", JSON.stringify(currency));
+                    await chooseArcana();
+                }
             if ((turn === 1 ? hero1Deck : hero2Deck).reduce((acc, val) => acc + val, 0) === 0) {
                 if (turn === 1) {
                     hero1Deck = [1,2,3];
@@ -1356,7 +1636,7 @@ async function game() {
     function chooseTarget(message, mode) {
         return new Promise(async resolve => {
             moveTo(0, 44);
-            clearLines(44, 54);
+            clearLines(43, 54);
             print(message);
             print("┌─┐ ┌─┐ ┌─┐ ┌─┐ ┌─┐");
             print("│1│>│2│>│3│>│4│>│5│");
@@ -1383,30 +1663,43 @@ async function game() {
         });
     }
     function attack(target, damage, special = false) {
+        let kill = false;
         if (board[target]) {
             let health = valueMap[board[target].value];
             if (board[target].tapped) {
                 if (damage >= Math.ceil(health / 2)) {
                     print("You killed the " + board[target].value + " of " + board[target].suit + "s!");
-                    if (!special) {
+                    if (!special && !(board.some(card => card?.value === "king" && card?.suit === "diamond"))) {
                         if (symbolMap[hero1] == suits[board[target].suit]) {
                             ammo1[board[target].value] = true;
                         } else if (symbolMap[hero2] == suits[board[target].suit]) {
                             ammo2[board[target].value] = true;
                         }
+                    } else {
+                        discard.push({value: board[target].value, suit: board[target].suit, tapped: true});
                     }
+                    if (board[target].value === "king") {
+                        kingKilled = board[target].suit;
+                    }
+                    kill = true;
                     board[target] = undefined;
                 }
             } else {
                 if (damage >= health) {
                     print("You killed the " + board[target].value + " of " + board[target].suit + "s!");
-                    if (!special) {
+                    if (!special && !(board.some(card => card?.value === "king" && card?.suit === "diamond"))) {
                         if (symbolMap[hero1] == suits[board[target].suit]) {
                             ammo1[board[target].value] = true;
                         } else if (symbolMap[hero2] == suits[board[target].suit]) {
                             ammo2[board[target].value] = true;
                         }
+                    } else {
+                        discard.push({value: board[target].value, suit: board[target].suit, tapped: true});
                     }
+                    if (board[target].value === "king") {
+                        kingKilled = board[target].suit;
+                    }
+                    kill = true;
                     board[target] = undefined;
                 } else if (damage >= Math.ceil(health / 2)) {
                     print("You tapped the " + board[target].value + " of " + board[target].suit + "s!");
@@ -1414,6 +1707,7 @@ async function game() {
                 }
             }
         }
+        return kill;
     }
     function specialAttack(hero) {
         return new Promise(async resolve => {
@@ -1452,7 +1746,7 @@ async function game() {
                 case "Archer":
                     {
                         let roll = Math.floor(Math.random() * 6) + 1;
-                        let target = await chooseTarget("Choose a row to shoot with a triple arrow for " + valueMap[ammo[0]] + " + " + roll + " damage", "row");
+                        let target = await chooseTarget("Choose a column to shoot with a triple arrow for " + valueMap[ammo[0]] + " + " + roll + " damage", "row");
                         if (target !== 0) {
                             if (board[10 - target]) {
                                 attack(10 - target, valueMap[ammo[0]] + roll, true);
@@ -1474,7 +1768,55 @@ async function game() {
                         }
                     }
                     break;
-
+                case "Crossbowman":
+                    {
+                        let roll1 = Math.floor(Math.random() * 6) + 1;
+                        let roll2 = Math.floor(Math.random() * 6) + 1;
+                        let target = await chooseTarget("Choose a column to shoot with a piercing bolt for " + valueMap[ammo[0]] + " + " + roll1 + " + " + roll2 + " damage", "row");
+                        if (board[9 - target]) {
+                            attack(9 - target, valueMap[ammo[0]] + roll1 + roll2, true);
+                        }
+                        if (board[target]) {
+                            attack(target, valueMap[ammo[0]] + roll1 + roll2, true);
+                        }
+                    }
+                    break;
+                case "Warhammer Wielder":
+                    {
+                        let damage = ammo.reduce((acc, val) => acc + valueMap[val], 0);
+                        let target = await chooseTarget("Choose an enemy to attack for " + damage + " splash damage", "single");
+                        let kill = attack(target, damage, true);
+                        if (kill) {
+                            let list = [];
+                            if (target !== 0) {
+                                list.push(target - 1);
+                            }
+                            if (target !== 9) {
+                                list.push(target + 1);
+                            }
+                            if (!list.includes(9 - target)) {
+                                list.push(9 - target);
+                            }
+                            list.forEach(target => {
+                                attack(target, damage, true);
+                            });
+                        }
+                    }
+                    break;
+                case "Necromancer":
+                    {
+                        if (turn === 1) {
+                            hero1Deck = ammo;
+                        } else {
+                            hero2Deck = ammo;
+                        }
+                    }
+                    break;
+                case "Knight":
+                    {
+                        let damage = ammo.reduce((acc, val) => acc + valueMap[val], 0);
+                        await knightSpecial(damage);
+                    }
             }
             resolve();
         });
@@ -1482,7 +1824,7 @@ async function game() {
     function chooseAmmo(min, max) {
         return new Promise(async resolve => {
             moveTo(0, 44);
-            clearLines(44, 54);
+            clearLines(43, 54);
             min !== max
             ? print("Choose " + min + " to " + max + " ammo cards:")
             : min === 1
@@ -1491,7 +1833,8 @@ async function game() {
             let chosen = [];
             while (chosen.length < max && (Object.values(ammo1).some(card => card) || Object.values(ammo2).some(card => card))) {
                 renderAmmo();
-                print("Chosen: " + chosen.map(card => ammoMap[card]).join(", "));
+                clearLines(line, line + 2);
+                print("Chosen: " + chosen.map(card => invAmmoMap[card.toUpperCase()]).join(", "));
                 let input = '';
                 let inputs = [];
                 Object.keys(ammo1).forEach((key) => {
@@ -1512,14 +1855,374 @@ async function game() {
                     break;
                 } else {
                     chosen.push(input);
-                    if (ammo1[input]) {
-                        ammo1[input] = false;
+                    if (ammo1[invAmmoMap[input.toUpperCase()]]) {
+                        ammo1[invAmmoMap[input.toUpperCase()]] = false;
+                        discard.push({value: invAmmoMap[input.toUpperCase()], suit: symbolMap[hero1], tapped: true});
                     } else {
-                        ammo2[input] = false;
+                        ammo2[invAmmoMap[input.toUpperCase()]] = false;
+                        discard.push({value: invAmmoMap[input.toUpperCase()], suit: symbolMap[hero2], tapped: true});
                     }
                 }
             }
-            resolve(chosen);
+            renderAmmo();
+            clearLines(line, line + 2);
+            resolve(chosen.map(card => invAmmoMap[card.toUpperCase()]));
+        });
+    }
+    function chooseArcana() {
+        return new Promise(async resolve => {
+            let choice1 = Math.floor(Math.random() * 22);
+            let choice2 = Math.floor(Math.random() * 22);
+            let choice3 = Math.floor(Math.random() * 22);
+            moveTo(0, 44);
+            clearLines(43, 60);
+            print("Choose an Arcana:");
+            print("[A]: " + choice1 + "-" + arcanaNames[choice1]);
+            print("[B]: " + choice2 + "-" + arcanaNames[choice2]);
+            print("[C]: " + choice3 + "-" + arcanaNames[choice3]);
+            let input = '';
+            while (!['a', 'b', 'c'].includes(input)) {
+                input = await getInput();
+            }
+            if (turn === 1) {
+                arcana1 = [choice1, choice2, choice3][['a', 'b', 'c'].indexOf(input)] + 1;
+            } else {
+                arcana2 = [choice1, choice2, choice3][['a', 'b', 'c'].indexOf(input)] + 1;
+            }
+            resolve();
+        })
+    }
+    function useArcana(arcana) {
+        return new Promise(async resolve => {
+            if (turn === 1) {
+                arcana1 = 0;
+            } else {
+                arcana2 = 0;
+            }
+            switch (arcana) {
+                case "The Fool":
+                    {
+                        let choice = Math.floor(Math.random() * 22);
+                        if (turn === 1) {
+                            arcana1 = choice + 1;
+                        } else {
+                            arcana2 = choice + 1;
+                        }
+                    }
+                    break;
+                case "The Magician":
+                    {
+                        let suit = await chooseSuit();
+                        for (let i = 0; i < 10; i++) {
+                            if (board[i]) {
+                                board[i].suit = suit;
+                            }
+                        }
+                    }
+                    break;
+                case "The High Priestess":
+                    {
+                        if (turn === 1) {
+                            hero1Deck = [1,1,1];
+                        } else {
+                            hero2Deck = [1,1,1];
+                        }
+                    }
+                    break;
+                case "The Empress":
+                    {
+                        if (turn === 1) {
+                            hero1Deck[0] = ["queen"];
+                        } else {
+                            hero2Deck[0] = ["queen"];
+                        }
+                    }
+                    break;
+                case "The Emperor":
+                    {
+                        if (turn === 1) {
+                            hero1Deck[0] = ["king"];
+                        } else {
+                            hero2Deck[0] = ["king"];
+                        }
+                    }
+                    break;
+                case "The Hierophant":
+                    {
+                        if (turn === 1) {
+                            hero1Deck[0] = ["priest"];
+                        } else {
+                            hero2Deck[0] = ["priest"];
+                        }
+                    }
+                    break;
+                case "The Lovers":
+                    {
+                        health += 2;
+                    }
+                    break;
+                case "The Chariot":
+                    {
+                        deck.push(board.shift());
+                        await sleep(250);
+                        renderGame();
+                        deck.push(board.shift());
+                        await sleep(250);
+                        renderGame();
+                        deck.push(board.shift());
+                        await sleep(250);
+                        renderGame();
+                        deck.push(board.shift());
+                        await sleep(250);
+                        renderGame();
+                    }
+                    break;
+                case "Strength":
+                    {
+                        if (turn === 1) {
+                            hero1Deck = [3,3,3];
+                        } else {
+                            hero2Deck = [3,3,3];
+                        }
+                    }
+                    break;
+                case "The Hermit":
+                    {
+                        Object.keys(ammo1).forEach(key => {
+                            ammo1[key] = false;
+                            ammo2[key] = false;
+                        });
+                        board.forEach((card, i) => {
+                            if (card) {
+                                attack(i, valueMap[card.value]);
+                            }
+                        });
+                    }
+                    break;
+                case "Wheel of Fortune":
+                    {
+                        for (let i = 0; i < 10; i++) {
+                            if (board[i]) {
+                                let roll1 = Math.floor(Math.random() * 6) + 1;
+                                let roll2 = Math.floor(Math.random() * 6) + 1;
+                                attack(i, roll1 + roll2);
+                            }
+                        }
+                    }
+                    break;
+                case "Justice":
+                    {
+                        let healthLost = maxHealth - health;
+                        let killCount = 0;
+                        while (killCount < healthLost) {
+                            let weakest = board.reduce((acc, val, index) => {
+                                if (val) {
+                                    if (acc === undefined) {
+                                        return index;
+                                    } else if (valueMap[val.value] < valueMap[board[acc].value]) {
+                                        return index;
+                                    }
+                                }
+                                return acc;
+                            }, undefined);
+                            if (weakest === undefined) {
+                                break;
+                            }
+                            killCount++;
+                            attack(weakest, valueMap[board[weakest].value]);
+                        }
+                    }
+                    break;
+                case "The Hanged Man":
+                    {
+                        while (board.length < 10) {
+                            board.push(undefined);
+                        }
+                        board = board.reverse();
+                    }
+                    break;
+                case "Death":
+                    {
+                        let target = await chooseTarget("Choose an enemy to kill", "single");
+                        attack(target, valueMap[board[target].value]);
+                    }
+                    break;
+                case "Temperance":
+                    {
+                        shields++;
+                    }
+                    break;
+                case "The Devil":
+                    {
+                        shields += 2;
+                        health--;
+                    }
+                    break;
+                case "The Tower":
+                    {
+                        let killCount = 0;
+                        while (killCount < 2 && board.some(card => card)) {
+                            let indeces = [];
+                            for (let i = 0; i < 10; i++) {
+                                if (board[i]) {
+                                    indeces.push(i);
+                                }
+                            }
+                            let target = indeces.shuffle()[0];
+                            attack(target, valueMap[board[target].value]);
+                            killCount++;
+                        }
+                    }
+                    break;
+                case "The Star":
+                    {
+                        for (let i = 0; i < 10; i++) {
+                            if (board[i]) {
+                                board[i].tapped = true;
+                            }
+                        }
+                    }
+                    break;
+                case "The Moon":
+                    {
+                        deck.push(undefined);
+                        deck.push(undefined);
+                    }
+                    break;
+                case "The Sun":
+                    {
+                        let column = await chooseTarget("Choose a column to burn all enemies in", "row");
+                        if (board[9 - column]) {
+                            attack(i, Math.ceil(valueMap[board[9 - column].value] / 2));
+                        }
+                        if (board[column]) {
+                            attack(i, Math.ceil(valueMap[board[column].value] / 2));
+                        }
+                    }
+                    break;
+                case "Judgement":
+                    {
+                        for (let i = 0; i < 10; i++) {
+                            if (board[i]?.tapped) {
+                                attack(i, valueMap[board[i].value]);
+                            }
+                        }
+                    }
+                    break;
+                case "The World":
+                    {
+                        await chooseAnyArcana();
+                    }
+                    break;
+            }
+            await sleep(250);
+            renderGame();
+            resolve();
+        });
+    }
+    function chooseAnyArcana() {
+        return new Promise(async resolve => {
+            let choice = 0;
+            moveTo(0, 44);
+            clearLines(43, 60);
+            print("Choose an Arcana:");
+            print("[A]: " + choice + "-" + arcanaNames[choice]);
+            print("[B]: Choose a different Arcana");
+            let input = '';
+            while (!['a'].includes(input)) {
+                input = await getInput();
+                if (input === 'b') {
+                    choice = (choice + 1) % 22;
+                    moveTo(0, 44);
+                    clearLines(43, 60);
+                    print("Choose an Arcana:");
+                    print("[A]: " + choice + "-" + arcanaNames[choice]);
+                    print("[B]: Choose a different Arcana");
+                }
+            }
+            if (turn === 1) {
+                arcana1 = choice + 1;
+            } else {
+                arcana2 = choice + 1;
+            }
+            resolve();
+        })
+    }
+    function chooseSuit() {
+        return new Promise(async resolve => {
+            moveTo(0, 44);
+            clearLines(43, 60);
+            print("Choose a suit:");
+            print("[A]: Heart");
+            print("[B]: Spade");
+            print("[C]: Diamond");
+            print("[D]: Club");
+            print("[E]: Shield");
+            print("[F]: Cup");
+            let input = '';
+            while (!['a', 'b', 'c', 'd', 'e', 'f'].includes(input)) {
+                input = await getInput();
+            }
+            let suits = ["heart", "spade", "diamond", "club", "shield", "cup"];
+            let suit = suits[['a', 'b', 'c', 'd', 'e', 'f'].indexOf(input)];
+            resolve(suit);
+        });
+    }
+    function knightSpecial(damage) {
+        return new Promise(async resolve => {
+            let killCount = 0;
+            while (killCount < 3 && board.some(card => card) && damage > 0) {
+                let target = await chooseTarget("Choose an enemy to target. Remaining damage: " + damage, "single");
+                moveTo(0, 44);
+                clearLines(43, 60);
+                print("Choose how much damage to deal to the " + board[target].value + " of " + board[target].suit + "s:");
+                let inputs = [];
+                if (!board[target].tapped) {
+                    if (damage >= valueMap[board[target].value]) {
+                        inputs.push('k');
+                        print("[K]: Kill the target by dealing " + valueMap[board[target].value] + " damage");
+                    }
+                    if (damage >= Math.ceil(valueMap[board[target].value] / 2)) {
+                        inputs.push('t');
+                        print("[T]: Tap the target by dealing " + Math.ceil(valueMap[board[target].value] / 2) + " damage");
+                    }
+                } else {
+                    if (damage >= Math.ceil(valueMap[board[target].value] / 2)) {
+                        inputs.push('k');
+                        print("[K]: Kill the target by dealing " + Math.ceil(valueMap[board[target].value] / 2) + " damage");
+                    }
+                }
+                inputs.push('r');
+                print("[R]: Deal all the remaining damage to the target");
+                let input = '';
+                while (!inputs.includes(input)) {
+                    input = await getInput();
+                }
+                switch (input) {
+                    case 'k':
+                        if (board[target].tapped) {
+                            attack(target, Math.ceil(valueMap[board[target].value] / 2));
+                            damage -= Math.ceil(valueMap[board[target].value] / 2);
+                            killCount++;
+                        } else {
+                            attack(target, valueMap[board[target].value]);
+                            damage -= valueMap[board[target].value];
+                            killCount++;
+                        }
+                        break;
+                    case 't':
+                        attack(target, Math.ceil(valueMap[board[target].value] / 2));
+                        damage -= Math.ceil(valueMap[board[target].value] / 2);
+                        killCount++;
+                        break;
+                    case 'r':
+                        attack(target, damage);
+                        damage = 0;
+                        killCount++;
+                        break;
+                }
+            }
+            resolve();
         });
     }
 }
