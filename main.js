@@ -1181,7 +1181,7 @@ async function game() {
             await sleep(600);
             if (board.some(card => card?.value === "king" && card?.suit === "heart")) {
                 board.forEach(card => {
-                    if (card) {
+                    if (card && card.value !== "king") {
                         card.tapped = false;
                     }
                 });
@@ -1504,7 +1504,7 @@ async function game() {
     async function drawCard() {
         let card = (board.some(card => (card?.value === "king" && card?.suit === "cup")) && discard.length ? discard : deck).pop();
         board.unshift(card);
-        if (board.length > 10) {
+        while (board.length > 10) {
             let card = board.pop();
             if (card) {
                 if (shields > 0) {
@@ -1529,7 +1529,7 @@ async function game() {
         if (typeof card.value === 'string') {
             card = (board.some(card => (card?.value === "king" && card?.suit === "cup")) && discard.length ? discard : deck).pop();
             board.unshift(card);
-            if (board.length > 10) {
+            while (board.length > 10) {
                 let card = board.pop();
                 if (card) {
                     if (shields > 0) {
