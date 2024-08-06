@@ -18,6 +18,7 @@ body {
 
 div {
     font-family: pixel;
+    height: 14px;
     transform: scaleY(2);
 }
 
