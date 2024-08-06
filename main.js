@@ -805,7 +805,16 @@ async function credits() {
 
 async function instructions() {
     clearScreen();
-    print("Instructions go here");
+    print("The goal of the game is to survive the onslaught of enemies.");
+    print("You start with 4 health and 0 shields, but can gain more through the shop or through arcanas.");
+    print("You can choose between 3 difficulties, each unlocking more enemies, bosses, and heroes.");
+    print("You get to choose 2 heroes, each with their own unique abilities.");
+    print("Every 11 cards, you will face a boss.");
+    print("After defeating the boss, you will get to choose between 3 arcanas.");
+    print("Arcanas are powerful, one-use abilities that can turn the tide of battle if used correctly.");
+    print("Additionally after defeating a boss of a certain suit, you gain 1 token of that suit to be spent in the shop.");
+    print("The game ends when you run out of health or when you defeat all the enemies.");
+    print("Good luck!");
     await pause();
     menu();
 }
@@ -1158,60 +1167,76 @@ async function game() {
     let arcana1 = unlocks.fool > 0 ? 1 : 0;
     let arcana2 = unlocks.fool > 1 ? 1 : 0;
     let kingKilled = false;
+    let arcanaUsed = false;
     while (!(health <= 0) && !(deck.length === 0 && board.every(card => card === undefined))) {
-        drawCard();
-        kingKilled = false;
-        await sleep(600);
-        if (board.some(card => card?.value === "king" && card?.suit === "heart")) {
-            board.forEach(card => {
-                if (card) {
-                    card.tapped = false;
-                }
-            });
-            renderGame();
-            print("The King of War is healing all the enemies through their anger");
-            await pause();
-        }
-        if (board.some(card => card?.value === "king" && card?.suit === "spade")) {
-            renderGame();
-            print("The King of Conquest is empowering all the enemies making them deal more damage to your castle");
-            await pause();
-        }
-        if (board.some(card => card?.value === "king" && card?.suit === "diamond")) {
-            renderGame();
-            print("The King of Famine is making ammo cards harder to come by");
-            await pause();
-        }
-        if (board.some(card => card?.value === "king" && card?.suit === "club")) {
-            let cardRemoved = false;
-            Object.keys(ammo1).forEach(key => {
-                if (cardRemoved) return;
-                if (ammo1[key]) {
-                    ammo1[key] = false;
-                    discard.push({value: key, suit: suitNameMap[hero1], tapped: true});
-                    cardRemoved = true;
-                } else if (ammo2[key]) {
-                    ammo2[key] = false;
-                    discard.push({value: key, suit: suitNameMap[hero2], tapped: true});
-                    cardRemoved = true;
-                }
-            });
-            renderGame();
-            print("The King of Pestilence is making ammo cards break more easily");
-            await pause();
-        }
-        if (board.some(card => card?.value === "king" && card?.suit === "shield")) {
-            renderGame();
-            print("The King of Madness is making it harder to get control of the board");
-            await pause();
-        }
-        if (board.some(card => card?.value === "king" && card?.suit === "cup")) {
-            renderGame();
-            print("The King of Death is making already dead enemies come back to life");
-            await pause();
+        if (!arcanaUsed) {
+            drawCard();
+            kingKilled = false;
+            await sleep(600);
+            if (board.some(card => card?.value === "king" && card?.suit === "heart")) {
+                board.forEach(card => {
+                    if (card) {
+                        card.tapped = false;
+                    }
+                });
+                renderGame();
+                print("The King of War is healing all the enemies through their anger");
+                await pause();
+            }
+            if (board.some(card => card?.value === "king" && card?.suit === "spade")) {
+                renderGame();
+                print("The King of Conquest is empowering all the enemies making them deal more damage to your castle");
+                await pause();
+            }
+            if (board.some(card => card?.value === "king" && card?.suit === "diamond")) {
+                renderGame();
+                print("The King of Famine is making ammo cards harder to come by");
+                await pause();
+            }
+            if (board.some(card => card?.value === "king" && card?.suit === "club")) {
+                let cardRemoved = false;
+                Object.keys(ammo1).forEach(key => {
+                    if (cardRemoved) return;
+                    if (ammo1[key]) {
+                        ammo1[key] = false;
+                        discard.push({value: key, suit: suitNameMap[hero1], tapped: true});
+                        cardRemoved = true;
+                    } else if (ammo2[key]) {
+                        ammo2[key] = false;
+                        discard.push({value: key, suit: suitNameMap[hero2], tapped: true});
+                        cardRemoved = true;
+                    }
+                });
+                renderGame();
+                print("The King of Pestilence is making ammo cards break more easily");
+                await pause();
+            }
+            if (board.some(card => card?.value === "king" && card?.suit === "shield")) {
+                renderGame();
+                print("The King of Madness is making it harder to get control of the board");
+                await pause();
+            }
+            if (board.some(card => card?.value === "king" && card?.suit === "cup")) {
+                renderGame();
+                print("The King of Death is making already dead enemies come back to life");
+                await pause();
+            }
+        } else {
+            arcanaUsed = false;
+            turn = 3 - turn;
         }
         await heroTurn();
     }
+    if (health <= 0) {
+        clearScreen();
+        print("You have lost");
+        await pause();
+    } else {
+        clearScreen();
+        print("You have won");
+        await pause();
+    }
+    menu();
     function renderGame() {
         clearLines(0, 37);
         moveTo(0, 0);
@@ -1894,6 +1919,7 @@ async function game() {
     }
     function useArcana(arcana) {
         return new Promise(async resolve => {
+            arcanaUsed = true;
             if (turn === 1) {
                 arcana1 = 0;
             } else {
@@ -1959,6 +1985,7 @@ async function game() {
                 case "The Lovers":
                     {
                         health += 2;
+                        health = Math.min(health, 8);
                     }
                     break;
                 case "The Chariot":
@@ -2050,11 +2077,13 @@ async function game() {
                 case "Temperance":
                     {
                         shields++;
+                        shields = Math.min(shields, 4);
                     }
                     break;
                 case "The Devil":
                     {
                         shields += 2;
+                        shields = Math.min(shields, 4);
                         health--;
                     }
                     break;
