@@ -11,6 +11,9 @@ Array.prototype.shuffle = function () {
 Array.prototype.random = function () {
     return this[Math.floor(Math.random() * this.length)];
 };
+String.prototype.replaceAll = function (search, replacement) {
+    return this.split(search).join(replacement);
+};
 let divs = [];
 const main = document.getElementById('main');
 console.log(document.body)
@@ -589,7 +592,20 @@ async function getInput() {
     });
 }
 
+async function isLineEmpty(line) {
+    return lines[line].reduce((a, b) => a + +(b.textContent == nbsp), 0) == lines[line].length;
+}
+
 async function pause() {
+    let line = 0;
+    for (let i = lines.length - 1; i >= 0; i--) {
+        if (!isLineEmpty(i) && line == 0) {
+            line = i+1;
+        }
+    }
+    if (line) {
+        moveTo(0, line);
+    }
     print("Press any key to continue...");
     return getInput();
 }
@@ -1866,7 +1882,7 @@ async function game() {
             while (chosen.length < max && (Object.values(ammo1).some(card => card) || Object.values(ammo2).some(card => card))) {
                 renderAmmo();
                 clearLines(line, line + 2);
-                print("Chosen: " + chosen.map(card => invAmmoMap[card.toUpperCase()]).join(", "));
+                print("Chosen: " + chosen.map(card => invAmmoMap[card.toUpperCase()]).join(", ").replaceAll('"', ""));
                 let input = '';
                 let inputs = [];
                 Object.keys(ammo1).forEach((key) => {
@@ -1874,7 +1890,7 @@ async function game() {
                         inputs.push(ammoMap[key]);
                     }
                 });
-                print(JSON.stringify(inputs) + ": Choose an ammo card");
+                print(JSON.stringify(inputs).replaceAll('"', "") + ": Choose an ammo card");
                 if (chosen.length >= min) {
                     inputs.push('s');
                     print("[S]: Stop");
