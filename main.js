@@ -942,6 +942,15 @@ async function instructions() {
     print("Arcanas are powerful, one-use abilities that can turn the tide of battle if used correctly.");
     print("Additionally after defeating a boss of a certain suit, you gain 1 token of that suit to be spent in the shop.");
     print("The game ends when you run out of health or when you defeat all the enemies.");
+    await pause();
+    clearScreen();
+    print("Enemies can't be damaged, but can instead be either killed or tapped, which will make them light gray.");
+    print("To tap an enemy or to kill a tapped one, you must deal damage equal to half their value rounded up.")
+    print("To kill an untapped enemy, you must deal damage equal to their value.");
+    print("Killing an enemy of a suit matching one of your heroes without using a class ability will grant you an ammo card of value equal to the enemy's value.");
+    print("Ammo cards can be spent to use class abilities using aces.");
+    await pause();
+    clearScreen();
     print("Good luck!");
     await pause();
     menu();
@@ -2207,7 +2216,7 @@ async function game() {
                                 break;
                             }
                             killCount++;
-                            attack(weakest, valueMap[board[weakest].value]);
+                            attack(weakest, valueMap[board[weakest].value], true);
                         }
                     }
                     break;
