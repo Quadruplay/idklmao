@@ -1357,10 +1357,10 @@ async function game() {
                         ? new specialText([String(arcana1 - 1)], ['yellow'], ['black'])
                         : new specialText(["_"], ['white'], ['black']));
                     break;
-                case 10:
+                case 11:
                     row.join(" Hero 2 hand:");
                     break;
-                case 11:
+                case 12:
                     row
                     .join("  ")
                     .join(hero2Deck[0]
@@ -1377,41 +1377,37 @@ async function game() {
                         ? new specialText([String(arcana2 - 1)], ['yellow'], ['black'])
                         : new specialText(["_"], ['white'], ['black']));
                     break;
-                case 12:
+                case 14:
                     row.join(" Next card:");
                     break;
-                case 13:
+                case 15:
                     row
                     .join("  ")
                     .join((board.some(card => (card?.value === "king" && card?.suit === "cup")) && discard.length ? discard : deck).at(-1)
                     ? ammoCard[0].clone()
                     : ammoBlank[0])
                     break;
-                case 14:
+                case 16:
                     row
                     .join("  ")
                     .join((board.some(card => (card?.value === "king" && card?.suit === "cup")) && discard.length ? discard : deck).at(-1)
                     ? ammoCard[1].clone().replace("X", ammoMap[(board.some(card => (card?.value === "king" && card?.suit === "cup")) && discard.length ? discard : deck).at(-1).value])
                     : ammoBlank[1])
                     break;
-                case 15:
+                case 17:
                     row
                     .join("  ")
                     .join((board.some(card => (card?.value === "king" && card?.suit === "cup")) && discard.length ? discard : deck).at(-1)
                     ? ammoCard[2].clone().replace("Y", ...(suits[(board.some(card => (card?.value === "king" && card?.suit === "cup")) && discard.length ? discard : deck).at(-1).suit]))
                     : ammoBlank[2])
                     break;
-                case 16:
-                    row
-                    .join("  ")
-                    .join((board.some(card => (card?.value === "king" && card?.suit === "cup")) && discard.length ? discard : deck).at(-1)
-                    ? ammoCard[3].clone()
-                    : ammoBlank[3])
-                    break;
             }
             printSpecial(row);
         });
-        print(" ".multiply(114)+"|");
+        printSpecial( new specialText([" ".multiply(114)+"|"+" ".multiply(10)], ["white"], ["black"])
+        .join((board.some(card => (card?.value === "king" && card?.suit === "cup")) && discard.length ? discard : deck).at(-1)
+        ? ammoCard[3].clone()
+        : ammoBlank[3]));
         print(" ".multiply(114)+"V");
         playerCastle.forEach((text, index) => {
             let row = text.clone()
@@ -1452,49 +1448,52 @@ async function game() {
             }
             switch (index) {
                 case 0:
-                    row.join(" A - 1");
+                    row.join(" Card Values:");
                     break;
                 case 1:
-                    row.join(" 2 - 2");
+                    row.join("  A (Ace)    - 1");
                     break;
                 case 2:
-                    row.join(" 3 - 3");
+                    row.join("  2          - 2");
                     break;
                 case 3:
-                    row.join(" 4 - 4");
+                    row.join("  3          - 3");
                     break;
                 case 4:
-                    row.join(" 5 - 5");
+                    row.join("  4          - 4");
                     break;
                 case 5:
-                    row.join(" 6 - 6");
+                    row.join("  5          - 5");
                     break;
                 case 6:
-                    row.join(" 7 - 7");
+                    row.join("  6          - 6");
                     break;
                 case 7:
-                    row.join(" 8 - 8");
+                    row.join("  7          - 7");
                     break;
                 case 8:
-                    row.join(" 9 - 9");
+                    row.join("  8          - 8");
                     break;
                 case 9:
-                    row.join(" T - 10");
+                    row.join("  9          - 9");
                     break;
                 case 10:
-                    row.join(" P - 10");
+                    row.join("  T (10)     - 10");
                     break;
                 case 11:
-                    row.join(" N - 11");
+                    row.join("  P (Page)   - 10");
                     break;
                 case 12:
-                    row.join(" Q - 12");
+                    row.join("  N (Knight) - 11");
                     break;
                 case 13:
-                    row.join(" K - 13");
+                    row.join("  Q (Queen)  - 12");
                     break;
                 case 14:
-                    row.join(" Ω - amount of ammo cards");
+                    row.join("  K (King)   - 13");
+                    break;
+                case 15:
+                    row.join("  Ω (Priest) - amount of ammo cards");
                     break;
             }
             printSpecial(row);
@@ -1580,6 +1579,8 @@ async function game() {
                     row.join(item ? ammoCard[i].clone().replace("X", ammoMap[item]).replace("Y", ...(symbolMap[turn === 1 ? hero1 : hero2])) : ammoBlank[i]);
                     row.join(" ");
                 }
+                row.join("  ");
+                row.join((turn === 1 ? arcana1 : arcana2) ? ammoCard[i].clone().recolor("yellow", "black").replace("X", String(Math.floor(((turn === 1 ? arcana1 : arcana2) - 1) / 10))).replace("Y", String(((turn === 1 ? arcana1 : arcana2) - 1) % 10)) : ammoBlank[i].clone().recolor("yellow", "black"));
                 printSpecial(row);
             }
             let choices = [];
