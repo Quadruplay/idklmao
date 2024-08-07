@@ -264,7 +264,7 @@ let opponentCastle = [
 ]
 
 const king = [
-    new specialText(["█≡=⁃-⁃=≡{}≡=⁃-⁃=≡█"], ['black'], ['white']),
+    new specialText(["◤≡=⁃-⁃=≡{}≡=⁃-⁃=≡◥"], ['black'], ['white']),
     new specialText(["§XK.    /\\    . X§"], ['black'], ['white']),
     new specialText(["║  │\\/\\/  \\/\\/│  ║"], ['black'], ['white']),
     new specialText(["│  ! \\/({})\\/ !  │"], ['black'], ['white']),
@@ -281,11 +281,11 @@ const king = [
     new specialText(["│     \\\\\\║___    │"], ['black'], ['white']),
     new specialText(['║     ,'+"'"+'¤ """    ║'], ['black'], ['white']),
     new specialText(["§X   //  \\\\    KX§"], ['black'], ['white']),
-    new specialText(["█≡=⁃-⁃=≡{}≡=⁃-⁃=≡█"], ['black'], ['white']),
+    new specialText(["◣≡=⁃-⁃=≡{}≡=⁃-⁃=≡◢"], ['black'], ['white']),
 ]
 
 const queen = [
-    new specialText(["█≡=⁃-⁃=≡{}≡=⁃-⁃=≡█"], ['black'], ['white']),
+    new specialText(["◤≡=⁃-⁃=≡{}≡=⁃-⁃=≡◥"], ['black'], ['white']),
     new specialText(["§XQ     /\\      X§"], ['black'], ['white']),
     new specialText(["║  . . //\\\\ . .  ║"], ['black'], ['white']),
     new specialText(["│  |\\|\\'\\/'/|/|  │"], ['black'], ['white']),
@@ -302,11 +302,11 @@ const queen = [
     new specialText(["│ │'   ├≡≡┤   §  │"], ['black'], ['white']),
     new specialText(["║      ╞##╡   §  ║"], ['black'], ['white']),
     new specialText(["§X     ├≡≡┤   §QX§"], ['black'], ['white']),
-    new specialText(["█≡=⁃-⁃=≡{}≡=⁃-⁃=≡█"], ['black'], ['white']),
+    new specialText(["◣≡=⁃-⁃=≡{}≡=⁃-⁃=≡◢"], ['black'], ['white']),
 ]
 
 const knight = [
-    new specialText(["█≡=⁃-⁃=≡{}≡=⁃-⁃=≡█"], ['black'], ['white']),
+    new specialText(["◤≡=⁃-⁃=≡{}≡=⁃-⁃=≡◥"], ['black'], ['white']),
     new specialText(["§XN  _.-¡¡-._   X§"], ['black'], ['white']),
     new specialText(["║  ¡"+'" | ││ | "'+"¡  ║"], ['black'], ['white']),
     new specialText(["│  │ || ││ || │  │"], ['black'], ['white']),
@@ -323,11 +323,11 @@ const knight = [
     new specialText(["│     ║│┌┐__│▐_│_│"], ['black'], ['white']),
     new specialText(["║  / ,‼'|≡≡≡[ΦΦ]≡║"], ['black'], ['white']),
     new specialText(["§X   ║│      ╠╣NX§"], ['black'], ['white']),
-    new specialText(["█≡=⁃-⁃=≡{}≡=⁃-⁃=≡█"], ['black'], ['white']),
+    new specialText(["◣≡=⁃-⁃=≡{}≡=⁃-⁃=≡◢"], ['black'], ['white']),
 ]
 
 const page = [
-    new specialText(["█≡=⁃-⁃=≡{}≡=⁃-⁃=≡█"], ['black'], ['white']),
+    new specialText(["◤≡=⁃-⁃=≡{}≡=⁃-⁃=≡◥"], ['black'], ['white']),
     new specialText(["§XP             X§"], ['black'], ['white']),
     new specialText(["║,.↔«ºº"+'""""'+"ºº»↔.,║"], ['black'], ['white']),
     new specialText(["│ \\↔«ºº"+'""""'+"ºº»↔/ │"], ['black'], ['white']),
@@ -344,7 +344,7 @@ const page = [
     new specialText(["│      │♦││ ▓    │"], ['black'], ['white']),
     new specialText(["║      │♦││▐▌    ║"], ['black'], ['white']),
     new specialText(["§X     │♦│'▓   PX§"], ['black'], ['white']),
-    new specialText(["█≡=⁃-⁃=≡{}≡=⁃-⁃=≡█"], ['black'], ['white']),
+    new specialText(["◣≡=⁃-⁃=≡{}≡=⁃-⁃=≡◢"], ['black'], ['white']),
 ]
 
 const blank = [
@@ -373,7 +373,7 @@ const cardsSpecial = {page, knight, queen, king, blank};
 const cards = [
     undefined,
     [
-        new specialText(["█≡=⁃-⁃=≡{}≡=⁃-⁃=≡█"], ['black'], ['white']),
+        new specialText(["◤≡=⁃-⁃=≡{}≡=⁃-⁃=≡◥"], ['black'], ['white']),
         new specialText(["§ A              §"], ['black'], ['white']),
         new specialText(["║                ║"], ['black'], ['white']),
         new specialText(["│                │"], ['black'], ['white']),
@@ -390,10 +390,10 @@ const cards = [
         new specialText(["│                │"], ['black'], ['white']),
         new specialText(["║                ║"], ['black'], ['white']),
         new specialText(["§              A §"], ['black'], ['white']),
-        new specialText(["█≡=⁃-⁃=≡{}≡=⁃-⁃=≡█"], ['black'], ['white']),
+        new specialText(["◣≡=⁃-⁃=≡{}≡=⁃-⁃=≡◢"], ['black'], ['white']),
     ],
     [
-        new specialText(["█≡=⁃-⁃=≡{}≡=⁃-⁃=≡█"], ['black'], ['white']),
+        new specialText(["◤≡=⁃-⁃=≡{}≡=⁃-⁃=≡◥"], ['black'], ['white']),
         new specialText(["§ 2              §"], ['black'], ['white']),
         new specialText(["║                ║"], ['black'], ['white']),
         new specialText(["│                │"], ['black'], ['white']),
@@ -410,10 +410,10 @@ const cards = [
         new specialText(["│                │"], ['black'], ['white']),
         new specialText(["║                ║"], ['black'], ['white']),
         new specialText(["§              2 §"], ['black'], ['white']),
-        new specialText(["█≡=⁃-⁃=≡{}≡=⁃-⁃=≡█"], ['black'], ['white']),
+        new specialText(["◣≡=⁃-⁃=≡{}≡=⁃-⁃=≡◢"], ['black'], ['white']),
     ],
     [
-        new specialText(["█≡=⁃-⁃=≡{}≡=⁃-⁃=≡█"], ['black'], ['white']),
+        new specialText(["◤≡=⁃-⁃=≡{}≡=⁃-⁃=≡◥"], ['black'], ['white']),
         new specialText(["§ 3              §"], ['black'], ['white']),
         new specialText(["║                ║"], ['black'], ['white']),
         new specialText(["│                │"], ['black'], ['white']),
@@ -430,10 +430,10 @@ const cards = [
         new specialText(["│                │"], ['black'], ['white']),
         new specialText(["║                ║"], ['black'], ['white']),
         new specialText(["§              3 §"], ['black'], ['white']),
-        new specialText(["█≡=⁃-⁃=≡{}≡=⁃-⁃=≡█"], ['black'], ['white']),
+        new specialText(["◣≡=⁃-⁃=≡{}≡=⁃-⁃=≡◢"], ['black'], ['white']),
     ],
     [
-        new specialText(["█≡=⁃-⁃=≡{}≡=⁃-⁃=≡█"], ['black'], ['white']),
+        new specialText(["◤≡=⁃-⁃=≡{}≡=⁃-⁃=≡◥"], ['black'], ['white']),
         new specialText(["§ 4              §"], ['black'], ['white']),
         new specialText(["║                ║"], ['black'], ['white']),
         new specialText(["│                │"], ['black'], ['white']),
@@ -450,10 +450,10 @@ const cards = [
         new specialText(["│                │"], ['black'], ['white']),
         new specialText(["║                ║"], ['black'], ['white']),
         new specialText(["§              4 §"], ['black'], ['white']),
-        new specialText(["█≡=⁃-⁃=≡{}≡=⁃-⁃=≡█"], ['black'], ['white']),
+        new specialText(["◣≡=⁃-⁃=≡{}≡=⁃-⁃=≡◢"], ['black'], ['white']),
     ],
     [
-        new specialText(["█≡=⁃-⁃=≡{}≡=⁃-⁃=≡█"], ['black'], ['white']),
+        new specialText(["◤≡=⁃-⁃=≡{}≡=⁃-⁃=≡◥"], ['black'], ['white']),
         new specialText(["§ 5              §"], ['black'], ['white']),
         new specialText(["║                ║"], ['black'], ['white']),
         new specialText(["│                │"], ['black'], ['white']),
@@ -470,10 +470,10 @@ const cards = [
         new specialText(["│                │"], ['black'], ['white']),
         new specialText(["║                ║"], ['black'], ['white']),
         new specialText(["§              5 §"], ['black'], ['white']),
-        new specialText(["█≡=⁃-⁃=≡{}≡=⁃-⁃=≡█"], ['black'], ['white']),
+        new specialText(["◣≡=⁃-⁃=≡{}≡=⁃-⁃=≡◢"], ['black'], ['white']),
     ],
     [
-        new specialText(["█≡=⁃-⁃=≡{}≡=⁃-⁃=≡█"], ['black'], ['white']),
+        new specialText(["◤≡=⁃-⁃=≡{}≡=⁃-⁃=≡◥"], ['black'], ['white']),
         new specialText(["§ 6              §"], ['black'], ['white']),
         new specialText(["║                ║"], ['black'], ['white']),
         new specialText(["│                │"], ['black'], ['white']),
@@ -490,10 +490,10 @@ const cards = [
         new specialText(["│                │"], ['black'], ['white']),
         new specialText(["║                ║"], ['black'], ['white']),
         new specialText(["§              6 §"], ['black'], ['white']),
-        new specialText(["█≡=⁃-⁃=≡{}≡=⁃-⁃=≡█"], ['black'], ['white']),
+        new specialText(["◣≡=⁃-⁃=≡{}≡=⁃-⁃=≡◢"], ['black'], ['white']),
     ],
     [
-        new specialText(["█≡=⁃-⁃=≡{}≡=⁃-⁃=≡█"], ['black'], ['white']),
+        new specialText(["◤≡=⁃-⁃=≡{}≡=⁃-⁃=≡◥"], ['black'], ['white']),
         new specialText(["§ 7              §"], ['black'], ['white']),
         new specialText(["║                ║"], ['black'], ['white']),
         new specialText(["│                │"], ['black'], ['white']),
@@ -510,10 +510,10 @@ const cards = [
         new specialText(["│                │"], ['black'], ['white']),
         new specialText(["║                ║"], ['black'], ['white']),
         new specialText(["§              7 §"], ['black'], ['white']),
-        new specialText(["█≡=⁃-⁃=≡{}≡=⁃-⁃=≡█"], ['black'], ['white']),
+        new specialText(["◣≡=⁃-⁃=≡{}≡=⁃-⁃=≡◢"], ['black'], ['white']),
     ],
     [
-        new specialText(["█≡=⁃-⁃=≡{}≡=⁃-⁃=≡█"], ['black'], ['white']),
+        new specialText(["◤≡=⁃-⁃=≡{}≡=⁃-⁃=≡◥"], ['black'], ['white']),
         new specialText(["§ 8              §"], ['black'], ['white']),
         new specialText(["║                ║"], ['black'], ['white']),
         new specialText(["│                │"], ['black'], ['white']),
@@ -530,10 +530,10 @@ const cards = [
         new specialText(["│                │"], ['black'], ['white']),
         new specialText(["║                ║"], ['black'], ['white']),
         new specialText(["§              8 §"], ['black'], ['white']),
-        new specialText(["█≡=⁃-⁃=≡{}≡=⁃-⁃=≡█"], ['black'], ['white']),
+        new specialText(["◣≡=⁃-⁃=≡{}≡=⁃-⁃=≡◢"], ['black'], ['white']),
     ],
     [
-        new specialText(["█≡=⁃-⁃=≡{}≡=⁃-⁃=≡█"], ['black'], ['white']),
+        new specialText(["◤≡=⁃-⁃=≡{}≡=⁃-⁃=≡◥"], ['black'], ['white']),
         new specialText(["§ 9              §"], ['black'], ['white']),
         new specialText(["║   X        X   ║"], ['black'], ['white']),
         new specialText(["│                │"], ['black'], ['white']),
@@ -550,10 +550,10 @@ const cards = [
         new specialText(["│                │"], ['black'], ['white']),
         new specialText(["║   X        X   ║"], ['black'], ['white']),
         new specialText(["§              9 §"], ['black'], ['white']),
-        new specialText(["█≡=⁃-⁃=≡{}≡=⁃-⁃=≡█"], ['black'], ['white']),
+        new specialText(["◣≡=⁃-⁃=≡{}≡=⁃-⁃=≡◢"], ['black'], ['white']),
     ],
     [
-        new specialText(["█≡=⁃-⁃=≡{}≡=⁃-⁃=≡█"], ['black'], ['white']),
+        new specialText(["◤≡=⁃-⁃=≡{}≡=⁃-⁃=≡◥"], ['black'], ['white']),
         new specialText(["§ 10             §"], ['black'], ['white']),
         new specialText(["║   X        X   ║"], ['black'], ['white']),
         new specialText(["│                │"], ['black'], ['white']),
@@ -570,7 +570,7 @@ const cards = [
         new specialText(["│                │"], ['black'], ['white']),
         new specialText(["║   X        X   ║"], ['black'], ['white']),
         new specialText(["§             10 §"], ['black'], ['white']),
-        new specialText(["█≡=⁃-⁃=≡{}≡=⁃-⁃=≡█"], ['black'], ['white']),
+        new specialText(["◣≡=⁃-⁃=≡{}≡=⁃-⁃=≡◢"], ['black'], ['white']),
     ]
 ]
 
@@ -1544,7 +1544,7 @@ async function game() {
                         : new specialText(["_"], ['white'], ['black']));
                     break;
                 case 14:
-                    row.join(" Next card:");
+                    row.join(" Next up:");
                     break;
                 case 15:
                     row
@@ -1552,6 +1552,13 @@ async function game() {
                     .join((board.some(card => (card?.value === "king" && card?.suit === "cup")) && discard.length ? discard : deck).at(-1)
                     ? ammoCard[0].clone()
                     : ammoBlank[0])
+                    if (typeof (board.some(card => (card?.value === "king" && card?.suit === "cup")) && discard.length ? discard : deck).at(-1)?.value === "string") {
+                        row
+                        .join(" ")
+                        .join((board.some(card => (card?.value === "king" && card?.suit === "cup")) && (discard.length > 1) ? discard : deck).at(-2)
+                        ? ammoCard[0].clone()
+                        : ammoBlank[0])
+                    }
                     break;
                 case 16:
                     row
@@ -1559,6 +1566,13 @@ async function game() {
                     .join((board.some(card => (card?.value === "king" && card?.suit === "cup")) && discard.length ? discard : deck).at(-1)
                     ? ammoCard[1].clone().replace("X", ammoMap[(board.some(card => (card?.value === "king" && card?.suit === "cup")) && discard.length ? discard : deck).at(-1).value])
                     : ammoBlank[1])
+                    if (typeof (board.some(card => (card?.value === "king" && card?.suit === "cup")) && discard.length ? discard : deck).at(-1)?.value === "string") {
+                        row
+                        .join("+")
+                        .join((board.some(card => (card?.value === "king" && card?.suit === "cup")) && (discard.length > 1) ? discard : deck).at(-2)
+                        ? ammoCard[1].clone().replace("X", ammoMap[(board.some(card => (card?.value === "king" && card?.suit === "cup")) && discard.length ? discard : deck).at(-2).value])
+                        : ammoBlank[1])
+                    }
                     break;
                 case 17:
                     row
@@ -1566,6 +1580,13 @@ async function game() {
                     .join((board.some(card => (card?.value === "king" && card?.suit === "cup")) && discard.length ? discard : deck).at(-1)
                     ? ammoCard[2].clone().replace("Y", ...(suits[(board.some(card => (card?.value === "king" && card?.suit === "cup")) && discard.length ? discard : deck).at(-1).suit]))
                     : ammoBlank[2])
+                    if (typeof (board.some(card => (card?.value === "king" && card?.suit === "cup")) && discard.length ? discard : deck).at(-1)?.value === "string") {
+                        row
+                        .join(" ")
+                        .join((board.some(card => (card?.value === "king" && card?.suit === "cup")) && (discard.length > 1) ? discard : deck).at(-2)
+                        ? ammoCard[2].clone().replace("Y", ...(suits[(board.some(card => (card?.value === "king" && card?.suit === "cup")) && discard.length ? discard : deck).at(-2).suit]))
+                        : ammoBlank[2])
+                    }
                     break;
             }
             printSpecial(row);
@@ -1573,7 +1594,13 @@ async function game() {
         printSpecial( new specialText([" ".multiply(114)+"|"+" ".multiply(10)], ["white"], ["black"])
         .join((board.some(card => (card?.value === "king" && card?.suit === "cup")) && discard.length ? discard : deck).at(-1)
         ? ammoCard[3].clone()
-        : ammoBlank[3]));
+        : ammoBlank[3])
+        .join(" ")
+        .join(typeof (board.some(card => (card?.value === "king" && card?.suit === "cup")) && discard.length ? discard : deck).at(-1)?.value === "string"
+        ?((board.some(card => (card?.value === "king" && card?.suit === "cup")) && (discard.length > 1) ? discard : deck).at(-2)
+        ? ammoCard[3].clone()
+        : ammoBlank[3])
+        : ""));
         print(" ".multiply(114)+"V");
         playerCastle.forEach((text, index) => {
             let row = text.clone()
