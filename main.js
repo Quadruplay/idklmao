@@ -593,18 +593,20 @@ async function getInput() {
 }
 
 async function isLineEmpty(line) {
-    return lines[line].reduce((a, b) => a + +(b.textContent == nbsp), 0) == lines[line].length;
+    return lines[line].every(char => char.textContent === nbsp);
 }
 
 async function pause() {
-    let line = 0;
-    for (let i = lines.length - 1; i >= 0; i--) {
-        if (!isLineEmpty(i) && line == 0) {
-            line = i+1;
+    let presumed = 0;
+    for (let i = 0; i < lines.length; i++) {
+        if (await isLineEmpty(i)) {
+            presumed = presumed || i;
+        } else {
+            presumed = 0;
         }
     }
-    if (line) {
-        moveTo(0, line);
+    if (presumed) {
+        moveTo(0, presumed);
     }
     print("Press any key to continue...");
     return getInput();
@@ -723,6 +725,8 @@ async function shop() {
         }
         switch (input) {
             case 'b':
+                localStorage.setItem("currency", JSON.stringify(currency));
+                localStorage.setItem("unlocks", JSON.stringify(unlocks));
                 menu();
                 break;
             case 'm':
@@ -1195,6 +1199,7 @@ async function game() {
             drawCard();
             kingKilled = false;
             await sleep(600);
+            if (health <= 0) break;
             if (board.some(card => card?.value === "king" && card?.suit === "heart")) {
                 board.forEach(card => {
                     if (card && card.value !== "king") {
@@ -1202,16 +1207,22 @@ async function game() {
                     }
                 });
                 renderGame();
+                moveTo(0, 44);
+                clearLines(43, 60);
                 print("The King of War is healing all the enemies through their anger");
                 await pause();
             }
             if (board.some(card => card?.value === "king" && card?.suit === "spade")) {
                 renderGame();
+                moveTo(0, 44);
+                clearLines(43, 60);
                 print("The King of Conquest is empowering all the enemies making them deal more damage to your castle");
                 await pause();
             }
             if (board.some(card => card?.value === "king" && card?.suit === "diamond")) {
                 renderGame();
+                moveTo(0, 44);
+                clearLines(43, 60);
                 print("The King of Famine is making ammo cards harder to come by");
                 await pause();
             }
@@ -1230,16 +1241,22 @@ async function game() {
                     }
                 });
                 renderGame();
+                moveTo(0, 44);
+                clearLines(43, 60);
                 print("The King of Pestilence is making ammo cards break more easily");
                 await pause();
             }
             if (board.some(card => card?.value === "king" && card?.suit === "shield")) {
                 renderGame();
+                moveTo(0, 44);
+                clearLines(43, 60);
                 print("The King of Madness is making it harder to get control of the board");
                 await pause();
             }
             if (board.some(card => card?.value === "king" && card?.suit === "cup")) {
                 renderGame();
+                moveTo(0, 44);
+                clearLines(43, 60);
                 print("The King of Death is making already dead enemies come back to life");
                 await pause();
             }
@@ -2227,6 +2244,7 @@ async function game() {
                 let target = await chooseTarget("Choose an enemy to target. Remaining damage: " + damage, "single");
                 moveTo(0, 44);
                 clearLines(43, 60);
+                print("Remaining damage: " + damage);
                 print("Choose how much damage to deal to the " + board[target].value + " of " + board[target].suit + "s:");
                 let inputs = [];
                 if (!board[target].tapped) {
