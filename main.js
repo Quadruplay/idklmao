@@ -16,9 +16,8 @@ String.prototype.replaceAll = function (search, replacement) {
 };
 let divs = [];
 const main = document.getElementById('main');
-console.log(document.body)
 for (let i = 0; i < 60; i++) {
-    divs.push(document.body.appendChild(document.createElement('div')));
+    divs.push(main.appendChild(document.createElement('div')));
 }
 let lines = [];
 divs.forEach((div, i) => {
@@ -581,6 +580,15 @@ const hpShield = ["♡", "yellow", "black"];
 const hpNo = [" ", "black", "black"];
 
 let suits = {heart, spade, diamond, club, shield, cup};
+
+let suitsGray = {
+    heart: ["♥", "red", "lightgray"],
+    spade: ["♠", "black", "lightgray"],
+    diamond: ["♦", "red", "lightgray"],
+    club: ["♣", "black", "lightgray"],
+    shield: ["♡", "red", "lightgray"],
+    cup: ["♢", "black", "lightgray"],
+}
 
 let deck = [];
 async function getInput() {
@@ -1296,12 +1304,12 @@ async function game() {
                         case 'number':
                             row
                             .join(cards[board[i].value][index].clone().recolor("black", board[i].tapped ? "lightgray" : "white"))
-                            .replace("X", ...(suits[board[i].suit]));
+                            .replace("X", ...((board[i].tapped ? suitsGray : suits)[board[i].suit]));
                             break;
                         case 'string':
                             row
                             .join(cardsSpecial[board[i].value][index].clone().recolor("black", board[i].tapped ? "lightgray" : "white"))
-                            .replace("X", ...(suits[board[i].suit]));
+                            .replace("X", ...((board[i].tapped ? suitsGray : suits)[board[i].suit]));
                             break;
                     }
                 } else {
@@ -1467,12 +1475,12 @@ async function game() {
                         case 'number':
                             row
                             .join(cards[board[9 - i].value][index].clone().recolor("black", board[9 - i].tapped ? "lightgray" : "white"))
-                            .replace("X", ...(suits[board[9 - i].suit]));
+                            .replace("X", ...((board[9 - i].tapped ? suitsGray : suits)[board[9 - i].suit]));
                             break;
                         case 'string':
                             row
                             .join(cardsSpecial[board[9 - i].value][index].clone().recolor("black", board[9 - i].tapped ? "lightgray" : "white"))
-                            .replace("X", ...(suits[board[9 - i].suit]));
+                            .replace("X", ...((board[9 - i].tapped ? suitsGray : suits)[board[9 - i].suit]));
                             break;
                     }
                 } else {

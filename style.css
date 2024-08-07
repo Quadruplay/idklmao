@@ -14,20 +14,26 @@ body {
     padding: 0;
     text-wrap: nowrap;
     overflow: hidden;
+    line-height: 0;
+    box-sizing: border-box;
 }
 
-div {
+div:not(#main) {
     font-family: pixel;
     height: 14px;
-    transform: scaleY(2);
+}
+
+#main {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: scale(0.5, 1) translate(-50%, 7px);
 }
 
 span {
-    font-size: 50%;
     line-height: 0;
     margin: 0;
     padding: 0;
-    display: inline;
-    height: 14px;
-    width: 7px;
+    margin-right: -1px;
+    margin-top: -1px;
 }
