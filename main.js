@@ -935,7 +935,7 @@ async function instructions() {
     clearScreen();
     print("The goal of the game is to survive the onslaught of enemies.");
     print("You start with 4 health and 0 shields, but can gain more through the shop or through arcanas.");
-    print("You can choose between 3 difficulties, each unlocking more enemies, bosses, and heroes.");
+    print("You can choose between 3 levels of difficulty, each unlocking more enemies, bosses, and heroes.");
     print("You get to choose 2 heroes, each with their own unique abilities.");
     print("Every 11 cards, you will face a boss.");
     print("After defeating the boss, you will get to choose between 3 arcanas.");
@@ -944,7 +944,7 @@ async function instructions() {
     print("The game ends when you run out of health or when you defeat all the enemies.");
     await pause();
     clearScreen();
-    print("Enemies can't be damaged, but can instead be either killed or tapped, which will make them light gray.");
+    print("Enemies can't be damaged, but can instead be either killed or tapped, the latter of which will make them light gray.");
     print("To tap an enemy or to kill a tapped one, you must deal damage equal to half their value rounded up.")
     print("To kill an untapped enemy, you must deal damage equal to their value.");
     print("Killing an enemy of a suit matching one of your heroes without using a class ability will grant you an ammo card of value equal to the enemy's value.");
