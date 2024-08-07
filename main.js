@@ -1274,10 +1274,10 @@ const arcanaDesc = {
     3: "Draw a Queen to your hand",
     4: "Draw a King to your hand",
     5: "Draw a Priest to your hand",
-    6: "Heal 2 health up to a maximum of 8",
+    6: "Heal 2 health up to a maximum of starting health",
     7: "Push all enemies 4 spaces back",
     8: "Fill hand with 3s",
-    9: "Kill all enemies on board at the cost of all ammo cards",
+    9: "Discard all your ammo cards and kill that many weakest enemies",
     10: "Deal 2d6 damage rolled individually to all enemies",
     11: "Kill the amount of weakest enemies equal to the amount of lost health",
     12: "Flip the board",
@@ -1297,7 +1297,7 @@ const arcanaDesc = {
     26: "Use Knight's ability",
     27: "Use Necromancer's ability",
     28: "Upgrade all the ammo cards",
-    29: "Heal your health to the maximum at the cost of all ammo cards",
+    29: "Discard all your ammo cards and heal that much health up to a maximum of starting health",
 }
 
 async function game() {
@@ -1315,7 +1315,6 @@ async function game() {
     let hero1Deck = [1,2,3];
     let hero2Deck = [1,2,3];
     let arcana1 = unlocks.fool > 0 ? 1 : 0;
-    arcana1 = 22;
     let arcana2 = unlocks.fool > 1 ? 1 : 0;
     let kingKilled = false;
     let arcanaUsed = false;
@@ -2151,7 +2150,7 @@ async function game() {
                 case "The Lovers":
                     {
                         health += 2;
-                        health = Math.min(health, 8);
+                        health = Math.min(health, maxHealth);
                     }
                     break;
                 case "The Chariot":
@@ -2181,15 +2180,35 @@ async function game() {
                     break;
                 case "The Hermit":
                     {
-                        board.forEach((card, i) => {
-                            if (card) {
-                                attack(i, valueMap[card.value]);
-                            }
-                        });
+                        let lostAmmo = 0;
                         Object.keys(ammo1).forEach(key => {
+                            if (ammo1[key]) {
+                                lostAmmo++;
+                            }
                             ammo1[key] = false;
+                            if (ammo2[key]){
+                                lostAmmo++;
+                            }
                             ammo2[key] = false;
                         });
+                        let killCount = 0;
+                        while (killCount < lostAmmo) {
+                            let weakest = board.reduce((acc, val, index) => {
+                                if (val) {
+                                    if (acc === undefined) {
+                                        return index;
+                                    } else if (valueMap[val.value] < valueMap[board[acc].value]) {
+                                        return index;
+                                    }
+                                }
+                                return acc;
+                            }, undefined);
+                            if (weakest === undefined) {
+                                break;
+                            }
+                            killCount++;
+                            attack(weakest, valueMap[board[weakest].value]);
+                        }
                     }
                     break;
                 case "Wheel of Fortune":
@@ -2372,11 +2391,19 @@ async function game() {
                     break;
                 case "Genesis":
                     {
-                        health = maxHealth;
+                        let lostAmmo = 0;
                         Object.keys(ammo1).forEach(key => {
+                            if (ammo1[key]) {
+                                lostAmmo++;
+                            }
                             ammo1[key] = false;
+                            if (ammo2[key]){
+                                lostAmmo++;
+                            }
                             ammo2[key] = false;
                         });
+                        health += lostAmmo;
+                        health = Math.min(health, maxHealth);
                     }
                     break;
             }
