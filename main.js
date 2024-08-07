@@ -1124,7 +1124,7 @@ const classAbilityDesc = {
     "Archer": "Discard 1 ammo card to deal its value + 1d6 to frontmost enemy in chosen column and neighboring columns",
     "Warhammer Wielder": "Discard up to 2 ammo cards to deal their value to chosen enemy. If the enemy is killed, deal same damage to adjacent cards",
     "Crossbowman": "Discard 1 ammo card to deal its value + 2d6 to all enemies in chosen column",
-    "Necromancer": "Discard 3 ammo cards to swap your hand with them",
+    "Necromancer": "Discard up to 3 ammo cards to swap your hand with them",
     "Knight": "Discard any number of ammo cards to deal their value split freely among up to 3 chosen enemies",
 }
 const arcanaNames = {
@@ -1621,14 +1621,8 @@ async function game() {
                 if (item) {
                     choices.push(ammoMap[item].toLowerCase());
                     if (item === 1) {
-                        if ((turn === 1 ? hero1 : hero2) === "Necromancer") {
-                            if (Object.values(ammo1).reduce((acc, val) => acc + val, 0) + Object.values(ammo2).reduce((acc, val) => acc + val, 0) < 3) {
-                                choices.pop();
-                            }
-                        } else {
-                            if (Object.values(ammo1).reduce((acc, val) => acc + val, 0) + Object.values(ammo2).reduce((acc, val) => acc + val, 0) < 1) {
-                                choices.pop();
-                            }
+                        if (Object.values(ammo1).reduce((acc, val) => acc + val, 0) + Object.values(ammo2).reduce((acc, val) => acc + val, 0) < 1) {
+                            choices.pop();
                         }
                         if (board.some(card => card?.value === "king" && card?.suit === "shield")) {
                             if (choices.at(-1) === "a") {
@@ -1776,24 +1770,21 @@ async function game() {
     }
     function specialAttack(hero) {
         return new Promise(async resolve => {
-            let ammoMin, ammoMax;
+            let ammoMin = 1;
+            let ammoMax;
             switch (hero) {
                 case "Fire Mage":
                 case "Archer":
                 case "Crossbowman":
-                    ammoMin = 1;
                     ammoMax = 1;
                     break;
                 case "Warhammer Wielder":
-                    ammoMin = 1;
                     ammoMax = 2;
                     break;
                 case "Necromancer":
-                    ammoMin = 3;
                     ammoMax = 3;
                     break;
                 case "Knight":
-                    ammoMin = 1;
                     ammoMax = Infinity;
                     break;
             }
@@ -1870,6 +1861,9 @@ async function game() {
                     break;
                 case "Necromancer":
                     {
+                        while (ammo.length < 3) {
+                            ammo.push(false);
+                        }
                         if (turn === 1) {
                             hero1Deck = ammo;
                         } else {
@@ -2271,18 +2265,18 @@ async function game() {
                 switch (input) {
                     case 'k':
                         if (board[target].tapped) {
-                            attack(target, Math.ceil(valueMap[board[target].value] / 2));
                             damage -= Math.ceil(valueMap[board[target].value] / 2);
+                            attack(target, Math.ceil(valueMap[board[target].value] / 2));
                             killCount++;
                         } else {
-                            attack(target, valueMap[board[target].value]);
                             damage -= valueMap[board[target].value];
+                            attack(target, valueMap[board[target].value]);
                             killCount++;
                         }
                         break;
                     case 't':
-                        attack(target, Math.ceil(valueMap[board[target].value] / 2));
                         damage -= Math.ceil(valueMap[board[target].value] / 2);
+                        attack(target, Math.ceil(valueMap[board[target].value] / 2));
                         killCount++;
                         break;
                     case 'r':
