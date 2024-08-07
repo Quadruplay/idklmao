@@ -77,10 +77,17 @@ let unlocks = {
     'hard': false,
     'health': 0,
     'shields': 0,
-    'fool': 0
+    'fool': 0,
+    'arcana': 0
 }
 if (localStorage.getItem('unlocks')) {
-    unlocks = JSON.parse(localStorage.getItem('unlocks'));
+    let unlocksLoaded = JSON.parse(localStorage.getItem('unlocks'));
+    for (let key in unlocksLoaded) {
+        unlocks[key] = unlocksLoaded[key];
+    }
+    if (Object.keys(unlocks).length !== Object.keys(unlocksLoaded).length) {
+        localStorage.setItem('unlocks', JSON.stringify(unlocks));
+    }
 } else {
     localStorage.setItem('unlocks', JSON.stringify(unlocks));
 }
@@ -719,6 +726,36 @@ async function shop() {
         }
         inputs.push('d');
     }
+    if (unlocks.arcana !== 8) {
+        print("");
+        switch (unlocks.arcana) {
+            case 0:
+                printSpecial(new specialText(["[A]: Unlock the Dragon arcana.                         1 B"], ["white"], ["black"]).replace("B", ...heart));
+                break;
+            case 1:
+                printSpecial(new specialText(["[A]: Unlock the Hydra arcana.                          1 B"], ["white"], ["black"]).replace("B", ...spade));
+                break;
+            case 2:
+                printSpecial(new specialText(["[A]: Unlock the Eagle arcana.                          1 B"], ["white"], ["black"]).replace("B", ...diamond));
+                break;
+            case 3:
+                printSpecial(new specialText(["[A]: Unlock the Ox arcana.                             1 B"], ["white"], ["black"]).replace("B", ...club));
+                break;
+            case 4:
+                printSpecial(new specialText(["[A]: Unlock the Lion arcana.                           1 B"], ["white"], ["black"]).replace("B", ...shield));
+                break;
+            case 5:
+                printSpecial(new specialText(["[A]: Unlock the Serpent arcana.                        1 B"], ["white"], ["black"]).replace("B", ...cup));
+                break;
+            case 6:
+                printSpecial(new specialText(["[A]: Unlock the Angel arcana.                          1 B  +  1 C  +  1 D  +  1 E  +  1 F  +  1 G"], ["white"], ["black"]).replace("B", ...heart).replace("C", ...spade).replace("D", ...diamond).replace("E", ...club).replace("F", ...shield).replace("G", ...cup));
+                break;
+            case 7:
+                printSpecial(new specialText(["[A]: Unlock the Genesis arcana.                        1 B  +  1 C  +  1 D  +  1 E  +  1 F  +  1 H"], ["white"], ["black"]).replace("B", ...heart).replace("C", ...spade).replace("D", ...diamond).replace("E", ...club).replace("F", ...shield).replace("H", ...cup));
+                break;
+        }
+        inputs.push('a');
+    }
     if (inputs.length === 1) {
         print("");
         print("Nothing left to unlock.");
@@ -816,6 +853,69 @@ async function shop() {
                             }
                             break;
                         }
+                }
+                shop();
+                break;
+            case 'a':
+                switch (unlocks.arcana) {
+                    case 0:
+                        if (currency.heart >= 1) {
+                            currency.heart -= 1;
+                            unlocks.arcana++;
+                        }
+                        break;
+                    case 1:
+                        if (currency.spade >= 1) {
+                            currency.spade -= 1;
+                            unlocks.arcana++;
+                        }
+                        break;
+                    case 2:
+                        if (currency.diamond >= 1) {
+                            currency.diamond -= 1;
+                            unlocks.arcana++;
+                        }
+                        break;
+                    case 3:
+                        if (currency.club >= 1) {
+                            currency.club -= 1;
+                            unlocks.arcana++;
+                        }
+                        break;
+                    case 4:
+                        if (currency.shield >= 1) {
+                            currency.shield -= 1;
+                            unlocks.arcana++;
+                        }
+                        break;
+                    case 5:
+                        if (currency.cup >= 1) {
+                            currency.cup -= 1;
+                            unlocks.arcana++;
+                        }
+                        break;
+                    case 6:
+                        if (currency.heart >= 1 && currency.spade >= 1 && currency.diamond >= 1 && currency.club >= 1 && currency.shield >= 1 && currency.cup >= 1) {
+                            currency.heart -= 1;
+                            currency.spade -= 1;
+                            currency.diamond -= 1;
+                            currency.club -= 1;
+                            currency.shield -= 1;
+                            currency.cup -= 1;
+                            unlocks.arcana++;
+                        }
+                        break;
+                    case 7:
+                        if (currency.heart >= 1 && currency.spade >= 1 && currency.diamond >= 1 && currency.club >= 1 && currency.shield >= 1 && currency.cup >= 1) {
+                            currency.heart -= 1;
+                            currency.spade -= 1;
+                            currency.diamond -= 1;
+                            currency.club -= 1;
+                            currency.shield -= 1;
+                            currency.cup -= 1;
+                            unlocks.arcana++;
+                        }
+                        break;
                 }
                 shop();
                 break;
@@ -1157,7 +1257,15 @@ const arcanaNames = {
     18: "The Moon",
     19: "The Sun",
     20: "Judgement",
-    21: "The World"
+    21: "The World",
+    22: "The Dragon",
+    23: "The Hydra",
+    24: "The Eagle",
+    25: "The Ox",
+    26: "The Lion",
+    27: "The Serpent",
+    28: "The Angel",
+    29: "Genesis",
 }
 const arcanaDesc = {
     0: "Draw a random Arcana",
@@ -1169,7 +1277,7 @@ const arcanaDesc = {
     6: "Heal 2 health up to a maximum of 8",
     7: "Push all enemies 4 spaces back",
     8: "Fill hand with 3s",
-    9: "Kill all enemies on board and lose all ammo cards",
+    9: "Kill all enemies on board at the cost of all ammo cards",
     10: "Deal 2d6 damage rolled individually to all enemies",
     11: "Kill the amount of weakest enemies equal to the amount of lost health",
     12: "Flip the board",
@@ -1181,7 +1289,15 @@ const arcanaDesc = {
     18: "Stop enemies spawning for 2 turns",
     19: "Tap untapped, and kill tapped enemies in a chosen column",
     20: "Kill all tapped enemies",
-    21: "Draw a chosen Arcana"
+    21: "Draw a chosen Arcana",
+    22: "Use Fire Mage's ability",
+    23: "Use Archer's ability",
+    24: "Use Crossbowman's ability",
+    25: "Use Warhammer Wielder's ability",
+    26: "Use Knight's ability",
+    27: "Use Necromancer's ability",
+    28: "Upgrade all the ammo cards",
+    29: "Heal your health to the maximum at the cost of all ammo cards",
 }
 
 async function game() {
@@ -1199,6 +1315,7 @@ async function game() {
     let hero1Deck = [1,2,3];
     let hero2Deck = [1,2,3];
     let arcana1 = unlocks.fool > 0 ? 1 : 0;
+    arcana1 = 22;
     let arcana2 = unlocks.fool > 1 ? 1 : 0;
     let kingKilled = false;
     let arcanaUsed = false;
@@ -1272,7 +1389,7 @@ async function game() {
             arcanaUsed = false;
             turn = 3 - turn;
         }
-        await heroTurn();
+        if (board.some(card => card)) await heroTurn();
     }
     if (health <= 0) {
         clearScreen();
@@ -1642,7 +1759,14 @@ async function game() {
                 }
             });
             choices = choices.map(choice => choice === "Ω".toLowerCase() ? "0" : choice);
-            (turn === 1 ? arcana1 : arcana2) > 0 && choices.push("s");
+            if ((turn === 1 ? arcana1 : arcana2) > 0) {
+                choices.push("s")
+                if ([23,24,25,26,27,28].includes(turn === 1 ? arcana1 : arcana2)) {
+                    if (Object.values(ammo1).reduce((acc, val) => acc + val, 0) + Object.values(ammo2).reduce((acc, val) => acc + val, 0) < 1) {
+                        choices.pop();
+                    }
+                }
+            }
             choices.forEach(choice => {
                 choice === "a"
                 ?print("["+choice.toUpperCase()+"]: " + classAbilityDesc[turn === 1 ? hero1 : hero2])
@@ -1938,9 +2062,9 @@ async function game() {
     }
     function chooseArcana() {
         return new Promise(async resolve => {
-            let choice1 = Math.floor(Math.random() * 22);
-            let choice2 = Math.floor(Math.random() * 22);
-            let choice3 = Math.floor(Math.random() * 22);
+            let choice1 = Math.floor(Math.random() * (22 + unlocks.arcana));
+            let choice2 = Math.floor(Math.random() * (22 + unlocks.arcana));
+            let choice3 = Math.floor(Math.random() * (22 + unlocks.arcana));
             moveTo(0, 44);
             clearLines(43, 60);
             print("Choose an Arcana:");
@@ -1970,7 +2094,7 @@ async function game() {
             switch (arcana) {
                 case "The Fool":
                     {
-                        let choice = Math.floor(Math.random() * 22);
+                        let choice = Math.floor(Math.random() * (22 + unlocks.arcana));
                         if (turn === 1) {
                             arcana1 = choice + 1;
                         } else {
@@ -2185,6 +2309,76 @@ async function game() {
                         await chooseAnyArcana();
                     }
                     break;
+                case "The Dragon":
+                    {
+                        await specialAttack("Fire Mage");
+                    }
+                    break;
+                case "The Hydra":
+                    {
+                        await specialAttack("Archer");
+                    }
+                    break;
+                case "The Eagle":
+                    {
+                        await specialAttack("Crossbowman");
+                    }
+                    break;
+                case "The Ox":
+                    {
+                        await specialAttack("Warhammer Wielder");
+                    }
+                    break;
+                case "The Lion":
+                    {
+                        await specialAttack("Knight");
+                    }
+                    break;
+                case "The Serpent":
+                    {
+                        await specialAttack("Necromancer");
+                    }
+                    break;
+                case "The Angel":
+                    {
+                        const angelKeys = {
+                            4: 5,
+                            5: 6,
+                            6: 7,
+                            7: 8,
+                            8: 9,
+                            9: 10,
+                            10: "page",
+                            "page": "knight",
+                            "knight": "queen",
+                            "queen": "king",
+                            "king": 4
+                        }
+                        let ammoTemp = {};
+                        for (let key in ammo1) {
+                            ammoTemp[angelKeys[key]] = ammo1[key];
+                        }
+                        for (let key in ammoTemp) {
+                            ammo1[key] = ammoTemp[key];
+                        }
+                        ammoTemp = {};
+                        for (let key in ammo2) {
+                            ammoTemp[angelKeys[key]] = ammo2[key];
+                        }
+                        for (let key in ammoTemp) {
+                            ammo2[key] = ammoTemp[key];
+                        }
+                    }
+                    break;
+                case "Genesis":
+                    {
+                        health = maxHealth;
+                        Object.keys(ammo1).forEach(key => {
+                            ammo1[key] = false;
+                            ammo2[key] = false;
+                        });
+                    }
+                    break;
             }
             await sleep(250);
             renderGame();
@@ -2203,7 +2397,7 @@ async function game() {
             while (!['a'].includes(input)) {
                 input = await getInput();
                 if (input === 'b') {
-                    choice = (choice + 1) % 22;
+                    choice = (choice + 1) % (22 + unlocks.arcana);
                     moveTo(0, 44);
                     clearLines(43, 60);
                     print("Choose an Arcana:");
