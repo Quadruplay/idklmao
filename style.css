@@ -27,7 +27,7 @@ div:not(#main) {
     position: absolute;
     top: 0;
     left: 0;
-    transform: scale(0.75, 1) translate(-8.333%, 0) translate(10.5px, 14px);
+    transform: scale(0.75, 1) translate(-16.666%, 0) translate(10.5px, 14px);
 }
 
 span {
