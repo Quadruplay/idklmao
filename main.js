@@ -124,12 +124,12 @@ let achievementRewards = {
     'half-baked hero': 'Change the die rolled to a d8 and unlock hard mode at the shop', //V
     'hard cookie to crack': 'Unlock ??? at the shop', //V
     'magnificent seven': 'Unlock infinite mode', //V?
-    'bad deal': 'No reward', //V?
-    'true hermit': 'No reward', //V?
+    'bad deal': 'Cry about it', //V
+    'true hermit': "Gain friends at the castle so you're never alone", //V
     'fool': 'Make the Fool arcana unable to draw itself, doubling the chance for drawin the World arcana', //V
     'new beginning': '+2 health limit', //V
     'hope': 'Unlock the Bishop hero',
-    'bitter aftertaste': 'Cry about it' //V?
+    'bitter aftertaste': 'Enable the quit button in the menu' //V?
 }
 
 function getDie() {
@@ -315,7 +315,7 @@ let playerCastle = [
     new specialText(["║","█","███","█","█","█","█","█","█","█","█","█","███║"], ['white',"gray","white","darkgray","lightgray","darkgray","lightgray","darkgray","lightgray","darkgray","lightgray","gray","white"], ['black','black','black','black','black','black','black','black','black','black','black','black','black']),
     new specialText(["║","█","███","████████","█","███║"], ['white',"gray","white",'lightgray',"gray","white"], ['black','black','black','black','black','black']),
     new specialText(["║","█","███","█    ","█","██","█","███║"], ['white',"gray","white",'lightgray',"darkgray",'lightgray',"gray","white"], ['black','black','black','black','black','black','black','black']),
-    new specialText(["║","█","███","      █","█","█","███║"], ['white',"gray","white","darkgray",'lightgray',"gray","white"], ['black','black','black','black','black','black','black']),
+    new specialText(["║","█","███      ","█","█","█","███║"], ['white',"gray","white","darkgray",'lightgray',"gray","white"], ['black','black','black','black','black','black','black']),
     new specialText(["╚════════════════╝"], ['white'], ['black']),
 ]
 
@@ -767,7 +767,8 @@ async function menu() {
             credits();
             break;
         case 'q':
-            // window.close();
+            if (achievements['bitter aftertaste']) window.close();
+            else menu();
             break;
     }
 };
@@ -2039,6 +2040,10 @@ async function game() {
             for (let [key, value] of Object.entries(ammo2)) {
                 row.join(value ? ammoCard[i].clone().replace("X", ammoMap[key]).replace("Y", ...(symbolMap[hero2])) : ammoBlank[i]);
                 row.join(" ");
+            }
+            if (achievements['true hermit']) {
+                if (i === 2) row.join("  i believe in you!")
+                if (i === 3) row.join("☺");
             }
             printSpecial(row);
         }
