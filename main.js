@@ -123,12 +123,12 @@ let achievementRewards = {
     'piece of cake': 'Change the die rolled to a d7 and unlock medium mode at the shop', //V
     'half-baked hero': 'Change the die rolled to a d8 and unlock hard mode at the shop', //V
     'hard cookie to crack': 'Unlock ??? at the shop', //V
-    'magnificent seven': 'No reward', //V?
+    'magnificent seven': 'Unlock infinite mode', //V?
     'bad deal': 'No reward', //V?
     'true hermit': 'No reward', //V?
-    'fool': 'Make the Fool arcana draw the World arcana whenever it would draw the Fool', //V
+    'fool': 'Make the Fool arcana unable to draw itself, doubling the chance for drawin the World arcana', //V
     'new beginning': '+2 health limit', //V
-    'hope': 'No reward', //V?
+    'hope': 'Unlock the Bishop hero',
     'bitter aftertaste': 'Cry about it' //V?
 }
 
@@ -678,13 +678,14 @@ const diamond = ["♦", "red", "white"];
 const club = ["♣", "black", "white"];
 const shield = ["♡", "red", "white"];
 const cup = ["♢", "black", "white"];
+const none = [" ", "black", "white"];
 
 const hp1 = ["♥", "red", "black"];
 const hp0 = ["♥", "gray", "black"];
 const hpShield = ["♡", "yellow", "black"];
 const hpNo = [" ", "black", "black"];
 
-let suits = {heart, spade, diamond, club, shield, cup};
+let suits = {heart, spade, diamond, club, shield, cup, none};
 
 let suitsGray = {
     heart: ["♥", "red", "lightgray"],
@@ -1106,11 +1107,13 @@ async function chooseDifficulty() {
     print("[E]asy");
     if (unlocks.medium) print("[M]edium");
     if (unlocks.hard) print("[H]ard");
+    if (achievements['magnificent seven']) print("[I]nfinite");
     print("[B]ack");
     let input = '';
     let inputs = ['e', 'b'];
     if (unlocks.medium) inputs.push('m');
     if (unlocks.hard) inputs.push('h');
+    if (achievements['magnificent seven']) inputs.push('i');
     while (!inputs.includes(input)) {
         input = await getInput();
     }
@@ -1124,6 +1127,7 @@ async function chooseDifficulty() {
             let valueDeck = [];
             let kingDeck = [];
             switch (difficulty) {
+                case 'i':
                 case 'h':
                     for (let j of ["cup", "shield"]) {
                         for (let i of [4, 5, 6, 7, 8, 9, 10]) {
@@ -1189,7 +1193,12 @@ async function chooseHeroes() {
     clearScreen();
     let heroPool = [];
     let choices = [];
+    if (difficulty !== 'i' && achievements['hope']) {
+        heroPool.push(new specialText(...none).join("[B]ishop"));
+        choices.push("b");
+    }
     switch (difficulty) {
+        case 'i':
         case 'h':
             heroPool.push(new specialText(...cup).join("[N]ecromancer"));
             heroPool.push(new specialText(...shield).join("[K]night"));
@@ -1232,6 +1241,9 @@ async function chooseHeroes() {
         case 'k':
             hero1 = "Knight";
             break;
+        case 'b':
+            hero1 = "Bishop";
+            break;
     }
     heroPool = heroPool.filter((_hero, index) => index !== choices.indexOf(input));
     choices = choices.filter(choice => choice !== input);
@@ -1264,6 +1276,9 @@ async function chooseHeroes() {
             break;
         case 'k':
             hero2 = "Knight";
+            break;
+        case 'b':
+            hero2 = "Bishop";
             break;
     }
     clearScreen();
@@ -1348,6 +1363,7 @@ let symbolMap = {
     "Crossbowman": diamond,
     "Necromancer": cup,
     "Knight": shield,
+    "Bishop": none,
 }
 let suitNameMap = {
     "Fire Mage": "heart",
@@ -1384,6 +1400,7 @@ const classAbilityDesc = {
     "Crossbowman": "Discard 1 ammo card to deal its value + 2d"+getDie()+" to all enemies in chosen column",
     "Necromancer": "Discard up to 3 ammo cards to swap your hand with them",
     "Knight": "Discard any number of ammo cards to deal their value split freely among up to 3 chosen enemies",
+    "Bishop": "Discard 1 ammo card to heal 1 health"
 }
 const arcanaNames = {
     0: "The Fool",
@@ -1457,7 +1474,6 @@ async function game() {
     health = 4 + unlocks.health;
     maxHealth = health + achievements["new beginning"]*2;
     shields = unlocks.shields;
-    deck = [deck[0]];
     deckSize = deck.length;
     board = [undefined].multiply(10);
     discard = [];
@@ -1467,12 +1483,15 @@ async function game() {
     });
     let turn = 1;
     let hero1Deck = [1,2,3];
+    if (hero1 === "Bishop") hero1Deck = ["priest", "priest", "priest"];
     let hero2Deck = [1,2,3];
+    if (hero2 === "Bishop") hero2Deck = ["priest", "priest", "priest"];
     let arcana1 = unlocks.fool > 0 ? 1 : 0;
     let arcana2 = unlocks.fool > 1 ? 1 : 0;
     let kingKilled = false;
     let arcanaUsed = false;
     let jokerSpawned = false;
+    let enemiesKilled = 0;
     while (!(health <= 0) && !(deck.length === 0 && board.every(card => card === undefined))) {
         if (!arcanaUsed) {
             drawCard();
@@ -1562,10 +1581,74 @@ async function game() {
             jokerSpawned = true;
             deck.push({value: "joker", suit: "heart", tapped: false});
         }
+        if (deck.length === 0 && board.every(card => card === undefined) && difficulty === 'i') {
+            let faceDeck = [];
+            let valueDeck = [];
+            let kingDeck = [];
+            switch (difficulty) {
+                case 'i':
+                case 'h':
+                    for (let j of ["cup", "shield"]) {
+                        for (let i of [4, 5, 6, 7, 8, 9, 10]) {
+                            valueDeck.push({value: i, suit: j, tapped: false});
+                        }
+                        for (let i of ["page", "knight", "queen"]) {
+                            faceDeck.push({value: i, suit: j, tapped: false});
+                        }
+                        for (let i of ["king"]) {
+                            kingDeck.push({value: i, suit: j, tapped: false});
+                        }
+                    }
+                case 'm':
+                    for (let j of ["club", "diamond"]) {
+                        for (let i of [4, 5, 6, 7, 8, 9, 10]) {
+                            valueDeck.push({value: i, suit: j, tapped: false});
+                        }
+                        for (let i of ["page", "knight", "queen"]) {
+                            faceDeck.push({value: i, suit: j, tapped: false});
+                        }
+                        for (let i of ["king"]) {
+                            kingDeck.push({value: i, suit: j, tapped: false});
+                        }
+                    }
+                case 'e':
+                    for (let j of ["heart", "spade"]) {
+                        for (let i of [4, 5, 6, 7, 8, 9, 10]) {
+                            valueDeck.push({value: i, suit: j, tapped: false});
+                        }
+                        for (let i of ["page", "knight", "queen"]) {
+                            faceDeck.push({value: i, suit: j, tapped: false});
+                        }
+                        for (let i of ["king"]) {
+                            kingDeck.push({value: i, suit: j, tapped: false});
+                        }
+                    }
+                    valueDeck.shuffle();
+                    kingDeck.shuffle();
+                    faceDeck.shuffle();
+                    while (valueDeck.length > 0) {
+                        deck.push(valueDeck.pop());
+                        deck.push(kingDeck.pop());
+                        deck.push(valueDeck.pop());
+                        deck.push(valueDeck.pop());
+                        deck.push(faceDeck.pop());
+                        deck.push(valueDeck.pop());
+                        deck.push(valueDeck.pop());
+                        deck.push(faceDeck.pop());
+                        deck.push(valueDeck.pop());
+                        deck.push(valueDeck.pop());
+                        deck.push(faceDeck.pop());
+                    }
+                    break;
+            }
+        }
     }
     if (health <= 0) {
         clearScreen();
         print("You have lost");
+        if (difficulty === 'i') {
+            print("You have defeated " + enemiesKilled + " enemies");
+        }
         if (difficulty === 'h') {
             if (!deck.some(card => card?.value === "king") && !board.some(card => card?.value === "king")) {
                 grantAchievement('bitter aftertaste');
@@ -2061,8 +2144,10 @@ async function game() {
             if ((turn === 1 ? hero1Deck : hero2Deck).reduce((acc, val) => acc + val, 0) === 0) {
                 if (turn === 1) {
                     hero1Deck = [1,2,3];
+                    if (hero1 === "Bishop") hero1Deck = ["priest", "priest", "priest"];
                 } else {
                     hero2Deck = [1,2,3];
+                    if (hero2 === "Bishop") hero2Deck = ["priest", "priest", "priest"];
                 }
             }
             turn = 3 - turn;
@@ -2146,6 +2231,9 @@ async function game() {
                 }
             }
         }
+        if (kill) {
+            enemiesKilled++;
+        }
         return kill;
     }
     function specialAttack(hero) {
@@ -2153,6 +2241,7 @@ async function game() {
             let ammoMin = 1;
             let ammoMax;
             switch (hero) {
+                case "Bishop":
                 case "Fire Mage":
                 case "Archer":
                 case "Crossbowman":
@@ -2170,6 +2259,10 @@ async function game() {
             }
             let ammo = await chooseAmmo(ammoMin, ammoMax);
             switch (hero) {
+                case "Bishop":
+                    health++;
+                    health = Math.min(health, maxHealth);
+                    break;
                 case "Fire Mage":
                     for (let i = 0; i < 5; i++) {
                         if (board[9 - i]) {
@@ -2263,7 +2356,7 @@ async function game() {
     function chooseAmmo(min, max) {
         return new Promise(async resolve => {
             moveTo(0, 44);
-            clearLines(43, 54);
+            clearLines(43, 60);
             min !== max
             ? print("Choose " + min + " to " + max + " ammo cards:")
             : min === 1
