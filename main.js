@@ -2731,10 +2731,10 @@ async function game() {
                     {
                         let column = await chooseTarget("Choose a column to burn all the enemies in", "row");
                         if (board[9 - column]) {
-                            attack(i, Math.ceil(valueMap[board[9 - column].value] / 2));
+                            attack(9 - column, Math.ceil(valueMap[board[9 - column].value] / 2));
                         }
                         if (board[column]) {
-                            attack(i, Math.ceil(valueMap[board[column].value] / 2));
+                            attack(column, Math.ceil(valueMap[board[column].value] / 2));
                         }
                     }
                     break;
