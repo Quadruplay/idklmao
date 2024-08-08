@@ -125,7 +125,7 @@ let achievementRewards = {
     'hard cookie to crack': 'Unlock ??? at the shop', //V
     'magnificent seven': 'Unlock infinite mode', //V?
     'bad deal': 'Cry about it', //V
-    'true hermit': "Gain friends at the castle so you're never alone", //V
+    'true hermit': "Unlock a friend", //V
     'fool': 'Make the Fool arcana unable to draw itself, doubling the chance for drawin the World arcana', //V
     'new beginning': '+2 health limit', //V
     'hope': 'Unlock the Bishop hero',
