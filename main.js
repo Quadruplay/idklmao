@@ -92,6 +92,82 @@ if (localStorage.getItem('unlocks')) {
     localStorage.setItem('unlocks', JSON.stringify(unlocks));
 }
 
+let achievementNames = {
+    'piece of cake': 'Piece of Cake',
+    'half-baked hero': 'Half-Baked Hero',
+    'hard cookie to crack': 'Hard Cookie to Crack',
+    'magnificent seven': 'Magnificent Seven [NYI]',
+    'bad deal': 'Bad Deal',
+    'true hermit': 'True Hermit [NYI]',
+    'fool': 'Fool',
+    'new beginning': 'New Beginning',
+    'hope': 'Hope [NYI]',
+    'bitter aftertaste': 'Bitter Aftertaste [NYI]'
+}
+
+let achievementDesc = {
+    'piece of cake': 'Complete the game on easy mode', //V
+    'half-baked hero': 'Complete the game on medium mode', //V
+    'hard cookie to crack': 'Complete the game on hard mode', //V
+    'magnificent seven': 'Defeat the secret boss',
+    'bad deal': 'Die by making a deal with the devil', //V
+    'true hermit': 'Clear the board using the Hermit arcana',
+    'fool': 'Draw the Fool arcana using the Fool arcana', //V
+    'new beginning': 'Heal to 8 health using the Genesis arcana', //V
+    'hope': 'Attack a King with an attack of power 1',
+    'bitter aftertaste': 'Die after defeating all six bosses'
+}
+
+let achievementRewards = {
+    'piece of cake': 'Change the die rolled to a d7',
+    'half-baked hero': 'Change the die rolled to a d8',
+    'hard cookie to crack': 'Unlock the secret boss',
+    'magnificent seven': 'No reward',
+    'bad deal': 'No reward',
+    'true hermit': 'No reward',
+    'fool': 'Make the Fool arcana grant the World arcana whenever Fool would be drawn',
+    'new beginning': '+2 health limit',
+    'hope': 'No reward',
+    'bitter aftertaste': 'Cry about it'
+}
+
+function getDie() {
+    return 6 + achievements['piece of cake'] + achievements['half-baked hero'];
+}
+
+let achievementsGranted = [];
+function grantAchievement(achievement) {
+    if (achievements[achievement]) return false;
+    achievements[achievement] = true;
+    achievementsGranted.push(achievement);
+    localStorage.setItem('achievements', JSON.stringify(achievements));
+    return true;
+}
+
+let achievements = {
+    'piece of cake': false, //easy mode
+    'half-baked hero': false, //medium mode
+    'hard cookie to crack': false, //hard mode
+    'magnificent seven': false, //secret boss
+    'bad deal': false, //die from devil
+    'true hermit': false, //clear board using hermit
+    'fool': false, //get fool from fool
+    'new beginning': false, //heal to full health using genesis
+    'hope': false, //attack king with 0+1
+    'bitter aftertaste': false, //die after defeating all six bosses
+}
+if (localStorage.getItem('achievements')) {
+    let achievementsLoaded = JSON.parse(localStorage.getItem('achievements'));
+    for (let key in achievementsLoaded) {
+        achievements[key] = achievementsLoaded[key];
+    }
+    if (Object.keys(achievements).length !== Object.keys(achievementsLoaded).length) {
+        localStorage.setItem('achievements', JSON.stringify(achievements));
+    }
+} else {
+    localStorage.setItem('achievements', JSON.stringify(achievements));
+}
+
 function print(text, color = lastColor, background = lastBackground) {
     lastColor = colors[color] || color;
     lastBackground = colors[background] || background;
@@ -223,7 +299,7 @@ let ammoCard = [
 
 let playerCastle = [
     new specialText(["╔════════════════╗"], ['white'], ['black']),
-    new specialText(["║ABCDEFGH        ║"], ['white'], ['black']),
+    new specialText(["║ABCDEFGHIJ      ║"], ['white'], ['black']),
     new specialText(["║WXYZ            ║"], ['white'], ['black']),
     new specialText(["║                ║"], ['white'], ['black']),
     new specialText(["║                ║"], ['white'], ['black']),
@@ -641,12 +717,13 @@ async function menu() {
     print("▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀");
     print("[S]tart");
     print("[U]nlocks");
+    print("[A]chievements");
     print("[I]nstructions");
     print("[C]redits");
     print("[Q]uit");
 
     let input = '';
-    let inputs = ['s', 'u', 'i', 'c', 'q'];
+    let inputs = ['s', 'u', 'a', 'i', 'c', 'q'];
     while (!inputs.includes(input)) {
         input = await getInput();
     }
@@ -656,6 +733,9 @@ async function menu() {
             break;
         case 'u':
             shop();
+            break;
+        case 'a':
+            achievementScreen();
             break;
         case 'i':
             instructions();
@@ -668,6 +748,27 @@ async function menu() {
             break;
     }
 };
+
+async function achievementScreen() {
+    clearScreen();
+    let no = ["X", "red", "black"];
+    let yes = ["V", "green", "black"];
+    print("Achievements:");
+    print("");
+    Object.keys(achievements).forEach(achievement => {
+        printSpecial(new specialText("[A] ")
+            .replace("A", ...(achievements[achievement] ? yes : no))
+            .join(achievementNames[achievement])
+            .join(" - ")
+            .join(achievementDesc[achievement])
+        );
+        print("    Reward: " + achievementRewards[achievement]);
+        print("");
+    });
+    print("");
+    await pause();
+    menu();
+}
 
 async function shop() {
     localStorage.setItem("currency", JSON.stringify(currency));
@@ -1238,9 +1339,9 @@ let valueMap = {
 
 const classAbilityDesc = {
     "Fire Mage": "Discard 1 ammo card to tap frontmost card in every column",
-    "Archer": "Discard 1 ammo card to deal its value + 1d6 to frontmost enemy in chosen column and neighboring columns",
+    "Archer": "Discard 1 ammo card to deal its value + 1d"+getDie()+" to frontmost enemy in chosen column and neighboring columns",
     "Warhammer Wielder": "Discard up to 2 ammo cards to deal their value to chosen enemy. If the enemy is killed, deal same damage to adjacent cards",
-    "Crossbowman": "Discard 1 ammo card to deal its value + 2d6 to all enemies in chosen column",
+    "Crossbowman": "Discard 1 ammo card to deal its value + 2d"+getDie()+" to all enemies in chosen column",
     "Necromancer": "Discard up to 3 ammo cards to swap your hand with them",
     "Knight": "Discard any number of ammo cards to deal their value split freely among up to 3 chosen enemies",
 }
@@ -1287,7 +1388,7 @@ const arcanaDesc = {
     7: "Push all enemies 4 spaces back",
     8: "Fill hand with 3s",
     9: "Discard all your ammo cards and kill that many weakest enemies",
-    10: "Deal 2d6 damage rolled individually to all enemies",
+    10: "Deal 2d"+getDie()+" damage rolled individually to all enemies",
     11: "Kill the amount of weakest enemies equal to the amount of lost health",
     12: "Flip the board",
     13: "Kill 1 chosen enemy",
@@ -1309,9 +1410,12 @@ const arcanaDesc = {
     29: "Discard all your ammo cards and heal that much health up to a maximum of starting health",
 }
 
+let unlockedAchievements = [];
+
 async function game() {
+    achievementsGranted = [];
     health = 4 + unlocks.health;
-    maxHealth = health;
+    maxHealth = health + achievements["new beginning"]*2;
     shields = unlocks.shields;
     deckSize = deck.length;
     board = [undefined].multiply(10);
@@ -1402,10 +1506,33 @@ async function game() {
     if (health <= 0) {
         clearScreen();
         print("You have lost");
+        if (achievementsGranted.length > 0) {
+            print("");
+            print("Achievements:");
+            print("");
+            achievementsGranted.forEach(achievement => {
+                print(achievementNames[achievement]);
+            });
+        }
         await pause();
     } else {
         clearScreen();
         print("You have won");
+        if (difficulty === 'e') {
+            grantAchievement('piece of cake');
+        } else if (difficulty === 'm') {
+            grantAchievement('half-baked hero');
+        } else if (difficulty === 'h') {
+            grantAchievement('hard cookie to crack');
+        }
+        if (achievementsGranted.length > 0) {
+            print("");
+            print("Achievements:");
+            print("");
+            achievementsGranted.forEach(achievement => {
+                print(achievementNames[achievement]);
+            });
+        }
         await pause();
     }
     menu();
@@ -1614,6 +1741,8 @@ async function game() {
             .replace("F", ...(health > 5 ? hp1 : maxHealth > 5 ? hp0 : hpNo))
             .replace("G", ...(health > 6 ? hp1 : maxHealth > 6 ? hp0 : hpNo))
             .replace("H", ...(health > 7 ? hp1 : maxHealth > 7 ? hp0 : hpNo))
+            .replace("I", ...(health > 8 ? hp1 : maxHealth > 8 ? hp0 : hpNo))
+            .replace("J", ...(health > 9 ? hp1 : maxHealth > 9 ? hp0 : hpNo))
             .replace("W", ...(shields > 0 ? hpShield : hpNo))
             .replace("X", ...(shields > 1 ? hpShield : hpNo))
             .replace("Y", ...(shields > 2 ? hpShield : hpNo))
@@ -1818,8 +1947,8 @@ async function game() {
                 :choice === "s"
                 ?print("["+choice.toUpperCase()+"]: " + String((turn === 1 ? arcana1 : arcana2) - 1) + "-" + arcanaNames[(turn === 1 ? arcana1 : arcana2) - 1] + " - " + arcanaDesc[(turn === 1 ? arcana1 : arcana2) - 1])
                 :choice === "0"
-                ?print("["+choice.toUpperCase()+"]: " + "Attack for " + Object.values(ammo1).reduce((p, c) => p + c, Object.values(ammo2).reduce((p, c) => p + c, 0)) + " + 1d6 damage")
-                :print("["+choice.toUpperCase()+"]: " + "Attack for " + valueMap[invAmmoMap[choice.toUpperCase()]] + " + 1d6 damage");
+                ?print("["+choice.toUpperCase()+"]: " + "Attack for " + Object.values(ammo1).reduce((p, c) => p + c, Object.values(ammo2).reduce((p, c) => p + c, 0)) + " + 1d"+getDie()+" damage")
+                :print("["+choice.toUpperCase()+"]: " + "Attack for " + valueMap[invAmmoMap[choice.toUpperCase()]] + " + 1d"+getDie()+" damage");
             });
             if (arcanaError) {
                 print(arcanaError);
@@ -1850,7 +1979,7 @@ async function game() {
                             }
                             damage = Object.values(ammo1).reduce((p, c) => p + c, Object.values(ammo2).reduce((p, c) => p + c, 0));
                         }
-                        let roll = Math.floor(Math.random() * 6) + 1;
+                        let roll = Math.floor(Math.random() * getDie()) + 1;
                         let target = await chooseTarget("Choose a target to attack for " + damage + " + " + roll + " damage", "single");
                         attack(target, damage + roll);
                         break;
@@ -1981,7 +2110,7 @@ async function game() {
                     break;
                 case "Archer":
                     {
-                        let roll = Math.floor(Math.random() * 6) + 1;
+                        let roll = Math.floor(Math.random() * getDie()) + 1;
                         let target = await chooseTarget("Choose a column to shoot with a triple arrow for " + valueMap[ammo[0]] + " + " + roll + " damage", "row");
                         if (target !== 0) {
                             if (board[10 - target]) {
@@ -2006,8 +2135,8 @@ async function game() {
                     break;
                 case "Crossbowman":
                     {
-                        let roll1 = Math.floor(Math.random() * 6) + 1;
-                        let roll2 = Math.floor(Math.random() * 6) + 1;
+                        let roll1 = Math.floor(Math.random() * getDie()) + 1;
+                        let roll2 = Math.floor(Math.random() * getDie()) + 1;
                         let target = await chooseTarget("Choose a column to shoot with a piercing bolt for " + valueMap[ammo[0]] + " + " + roll1 + " + " + roll2 + " damage", "row");
                         if (board[9 - target]) {
                             attack(9 - target, valueMap[ammo[0]] + roll1 + roll2, true);
@@ -2143,6 +2272,13 @@ async function game() {
                 case "The Fool":
                     {
                         let choice = Math.floor(Math.random() * (22 + unlocks.arcana));
+                        if (choice === 0) {
+                            if (achievements['fool']) {
+                                choice = 21;
+                            } else {
+                                grantAchievement('fool');
+                            }
+                        }
                         if (turn === 1) {
                             arcana1 = choice + 1;
                         } else {
@@ -2264,8 +2400,8 @@ async function game() {
                     {
                         for (let i = 0; i < 10; i++) {
                             if (board[i]) {
-                                let roll1 = Math.floor(Math.random() * 6) + 1;
-                                let roll2 = Math.floor(Math.random() * 6) + 1;
+                                let roll1 = Math.floor(Math.random() * getDie()) + 1;
+                                let roll2 = Math.floor(Math.random() * getDie()) + 1;
                                 attack(i, roll1 + roll2);
                             }
                         }
@@ -2319,6 +2455,9 @@ async function game() {
                         shields += 2;
                         shields = Math.min(shields, 4);
                         health--;
+                        if (health <= 0) {
+                            grantAchievement('bad deal');
+                        }
                     }
                     break;
                 case "The Tower":
@@ -2451,6 +2590,9 @@ async function game() {
                             }
                             ammo2[key] = false;
                         });
+                        if (health+lostAmmo >= 8 && health < 8) {
+                            grantAchievement("new beginning");
+                        }
                         health += lostAmmo;
                         health = Math.min(health, maxHealth);
                     }
