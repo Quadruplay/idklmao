@@ -2618,7 +2618,7 @@ async function game() {
                             killCount++;
                             attack(weakest, valueMap[board[weakest].value], true);
                         }
-                        if (killCount && board.reduce((acc, val, index) => {
+                        if (killCount && !board.reduce((acc, val, index) => {
                             if (val) {
                                 if (acc === undefined) {
                                     return index;
@@ -2627,7 +2627,7 @@ async function game() {
                                 }
                             }
                             return acc;
-                        }, undefined)) {
+                        }, 0)) {
                             grantAchievement('true hermit')
                         }
                     }
