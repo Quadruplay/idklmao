@@ -934,19 +934,19 @@ async function credits() {
 async function instructions() {
     clearScreen();
     print("The goal of the game is to survive the onslaught of enemies.");
-    print("You start with 4 health and 0 shields, but can gain more through the shop or through arcanas.");
+    print("You start with 4 health and 0 shields, but can gain more at the shop or through arcanas.");
     print("You can choose between 3 levels of difficulty, each unlocking more enemies, bosses, and heroes.");
     print("You get to choose 2 heroes, each with their own unique abilities.");
     print("Every 11 cards, you will face a boss.");
     print("After defeating the boss, you will get to choose between 3 arcanas.");
-    print("Arcanas are powerful, one-use abilities that can turn the tide of battle if used correctly.");
+    print("Arcanas are powerful, one-time use abilities that can turn the tide of battle if used correctly.");
     print("Additionally after defeating a boss of a certain suit, you gain 1 token of that suit to be spent in the shop.");
     print("The game ends when you run out of health or when you defeat all the enemies.");
     await pause();
     clearScreen();
     print("Enemies can't be damaged, but can instead be either killed or tapped, the latter of which will make them light gray.");
-    print("To tap an enemy or to kill a tapped one, you must deal damage equal to half their value rounded up.")
-    print("To kill an untapped enemy, you must deal damage equal to their value.");
+    print("To tap an enemy or to kill a tapped one, you must deal damage equal to at least half their value rounded up.")
+    print("To kill an untapped enemy, you must deal damage greater than or equal to their value.");
     print("Killing an enemy of a suit matching one of your heroes without using a class ability will grant you an ammo card of value equal to the enemy's value.");
     print("Ammo cards can be spent to use class abilities using aces.");
     await pause();
@@ -1508,7 +1508,8 @@ async function game() {
                     break;
                 case 9:
                     row
-                    .join("  ")
+                    .join(" ")
+                    .join(new specialText(...symbolMap[hero1]))
                     .join(hero1Deck[0]
                         ? new specialText([ammoMap[hero1Deck[0]]], ['black'], ['white'])
                         : new specialText(["_"], ['white'], ['black']))
@@ -1528,7 +1529,8 @@ async function game() {
                     break;
                 case 12:
                     row
-                    .join("  ")
+                    .join(" ")
+                    .join(new specialText(...symbolMap[hero2]))
                     .join(hero2Deck[0]
                         ? new specialText([ammoMap[hero2Deck[0]]], ['black'], ['white'])
                         : new specialText(["_"], ['white'], ['black']))
@@ -1777,16 +1779,20 @@ async function game() {
                 printSpecial(row);
             }
             let choices = [];
+            let specialError = false;
+            let arcanaError = false;
             (turn === 1 ? hero1Deck : hero2Deck).forEach((item, i) => {
                 if (item) {
                     choices.push(ammoMap[item].toLowerCase());
                     if (item === 1) {
                         if (Object.values(ammo1).reduce((acc, val) => acc + val, 0) + Object.values(ammo2).reduce((acc, val) => acc + val, 0) < 1) {
                             choices.pop();
+                            specialError = "[X]: Not enough ammo cards to use special ability";
                         }
                         if (board.some(card => card?.value === "king" && card?.suit === "shield")) {
                             if (choices.at(-1) === "a") {
                                 choices.pop();
+                                specialError = "[X]: Cannot use special ability while King of Madness is present on board";
                             }
                         }
                         choices.push("1");
@@ -1799,8 +1805,12 @@ async function game() {
                 if ([23,24,25,26,27,28].includes(turn === 1 ? arcana1 : arcana2)) {
                     if (Object.values(ammo1).reduce((acc, val) => acc + val, 0) + Object.values(ammo2).reduce((acc, val) => acc + val, 0) < 1) {
                         choices.pop();
+                        arcanaError = "[X]: Not enough ammo cards to use this Arcana";
                     }
                 }
+            }
+            if (specialError) {
+                print(specialError);
             }
             choices.forEach(choice => {
                 choice === "a"
@@ -1811,6 +1821,9 @@ async function game() {
                 ?print("["+choice.toUpperCase()+"]: " + "Attack for " + Object.values(ammo1).reduce((p, c) => p + c, Object.values(ammo2).reduce((p, c) => p + c, 0)) + " + 1d6 damage")
                 :print("["+choice.toUpperCase()+"]: " + "Attack for " + valueMap[invAmmoMap[choice.toUpperCase()]] + " + 1d6 damage");
             });
+            if (arcanaError) {
+                print(arcanaError);
+            }
             let input = '';
                 while (!choices.includes(input)) {
                     input = await getInput();
