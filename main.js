@@ -124,7 +124,7 @@ let achievementRewards = {
     'half-baked hero': 'Change the die rolled to a d8 and unlock hard mode at the shop', //V
     'hard cookie to crack': 'Unlock ??? at the shop', //V
     'magnificent seven': 'Unlock infinite mode', //V?
-    'bad deal': 'Cry about it', //V
+    'bad deal': 'Changes the reward of the "New Beggining" achievement to "+2 starting health"', //V
     'true hermit': "Unlock a friend", //V
     'fool': 'Make the Fool arcana unable to draw itself, doubling the chance for drawin the World arcana', //V
     'new beginning': '+2 health limit', //V
@@ -144,6 +144,13 @@ function grantAchievement(achievement) {
     localStorage.setItem('achievements', JSON.stringify(achievements));
     return true;
 }
+
+const hitCard = new Audio('hitCard.wav'); //V?
+const hitCastle = new Audio('hitCastle.wav'); //V?
+const moveCard = new Audio('moveCard.wav'); //V?
+const gainArcana = new Audio('gainArcana.wav'); //V?
+const lose = new Audio('lose.wav'); //V?
+const win = new Audio('win.mp3'); //V?
 
 let achievements = {
     'piece of cake': false, //easy mode
@@ -1075,24 +1082,25 @@ async function credits() {
 
 async function instructions() {
     clearScreen();
-    print("The goal of the game is to survive the onslaught of enemies.");
-    print("You start with 4 health and 0 shields, but can gain more at the shop or through arcanas.");
-    print("You can choose between 3 levels of difficulty, each unlocking more enemies, bosses, and heroes.");
-    print("You get to choose 2 heroes, each with their own unique abilities.");
-    print("Every 11 cards, you will face a boss.");
-    print("After defeating the boss, you will get to choose between 3 arcanas.");
-    print("Arcanas are powerful, one-time use abilities that can turn the tide of battle if used correctly.");
-    print("Additionally after defeating a boss of a certain suit, you gain 1 token of that suit to be spent in the shop.");
-    print("The game ends when you run out of health or when you defeat all the enemies.");
-    await pause();
-    clearScreen();
-    print("Enemies can't be damaged, but can instead be either killed or tapped, the latter of which will make them light gray.");
-    print("To tap an enemy or to kill a tapped one, you must deal damage equal to at least half their value rounded up.")
-    print("To kill an untapped enemy, you must deal damage greater than or equal to their value.");
-    print("Killing an enemy of a suit matching one of your heroes without using a class ability will grant you an ammo card of value equal to the enemy's value.");
-    print("Ammo cards can be spent to use class abilities using aces.");
-    await pause();
-    clearScreen();
+    print("You are a great wizard tasked by the king in overseeing and aiding");
+    print("brave heroes in their quest to defeat the dark magician.");
+    print("To do so you must guide them using your deck of cards.");
+    print("Each enemy card has a value and a suit. The value represents the amount");
+    print("of damage needed to tap or kill the enemy. To kill an enemy, you must deal");
+    print("damage equal to or greater than their value. To tap an enemy, you must deal");
+    print("damage equal to at least half their value rounded up. Tapped enemies require");
+    print("half the damage to kill. The suit represents the potential spoils in the form of ammo cards.");
+    print("Killing an enemy of a suit matching one of your heroes without using a class ability");
+    print("will grant you an ammo card of value equal to the enemy's value. Ammo cards can be spent");
+    print("to use class abilities using aces. Additionally kings from the neighboring kingdoms, corrupted");
+    print("by the dark magician will join the battle. Defeating them will grant you a powerful artifact");
+    print("in the form of an arcana card. Arcana cards can be used to turn the tide of battle if used wisely.");
+    print("Using an arcana card does not consume a turn. Kings like some other enemies are considered face cards.");
+    print("Face cards represent powerful opponents which never arrive to the battlefield alone. They are always");
+    print("accompanied by a second, less powerful card. It is highly unlikely that you will be able to defeat them,");
+    print("but fortunately, you hold a rare artifact, the Crystal of Time, which allows you to turn back time and");
+    print("try again. The kings, twisted with dark magic will yield magical essences, which may be spent after each battle.");
+    print("Only using these, may you hope to finally reach the dark magician.");
     print("Good luck!");
     await pause();
     menu();
@@ -1468,12 +1476,12 @@ const arcanaDesc = {
     29: "Discard all your ammo cards and heal that much health up to a maximum of starting health",
 }
 
-let unlockedAchievements = [];
-
 async function game() {
     achievementsGranted = [];
     health = 4 + unlocks.health;
-    maxHealth = health + achievements["new beginning"]*2;
+    maxHealth = health;
+    if (achievements["new beginning"]) maxHealth += 2;
+    if (achievements["bad deal"] && achievements[new beginning]) health += 2;
     shields = unlocks.shields;
     deckSize = deck.length;
     board = [undefined].multiply(10);
@@ -1569,7 +1577,7 @@ async function game() {
                 renderGame();
                 moveTo(0, 44);
                 clearLines(43, 60);
-                print("The Joker is removing all sources of power from the heroes");
+                print("The Dark Magician is removing all sources of power from the heroes");
                 await pause();
             }
         } else {
@@ -1646,6 +1654,7 @@ async function game() {
     }
     if (health <= 0) {
         clearScreen();
+        lose.play();
         print("You have lost");
         if (difficulty === 'i') {
             print("You have defeated " + enemiesKilled + " enemies");
@@ -1666,6 +1675,7 @@ async function game() {
         await pause();
     } else {
         clearScreen();
+        win.play();
         print("You have won");
         if (difficulty === 'e') {
             grantAchievement('piece of cake');
@@ -1982,6 +1992,7 @@ async function game() {
         while (board.length > 10) {
             let card = board.pop();
             if (card) {
+                hitCastle.play();
                 if (shields > 0) {
                     shields--;
                 } else {
@@ -1999,6 +2010,7 @@ async function game() {
                 discard.push(card);
             }
         }
+        moveCard.play();
         renderGame();
         await sleep(500);
         if (typeof card.value === 'string' || board.some(card => card?.value === "joker")) {
@@ -2007,6 +2019,7 @@ async function game() {
             while (board.length > 10) {
                 let card = board.pop();
                 if (card) {
+                    hitCastle.play();
                     if (shields > 0) {
                         shields--;
                     } else {
@@ -2024,6 +2037,7 @@ async function game() {
                     discard.push(card);
                 }
             }
+            moveCard.play();
             renderGame();
         }
     }
@@ -2189,6 +2203,7 @@ async function game() {
         });
     }
     function attack(target, damage, special = false) {
+        hitCard.play();
         let kill = false;
         if (board[target].value === "king" && damage === 1) {
             grantAchievement('hope');
@@ -2197,7 +2212,7 @@ async function game() {
             let health = valueMap[board[target].value];
             if (board[target].tapped) {
                 if (damage >= Math.ceil(health / 2)) {
-                    print("You killed the " + board[target].value + (board[target].value === "joker" ? "" : (" of " + board[target].suit + "s!")));
+                    print("You killed the " + (board[target].value === "joker" ? "Dark Magician" : board[target].value) + (board[target].value === "joker" ? "" : (" of " + board[target].suit + "s!")));
                     if (!special && !(board.some(card => card?.value === "king" && card?.suit === "diamond")) && !(board[target].value === "joker")) {
                         if (symbolMap[hero1] == suits[board[target].suit]) {
                             ammo1[board[target].value] = true;
@@ -2215,7 +2230,7 @@ async function game() {
                 }
             } else {
                 if (damage >= health) {
-                    print("You killed the " + board[target].value + (board[target].value === "joker" ? "" : (" of " + board[target].suit + "s!")));
+                    print("You killed the " + (board[target].value === "joker" ? "Dark Magician" : board[target].value) + (board[target].value === "joker" ? "" : (" of " + board[target].suit + "s!")));
                     if (!special && !(board.some(card => card?.value === "king" && card?.suit === "diamond")) && !(board[target].value === "joker")) {
                         if (symbolMap[hero1] == suits[board[target].suit]) {
                             ammo1[board[target].value] = true;
@@ -2231,7 +2246,7 @@ async function game() {
                     kill = true;
                     board[target] = undefined;
                 } else if (damage >= Math.ceil(health / 2)) {
-                    print("You tapped the " + board[target].value + (board[target].value === "joker" ? "" : (" of " + board[target].suit + "s!")));
+                    print("You tapped the " + (board[target].value === "joker" ? "Dark Magician" : board[target].value) + (board[target].value === "joker" ? "" : (" of " + board[target].suit + "s!")));
                     board[target].tapped = true;
                 }
             }
@@ -2408,6 +2423,7 @@ async function game() {
     }
     function chooseArcana() {
         return new Promise(async resolve => {
+            gainArcana.play();
             let choice1 = Math.floor(Math.random() * (22 + unlocks.arcana));
             let choice2 = Math.floor(Math.random() * (22 + unlocks.arcana));
             let choice3 = Math.floor(Math.random() * (22 + unlocks.arcana));
@@ -2511,15 +2527,19 @@ async function game() {
                     {
                         deck.push(board.shift());
                         await sleep(250);
+                        moveCard.play();
                         renderGame();
                         deck.push(board.shift());
                         await sleep(250);
+                        moveCard.play();
                         renderGame();
                         deck.push(board.shift());
                         await sleep(250);
+                        moveCard.play();
                         renderGame();
                         deck.push(board.shift());
                         await sleep(250);
+                        moveCard.play();
                         renderGame();
                     }
                     break;
