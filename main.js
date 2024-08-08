@@ -110,8 +110,8 @@ let achievementDesc = {
     'piece of cake': 'Complete the game on easy mode', //V
     'half-baked hero': 'Complete the game on medium mode', //V
     'hard cookie to crack': 'Complete the game on hard mode', //V
-    'magnificent seven': 'Defeat ???', //V
-    'bad deal': 'Die by making a deal with the devil', //V
+    'magnificent seven': 'Defeat the Dark Magician', //V
+    'bad deal': 'Die by making a deal with the Devil', //V
     'true hermit': 'Clear the board using the Hermit arcana', //V
     'fool': 'Draw the Fool arcana using the Fool arcana', //V
     'new beginning': 'Heal to 8 health using the Genesis arcana', //V
@@ -122,7 +122,7 @@ let achievementDesc = {
 let achievementRewards = {
     'piece of cake': 'Change the die rolled to a d7 and unlock medium mode at the shop', //V
     'half-baked hero': 'Change the die rolled to a d8 and unlock hard mode at the shop', //V
-    'hard cookie to crack': 'Unlock ??? at the shop', //V
+    'hard cookie to crack': 'Unlock the Dark Magician at the shop', //V
     'magnificent seven': 'Unlock infinite mode', //V?
     'bad deal': 'Changes the reward of the "New Beggining" achievement to "+2 starting health"', //V
     'true hermit': "Unlock a friend", //V
@@ -805,7 +805,7 @@ async function shop() {
     localStorage.setItem("currency", JSON.stringify(currency));
     localStorage.setItem("unlocks", JSON.stringify(unlocks));
     clearScreen();
-    printSpecial(new specialText(["Resources: "+currency.heart+" A  "+currency.spade+" B "+currency.diamond+" C  "+currency.club+" D  "+currency.shield+" E  "+currency.cup+" F"], ["white"], ["black"]).replace("A", ...heart).replace("B", ...spade).replace("C", ...diamond).replace("D", ...club).replace("E", ...shield).replace("F", ...cup));
+    printSpecial(new specialText(["Gems: "+currency.heart+" A  "+currency.spade+" B "+currency.diamond+" C  "+currency.club+" D  "+currency.shield+" E  "+currency.cup+" F"], ["white"], ["black"]).replace("A", ...heart).replace("B", ...spade).replace("C", ...diamond).replace("D", ...club).replace("E", ...shield).replace("F", ...cup));
     let inputs = ['b'];
     if (!unlocks.medium && achievements['piece of cake']) {
         print("");
@@ -1099,7 +1099,7 @@ async function instructions() {
     print("Face cards represent powerful opponents which never arrive to the battlefield alone. They are always");
     print("accompanied by a second, less powerful card. It is highly unlikely that you will be able to defeat them,");
     print("but fortunately, you hold a rare artifact, the Crystal of Time, which allows you to turn back time and");
-    print("try again. The kings, twisted with dark magic will yield magical essences, which may be spent after each battle.");
+    print("try again. The kings, twisted with dark magic will yield magical gems, which may be spent after each battle.");
     print("Only using these, may you hope to finally reach the dark magician.");
     print("Good luck!");
     await pause();
@@ -1116,12 +1116,14 @@ async function chooseDifficulty() {
     print("[E]asy");
     if (unlocks.medium) print("[M]edium");
     if (unlocks.hard) print("[H]ard");
+    if (unlocks.secret) print("[D]ark Magician");
     if (achievements['magnificent seven']) print("[I]nfinite");
     print("[B]ack");
     let input = '';
     let inputs = ['e', 'b'];
     if (unlocks.medium) inputs.push('m');
     if (unlocks.hard) inputs.push('h');
+    if (unlocks.secret) inputs.push('d');
     if (achievements['magnificent seven']) inputs.push('i');
     while (!inputs.includes(input)) {
         input = await getInput();
@@ -1137,6 +1139,7 @@ async function chooseDifficulty() {
             let kingDeck = [];
             switch (difficulty) {
                 case 'i':
+                case 'd':
                 case 'h':
                     for (let j of ["cup", "shield"]) {
                         for (let i of [4, 5, 6, 7, 8, 9, 10]) {
@@ -1208,6 +1211,7 @@ async function chooseHeroes() {
     }
     switch (difficulty) {
         case 'i':
+        case 'd':
         case 'h':
             heroPool.push(new specialText(...cup).join("[N]ecromancer"));
             heroPool.push(new specialText(...shield).join("[K]night"));
@@ -1484,6 +1488,7 @@ async function game() {
     if (achievements["bad deal"] && achievements[new beginning]) health += 2;
     shields = unlocks.shields;
     deckSize = deck.length;
+    deck = [deck[0]]
     board = [undefined].multiply(10);
     discard = [];
     Object.keys(ammo1).forEach(key => {
@@ -1586,7 +1591,7 @@ async function game() {
         }
         if (board.some(card => card)) await heroTurn();
         if (health <= 0) break;
-        if (deck.length === 0 && board.every(card => card === undefined) && difficulty === 'h' && unlocks.secret && !jokerSpawned) {
+        if (deck.length === 0 && board.every(card => card === undefined) && difficulty === 'd' && unlocks.secret && !jokerSpawned) {
             jokerSpawned = true;
             deck.push({value: "joker", suit: "heart", tapped: false});
         }
@@ -1596,6 +1601,7 @@ async function game() {
             let kingDeck = [];
             switch (difficulty) {
                 case 'i':
+                case 'd':
                 case 'h':
                     for (let j of ["cup", "shield"]) {
                         for (let i of [4, 5, 6, 7, 8, 9, 10]) {
@@ -2016,7 +2022,7 @@ async function game() {
         moveCard.play();
         renderGame();
         await sleep(500);
-        if (typeof card.value === 'string' || board.some(card => card?.value === "joker")) {
+        if (typeof card?.value === 'string' || board.some(card => card?.value === "joker")) {
             card = (board.some(card => (card?.value === "king" && card?.suit === "cup")) && discard.length ? discard : deck).pop();
             board.unshift(card);
             while (board.length > 10) {
