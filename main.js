@@ -48,6 +48,17 @@ lines.forEach((line, i) => {
 //     alert("PLEASE COPY THIS AND SEND TO ME\n\n" + errorMessage);
 // };
 
+let dieFaces = {
+    1: "⚀", 
+    2: "⚁", 
+    3: "⚂", 
+    4: "⚃", 
+    5: "⚄", 
+    6: "⚅", 
+    7: "⚆", 
+    8: "⚇"
+}
+
 let line = 0;
 let column = 0
 let colors = {
@@ -201,6 +212,92 @@ function print(text, color = lastColor, background = lastBackground) {
     });
     line++;
     column = 0;
+}
+
+let statistics = {
+    'easy': {
+        'games': 0,
+        'wins': 0,
+        'losses': 0,
+    },
+    'medium': {
+        'games': 0,
+        'wins': 0,
+        'losses': 0,
+    },
+    'hard': {
+        'games': 0,
+        'wins': 0,
+        'losses': 0,
+    },
+    'darkMagician': {
+        'games': 0,
+        'wins': 0,
+        'losses': 0,
+    },
+    'infinite': {
+        'games': 0,
+        'maxCards': 0,
+        'maxFaceCards': 0,
+        'maxKings': 0,
+    },
+    'total': {
+        'games': 0,
+        'wins': 0,
+        'losses': 0,
+        'cards': 0,
+        'faceCards': 0,
+        'kings': 0,
+        'heart': 0,
+        'diamond': 0,
+        'club': 0,
+        'spade': 0,
+        'cup': 0,
+        'shield': 0,
+    },
+    'arcanas': {
+        0: false,
+        1: false,
+        2: false,
+        3: false,
+        4: false,
+        5: false,
+        6: false,
+        7: false,
+        8: false,
+        9: false,
+        10: false,
+        11: false,
+        12: false,
+        13: false,
+        14: false,
+        15: false,
+        16: false,
+        17: false,
+        18: false,
+        19: false,
+        20: false,
+        21: false,
+        22: false,
+        23: false,
+        24: false,
+        25: false,
+        26: false,
+        27: false,
+        28: false,
+        29: false,
+    }
+}
+if (localStorage.getItem('statistics')) {
+    let statisticsLoaded = JSON.parse(localStorage.getItem('statistics'));
+    for (let key in statisticsLoaded) {
+        for (let key2 in statisticsLoaded[key]) {
+            statistics[key][key2] = statisticsLoaded[key][key2];
+        }
+    }
+    localStorage.setItem('statistics', JSON.stringify(statistics));
+} else {
+    localStorage.setItem('statistics', JSON.stringify(statistics));
 }
 
 function moveTo(x, y) {
@@ -2236,9 +2333,9 @@ async function game() {
         let kill = false;
         let face = false;
         let king = false;
-        if (board[target].value === "king") king = true;
-        if (typeof board[target].value === 'string') face = true;
-        if (board[target].value === "king" && damage === 1) {
+        if (board[target]?.value === "king") king = true;
+        if (typeof board[target]?.value === 'string') face = true;
+        if (board[target]?.value === "king" && damage === 1) {
             grantAchievement('hope');
         }
         if (board[target]) {
