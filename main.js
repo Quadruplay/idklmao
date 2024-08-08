@@ -1485,10 +1485,9 @@ async function game() {
     health = 4 + unlocks.health;
     maxHealth = health;
     if (achievements["new beginning"]) maxHealth += 2;
-    if (achievements["bad deal"] && achievements[new beginning]) health += 2;
+    if (achievements["bad deal"] && achievements["new beginning"]) health += 2;
     shields = unlocks.shields;
     deckSize = deck.length;
-    deck = [deck[0]]
     board = [undefined].multiply(10);
     discard = [];
     Object.keys(ammo1).forEach(key => {
@@ -1506,10 +1505,11 @@ async function game() {
     let arcanaUsed = false;
     let jokerSpawned = false;
     let enemiesKilled = 0;
+    let faceCardsKilled = 0;
+    let bossesKilled = 0;
     while (!(health <= 0) && !(deck.length === 0 && board.every(card => card === undefined))) {
         if (!arcanaUsed) {
             drawCard();
-            kingKilled = false;
             await sleep(600);
             if (health <= 0) break;
             if (board.some(card => card?.value === "king" && card?.suit === "heart")) {
@@ -1664,9 +1664,11 @@ async function game() {
         print("You have lost");
         if (difficulty === 'i') {
             print("You have defeated " + enemiesKilled + " enemies");
+            print(faceCardsKilled + " of which were face cards");
+            print(bossesKilled + " of which were kings");
         }
         if (difficulty === 'h') {
-            if (!deck.some(card => card?.value === "king") && !board.some(card => card?.value === "king")) {
+            if (!deck.some(card => card?.value === "king") && !board.some(card => card?.value === "king") && discard.at(-1)?.value !== "king") {
                 grantAchievement('bitter aftertaste');
             }
         }
@@ -2169,6 +2171,7 @@ async function game() {
                 await pause();
                 if (kingKilled) {
                     currency[kingKilled]++;
+                    kingKilled = false;
                     localStorage.setItem("currency", JSON.stringify(currency));
                     await chooseArcana();
                 }
@@ -2217,6 +2220,10 @@ async function game() {
     function attack(target, damage, special = false) {
         hitCard.play();
         let kill = false;
+        let face = false;
+        let king = false;
+        if (board[target].value === "king") king = true;
+        if (typeof board[target].value === 'string') face = true;
         if (board[target].value === "king" && damage === 1) {
             grantAchievement('hope');
         }
@@ -2265,6 +2272,8 @@ async function game() {
         }
         if (kill) {
             enemiesKilled++;
+            if (king) bossesKilled++;
+            if (face) faceCardsKilled++;
         }
         return kill;
     }
