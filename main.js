@@ -2006,6 +2006,9 @@ async function game() {
                     if (board.some(card => (card?.value === "king" && card?.suit === "spade"))) {
                         health--;
                     }
+                    if (card?.value === "joker") {
+                        health = 0;
+                    }
                 }
                 discard.push(card);
             }
@@ -2032,6 +2035,9 @@ async function game() {
                         }
                         if (board.some(card => (card?.value === "king" && card?.suit === "spade"))) {
                             health--;
+                        }
+                        if (card?.value === "joker") {
+                            health = 0;
                         }
                     }
                     discard.push(card);
