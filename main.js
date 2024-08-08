@@ -216,27 +216,27 @@ function print(text, color = lastColor, background = lastBackground) {
 
 let statistics = {
     'easy': {
-        'games': 0,
+        'total': 0,
         'wins': 0,
         'losses': 0,
     },
     'medium': {
-        'games': 0,
+        'total': 0,
         'wins': 0,
         'losses': 0,
     },
     'hard': {
-        'games': 0,
+        'total': 0,
         'wins': 0,
         'losses': 0,
     },
     'darkMagician': {
-        'games': 0,
+        'total': 0,
         'wins': 0,
         'losses': 0,
     },
     'infinite': {
-        'games': 0,
+        'total': 0,
         'maxCards': 0,
         'maxFaceCards': 0,
         'maxKings': 0,
@@ -860,11 +860,12 @@ async function menu() {
     print("[U]nlocks");
     print("[A]chievements");
     print("[I]nstructions");
+    print("[T]ime Crystal");
     print("[C]redits");
     print("[Q]uit");
 
     let input = '';
-    let inputs = ['s', 'u', 'a', 'i', 'c', 'q'];
+    let inputs = ['s', 'u', 'a', 'i', 'c', 'q', 't'];
     while (!inputs.includes(input)) {
         input = await getInput();
     }
@@ -881,6 +882,9 @@ async function menu() {
         case 'i':
             instructions();
             break;
+        case 't':
+            time();
+            break
         case 'c':
             credits();
             break;
@@ -890,6 +894,79 @@ async function menu() {
             break;
     }
 };
+
+async function time() {
+    clearScreen();
+    print("You peek into the crystal of time...");
+    print("What events from your past would you like to recall?");
+    print("");
+    print("[P]ast runs");
+    print("[A]rcanas");
+    print("[M]ain menu");
+    let input = '';
+    let inputs = ['p', 'a', 'm'];
+    while (!inputs.includes(input)) {
+        input = await getInput();
+    }
+    clearScreen();
+    switch (input) {
+        case 'p':
+            print("Easy mode:");
+            print("    Total runs:                            " + statistics.easy.total);
+            print("    Total wins:                            " + statistics.easy.wins);
+            print("    Total losses:                          " + statistics.easy.losses);
+            print("");
+            print("Medium mode:");
+            print("    Total runs:                            " + statistics.medium.total);
+            print("    Total wins:                            " + statistics.medium.wins);
+            print("    Total losses:                          " + statistics.medium.losses);
+            print("");
+            print("Hard mode:");
+            print("    Total runs:                            " + statistics.hard.total);
+            print("    Total wins:                            " + statistics.hard.wins);
+            print("    Total losses:                          " + statistics.hard.losses);
+            print("");
+            print("Dark Magician encounters: ");
+            print("    Total encounters:                      " + statistics.darkMagician.total);
+            print("    Total wins:                            " + statistics.darkMagician.wins);
+            print("    Total losses:                          " + statistics.darkMagician.losses);
+            print("");
+            print("Infinite mode:");
+            print("    Total runs:                            " + statistics.infinite.total);
+            print("    Record amount of enemies defeated:     " + statistics.infinite.maxCards);
+            print("    Record amount of face cards defeated:  " + statistics.infinite.maxFaceCards);
+            print("    Record amount of kings defeated:       " + statistics.infinite.maxKings);
+            print("");
+            print("In total:");
+            print("    Total runs:                            " + statistics.total.games);
+            print("    Total wins:                            " + statistics.total.wins);
+            print("    Total losses:                          " + statistics.total.losses);
+            print("    Total enemies defeated:                " + statistics.total.cards);
+            print("    Total face cards defeated:             " + statistics.total.faceCards);
+            print("    Total kings defeated:                  " + statistics.total.kings);
+            print("        Of which were kings of war:        " + statistics.total.heart);
+            print("        Of which were kings of conquest:   " + statistics.total.spade);
+            print("        Of which were kings of famine:     " + statistics.total.diamond);
+            print("        Of which were kings of pestilence: " + statistics.total.club);
+            print("        Of which were kings of madness:    " + statistics.total.shield);
+            print("        Of which were kings of death:      " + statistics.total.cup);
+            print("");
+            await pause();
+            time();
+            break;
+        case 'a':
+            print("Arcanas:");
+            for (let i = 0; i < 30; i++) {
+                print("    " + i + "-" + arcanaNames[i] + " - " + (statistics.arcanas[i] ? arcanaDesc[i] : "???"));
+            }
+            await pause();
+            time();
+            break;
+        case 'm':
+            menu();
+            break;
+    }
+}
 
 async function achievementScreen() {
     clearScreen();
@@ -1059,6 +1136,8 @@ async function shop() {
                         currency.diamond -= 1;
                         currency.shield -= 1;
                         unlocks.fool = 1;
+                        statistics.arcanas[0] = true;
+                        localStorage.setItem("statistics", JSON.stringify(statistics));
                     }
                 } else {
                     if (currency.spade >= 1 && currency.club >= 1 && currency.cup >= 1) {
@@ -1770,6 +1849,7 @@ async function game() {
         }
     }
     if (health <= 0) {
+        statistics.total.losses++;
         clearScreen();
         lose.play();
         print("You have lost");
@@ -1777,11 +1857,33 @@ async function game() {
             print("You have defeated " + enemiesKilled + " enemies");
             print(faceCardsKilled + " of which were face cards");
             print(bossesKilled + " of which were kings");
+            statistics.infinite.total++;
+            statistics.infinite.maxCards = Math.max(statistics.infinite.maxCards, enemiesKilled);
+            statistics.infinite.maxFaceCards = Math.max(statistics.infinite.maxFaceCards, faceCardsKilled);
+            statistics.infinite.maxKings = Math.max(statistics.infinite.maxKings, bossesKilled);
         }
         if (difficulty === 'h') {
             if (!deck.some(card => card?.value === "king") && !board.some(card => card?.value === "king") && discard.at(-1)?.value !== "king") {
                 grantAchievement('bitter aftertaste');
             }
+        }
+        switch (difficulty) {
+            case 'e':
+                statistics.easy.total++;
+                statistics.easy.losses++;
+                break;
+            case 'm':
+                statistics.medium.total++;
+                statistics.medium.losses++;
+                break;
+            case 'h':
+                statistics.hard.total++;
+                statistics.hard.losses++;
+                break;
+            case 'd':
+                statistics.darkMagician.total++;
+                statistics.darkMagician.losses++;
+                break;
         }
         if (achievementsGranted.length > 0) {
             print("");
@@ -1793,18 +1895,26 @@ async function game() {
         }
         await pause();
     } else {
+        statistics.total.wins++;
         clearScreen();
         win.play();
         print("You have won");
         if (difficulty === 'e') {
             grantAchievement('piece of cake');
+            statistics.easy.total++;
+            statistics.easy.wins++;
         } else if (difficulty === 'm') {
             grantAchievement('half-baked hero');
+            statistics.medium.total++;
+            statistics.medium.wins++;
         } else if (difficulty === 'h') {
             grantAchievement('hard cookie to crack');
-            if (unlocks.secret) {
-                grantAchievement('magnificent seven');
-            }
+            statistics.hard.total++;
+            statistics.hard.wins++;
+        } else if (difficulty === 'd') {
+            grantAchievement('magnicifent seven');
+            statistics.darkMagician.total++;
+            statistics.darkMagician.wins++;
         }
         if (achievementsGranted.length > 0) {
             print("");
@@ -1816,6 +1926,11 @@ async function game() {
         }
         await pause();
     }
+    statistics.total.games++;
+    statistics.total.cards += enemiesKilled;
+    statistics.total.faceCards += faceCardsKilled;
+    statistics.total.kings += bossesKilled;
+    localStorage.setItem("statistics", JSON.stringify(statistics));
     menu();
     function renderGame() {
         clearLines(0, 37);
@@ -1973,28 +2088,28 @@ async function game() {
                 case 16:
                     row
                     .join("  ")
-                    .join((board.some(card => (card?.value === "king" && card?.suit === "cup")) && discard.length ? discard : deck).at(-1)
-                    ? ammoCard[1].clone().replace("X", ammoMap[(board.some(card => (card?.value === "king" && card?.suit === "cup")) && discard.length ? discard : deck).at(-1).value])
+                    .join(deck.at(-1)
+                    ? ammoCard[1].clone().replace("X", ammoMap[deck.at(-1).value])
                     : ammoBlank[1])
-                    if (typeof (board.some(card => (card?.value === "king" && card?.suit === "cup")) && discard.length ? discard : deck).at(-1)?.value === "string") {
+                    if (typeof deck.at(-1)?.value === "string") {
                         row
                         .join("+")
                         .join((board.some(card => (card?.value === "king" && card?.suit === "cup")) && (discard.length > 1) ? discard : deck).at(-2)
-                        ? ammoCard[1].clone().replace("X", ammoMap[(board.some(card => (card?.value === "king" && card?.suit === "cup")) && discard.length ? discard : deck).at(-2).value])
+                        ? ammoCard[1].clone().replace("X", ammoMap[deck.at(-2).value])
                         : ammoBlank[1])
                     }
                     break;
                 case 17:
                     row
                     .join("  ")
-                    .join((board.some(card => (card?.value === "king" && card?.suit === "cup")) && discard.length ? discard : deck).at(-1)
-                    ? ammoCard[2].clone().replace("Y", ...(suits[(board.some(card => (card?.value === "king" && card?.suit === "cup")) && discard.length ? discard : deck).at(-1).suit]))
+                    .join(deck.at(-1)
+                    ? ammoCard[2].clone().replace("Y", ...(suits[deck.at(-1).suit]))
                     : ammoBlank[2])
-                    if (typeof (board.some(card => (card?.value === "king" && card?.suit === "cup")) && discard.length ? discard : deck).at(-1)?.value === "string") {
+                    if (typeof deck.at(-1)?.value === "string") {
                         row
                         .join(" ")
                         .join((board.some(card => (card?.value === "king" && card?.suit === "cup")) && (discard.length > 1) ? discard : deck).at(-2)
-                        ? ammoCard[2].clone().replace("Y", ...(suits[(board.some(card => (card?.value === "king" && card?.suit === "cup")) && discard.length ? discard : deck).at(-2).suit]))
+                        ? ammoCard[2].clone().replace("Y", ...(suits[deck.at(-2).suit]))
                         : ammoBlank[2])
                     }
                     break;
@@ -2002,11 +2117,11 @@ async function game() {
             printSpecial(row);
         });
         printSpecial( new specialText([" ".multiply(114)+"|"+" ".multiply(10)], ["white"], ["black"])
-        .join((board.some(card => (card?.value === "king" && card?.suit === "cup")) && discard.length ? discard : deck).at(-1)
+        .join(deck.at(-1)
         ? ammoCard[3].clone()
         : ammoBlank[3])
         .join(" ")
-        .join(typeof (board.some(card => (card?.value === "king" && card?.suit === "cup")) && discard.length ? discard : deck).at(-1)?.value === "string"
+        .join(typeof deck.at(-1)?.value === "string"
         ?((board.some(card => (card?.value === "king" && card?.suit === "cup")) && (discard.length > 1) ? discard : deck).at(-2)
         ? ammoCard[3].clone()
         : ammoBlank[3])
@@ -2281,6 +2396,8 @@ async function game() {
                 }
                 await pause();
                 if (kingKilled) {
+                    statistics.total[kingKilled]++;
+                    localStorage.setItem("statistics", JSON.stringify(statistics));
                     currency[kingKilled]++;
                     kingKilled = false;
                     localStorage.setItem("currency", JSON.stringify(currency));
@@ -2569,6 +2686,8 @@ async function game() {
             while (!['a', 'b', 'c'].includes(input)) {
                 input = await getInput();
             }
+            statistics.arcanas[[choice1, choice2, choice3][['a', 'b', 'c'].indexOf(input)]] = true;
+            localStorage.setItem("statistics", JSON.stringify(statistics));
             if (turn === 1) {
                 arcana1 = [choice1, choice2, choice3][['a', 'b', 'c'].indexOf(input)] + 1;
             } else {
@@ -2596,6 +2715,8 @@ async function game() {
                                 grantAchievement('fool');
                             }
                         }
+                        statistics.arcanas[choice] = true;
+                        localStorage.setItem("statistics", JSON.stringify(statistics));
                         if (turn === 1) {
                             arcana1 = choice + 1;
                         } else {
@@ -2956,6 +3077,8 @@ async function game() {
                     print("[B]: Choose a different Arcana");
                 }
             }
+            statistics.arcanas[choice] = true;
+            localStorage.setItem("statistics", JSON.stringify(statistics));
             if (turn === 1) {
                 arcana1 = choice + 1;
             } else {
