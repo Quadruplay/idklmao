@@ -34,6 +34,20 @@ lines.forEach((line, i) => {
     });
 });
 
+window.onerror = function(message, source, lineno, colno, error) {
+    // Construct an error message
+    const errorMessage = `
+        Error: ${message}
+        Source: ${source}
+        Line: ${lineno}
+        Column: ${colno}
+        Stack Trace: ${error ? error.stack : 'N/A'}
+    `;
+    
+    // Display the error using an alert
+    alert("PLEASE COPY THIS AND SEND TO ME\n\n" + errorMessage);
+};
+
 let line = 0;
 let column = 0
 let colors = {
@@ -2715,7 +2729,7 @@ async function game() {
                     break;
                 case "The Sun":
                     {
-                        let column = await chooseTarget("Choose a column to burn all enemies in", "row");
+                        let column = await chooseTarget("Choose a column to burn all the enemies in", "row");
                         if (board[9 - column]) {
                             attack(i, Math.ceil(valueMap[board[9 - column].value] / 2));
                         }
