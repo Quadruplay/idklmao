@@ -78,7 +78,8 @@ let unlocks = {
     'health': 0,
     'shields': 0,
     'fool': 0,
-    'arcana': 0
+    'arcana': 0,
+    'secret': false
 }
 if (localStorage.getItem('unlocks')) {
     let unlocksLoaded = JSON.parse(localStorage.getItem('unlocks'));
@@ -96,39 +97,39 @@ let achievementNames = {
     'piece of cake': 'Piece of Cake',
     'half-baked hero': 'Half-Baked Hero',
     'hard cookie to crack': 'Hard Cookie to Crack',
-    'magnificent seven': 'Magnificent Seven [NYI]',
+    'magnificent seven': 'Magnificent Seven',
     'bad deal': 'Bad Deal',
-    'true hermit': 'True Hermit [NYI]',
+    'true hermit': 'True Hermit',
     'fool': 'Fool',
     'new beginning': 'New Beginning',
-    'hope': 'Hope [NYI]',
-    'bitter aftertaste': 'Bitter Aftertaste [NYI]'
+    'hope': 'Hope',
+    'bitter aftertaste': 'Bitter Aftertaste'
 }
 
 let achievementDesc = {
     'piece of cake': 'Complete the game on easy mode', //V
     'half-baked hero': 'Complete the game on medium mode', //V
     'hard cookie to crack': 'Complete the game on hard mode', //V
-    'magnificent seven': 'Defeat the secret boss',
+    'magnificent seven': 'Defeat ??? [NYI]',
     'bad deal': 'Die by making a deal with the devil', //V
-    'true hermit': 'Clear the board using the Hermit arcana',
+    'true hermit': 'Clear the board using the Hermit arcana', //V
     'fool': 'Draw the Fool arcana using the Fool arcana', //V
     'new beginning': 'Heal to 8 health using the Genesis arcana', //V
-    'hope': 'Attack a King with an attack of power 1',
-    'bitter aftertaste': 'Die after defeating all six bosses'
+    'hope': 'Attack a King with an attack of power 1', //V
+    'bitter aftertaste': 'Die after defeating all six bosses' //V
 }
 
 let achievementRewards = {
-    'piece of cake': 'Change the die rolled to a d7',
-    'half-baked hero': 'Change the die rolled to a d8',
-    'hard cookie to crack': 'Unlock the secret boss',
-    'magnificent seven': 'No reward',
-    'bad deal': 'No reward',
-    'true hermit': 'No reward',
-    'fool': 'Make the Fool arcana grant the World arcana whenever Fool would be drawn',
-    'new beginning': '+2 health limit',
-    'hope': 'No reward',
-    'bitter aftertaste': 'Cry about it'
+    'piece of cake': 'Change the die rolled to a d7 and unlock medium mode at the shop', //V
+    'half-baked hero': 'Change the die rolled to a d8 and unlock hard mode at the shop', //V
+    'hard cookie to crack': 'Unlock ??? at the shop', //V
+    'magnificent seven': 'No reward', //V?
+    'bad deal': 'No reward', //V?
+    'true hermit': 'No reward', //V?
+    'fool': 'Make the Fool arcana draw the World arcana whenever it would draw the Fool', //V
+    'new beginning': '+2 health limit', //V
+    'hope': 'No reward', //V?
+    'bitter aftertaste': 'Cry about it' //V?
 }
 
 function getDie() {
@@ -776,15 +777,20 @@ async function shop() {
     clearScreen();
     printSpecial(new specialText(["Resources: "+currency.heart+" A  "+currency.spade+" B "+currency.diamond+" C  "+currency.club+" D  "+currency.shield+" E  "+currency.cup+" F"], ["white"], ["black"]).replace("A", ...heart).replace("B", ...spade).replace("C", ...diamond).replace("D", ...club).replace("E", ...shield).replace("F", ...cup));
     let inputs = ['b'];
-    if (!unlocks.medium) {
+    if (!unlocks.medium && achievements['piece of cake']) {
         print("");
         printSpecial(new specialText(["[M]: Unlock medium difficulty.                         2 A  +  2 B"], ["white"], ["black"]).replace("A", ...heart).replace("B", ...spade));
         inputs.push('m');
     }
-    if (!unlocks.hard) {
+    if (!unlocks.hard && achievements['half-baked hero']) {
         print("");
         printSpecial(new specialText(["[H]: Unlock hard difficulty.                           2 A  +  2 B  +  2 C  +  2 D"], ["white"], ["black"]).replace("A", ...heart).replace("B", ...spade).replace("C", ...diamond).replace("D", ...club));
         inputs.push('h');
+    }
+    if (!unlocks.secret && achievements['hard cookie to crack']) {
+        print("");
+        printSpecial(new specialText(["[S]: Unlock ??? on hard difficulty.                         2 A  +  2 B  +  2 C  +  2 D  +  2 E  +  2 F"], ["white"], ["black"]).replace("A", ...heart).replace("B", ...spade).replace("C", ...diamond).replace("D", ...club).replace("E", ...shield).replace("F", ...cup));
+        inputs.push('s');
     }
     if (unlocks.fool !== 2) {
         print("");
@@ -890,6 +896,18 @@ async function shop() {
                     currency.diamond -= 2;
                     currency.club -= 2;
                     unlocks.hard = true;
+                }
+                shop();
+                break;
+            case 's':
+                if (currency.heart >= 2 && currency.spade >= 2 && currency.diamond >= 2 && currency.club >= 2 && currency.shield >= 2 && currency.cup >= 2) {
+                    currency.heart -= 2;
+                    currency.spade -= 2;
+                    currency.diamond -= 2;
+                    currency.club -= 2;
+                    currency.shield -= 2;
+                    currency.cup -= 2;
+                    unlocks.secret = true;
                 }
                 shop();
                 break;
@@ -1506,6 +1524,11 @@ async function game() {
     if (health <= 0) {
         clearScreen();
         print("You have lost");
+        if (difficulty === 'h') {
+            if (!deck.some(card => card?.value === "king") && !board.some(card => card?.value === "king")) {
+                grantAchievement('bitter aftertaste');
+            }
+        }
         if (achievementsGranted.length > 0) {
             print("");
             print("Achievements:");
@@ -2032,6 +2055,9 @@ async function game() {
     }
     function attack(target, damage, special = false) {
         let kill = false;
+        if (board[target].value === "king" && damage === 1) {
+            grantAchievement('hope');
+        }
         if (board[target]) {
             let health = valueMap[board[target].value];
             if (board[target].tapped) {
@@ -2393,6 +2419,18 @@ async function game() {
                             }
                             killCount++;
                             attack(weakest, valueMap[board[weakest].value], true);
+                        }
+                        if (killCount && board.reduce((acc, val, index) => {
+                            if (val) {
+                                if (acc === undefined) {
+                                    return index;
+                                } else if (valueMap[val.value] < valueMap[board[acc].value]) {
+                                    return index;
+                                }
+                            }
+                            return acc;
+                        }, undefined)) {
+                            grantAchievement('true hermit')
                         }
                     }
                     break;
