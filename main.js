@@ -110,7 +110,7 @@ let achievementDesc = {
     'piece of cake': 'Complete the game on easy mode', //V
     'half-baked hero': 'Complete the game on medium mode', //V
     'hard cookie to crack': 'Complete the game on hard mode', //V
-    'magnificent seven': 'Defeat ??? [NYI]',
+    'magnificent seven': 'Defeat ???', //V
     'bad deal': 'Die by making a deal with the devil', //V
     'true hermit': 'Clear the board using the Hermit arcana', //V
     'fool': 'Draw the Fool arcana using the Fool arcana', //V
@@ -445,7 +445,28 @@ const blank = [
     new specialText([".................."], ['white'], ['black']),
 ]
 
-const cardsSpecial = {page, knight, queen, king, blank};
+const joker = [
+    new specialText(["◤≡=⁃-⁃=≡{}≡=⁃-⁃=≡◥"], ['black'], ['white']),
+    new specialText(["§ J              §"], ['black'], ['white']),
+    new specialText(["║ O              ║"], ['black'], ['white']),
+    new specialText(["│ K              │"], ['black'], ['white']),
+    new specialText([": E              :"], ['black'], ['white']),
+    new specialText(["│ R              │"], ['black'], ['white']),
+    new specialText(['║                ║'], ['black'], ['white']),
+    new specialText(["§                §"], ['black'], ['white']),
+    new specialText(["∩                ∩"], ['black'], ['white']),
+    new specialText(["Ü                Ü"], ['black'], ['white']),
+    new specialText(["§                §"], ['black'], ['white']),
+    new specialText(["║                ║"], ['black'], ['white']),
+    new specialText(["│              J │"], ['black'], ['white']),
+    new specialText([":              O :"], ['black'], ['white']),
+    new specialText(["│              K │"], ['black'], ['white']),
+    new specialText(["║              E ║"], ['black'], ['white']),
+    new specialText(["§              R §"], ['black'], ['white']),
+    new specialText(["◣≡=⁃-⁃=≡{}≡=⁃-⁃=≡◢"], ['black'], ['white']),
+]
+
+const cardsSpecial = {page, knight, queen, king, blank, joker};
 
 const cards = [
     undefined,
@@ -1352,7 +1373,8 @@ let valueMap = {
     knight: 11,
     queen: 12,
     king: 13,
-    priest: 0
+    priest: 0,
+    joker: 15
 }
 
 const classAbilityDesc = {
@@ -1435,6 +1457,7 @@ async function game() {
     health = 4 + unlocks.health;
     maxHealth = health + achievements["new beginning"]*2;
     shields = unlocks.shields;
+    deck = [deck[0]];
     deckSize = deck.length;
     board = [undefined].multiply(10);
     discard = [];
@@ -1449,6 +1472,7 @@ async function game() {
     let arcana2 = unlocks.fool > 1 ? 1 : 0;
     let kingKilled = false;
     let arcanaUsed = false;
+    let jokerSpawned = false;
     while (!(health <= 0) && !(deck.length === 0 && board.every(card => card === undefined))) {
         if (!arcanaUsed) {
             drawCard();
@@ -1515,11 +1539,29 @@ async function game() {
                 print("The King of Death is making already dead enemies come back to life");
                 await pause();
             }
+            if (board.some(card => card?.value === "joker")) {
+                arcana1 = 0;
+                arcana2 = 0;
+                Object.keys(ammo1).forEach(key => {
+                    ammo1[key] = false;
+                    ammo2[key] = false;
+                });
+                renderGame();
+                moveTo(0, 44);
+                clearLines(43, 60);
+                print("The Joker is removing all sources of power from the heroes");
+                await pause();
+            }
         } else {
             arcanaUsed = false;
             turn = 3 - turn;
         }
         if (board.some(card => card)) await heroTurn();
+        if (health <= 0) break;
+        if (deck.length === 0 && board.every(card => card === undefined) && difficulty === 'h' && unlocks.secret && !jokerSpawned) {
+            jokerSpawned = true;
+            deck.push({value: "joker", suit: "heart", tapped: false});
+        }
     }
     if (health <= 0) {
         clearScreen();
@@ -1547,6 +1589,9 @@ async function game() {
             grantAchievement('half-baked hero');
         } else if (difficulty === 'h') {
             grantAchievement('hard cookie to crack');
+            if (unlocks.secret) {
+                grantAchievement('magnificent seven');
+            }
         }
         if (achievementsGranted.length > 0) {
             print("");
@@ -1872,7 +1917,7 @@ async function game() {
         }
         renderGame();
         await sleep(500);
-        if (typeof card.value === 'string') {
+        if (typeof card.value === 'string' || board.some(card => card?.value === "joker")) {
             card = (board.some(card => (card?.value === "king" && card?.suit === "cup")) && discard.length ? discard : deck).pop();
             board.unshift(card);
             while (board.length > 10) {
@@ -2062,8 +2107,8 @@ async function game() {
             let health = valueMap[board[target].value];
             if (board[target].tapped) {
                 if (damage >= Math.ceil(health / 2)) {
-                    print("You killed the " + board[target].value + " of " + board[target].suit + "s!");
-                    if (!special && !(board.some(card => card?.value === "king" && card?.suit === "diamond"))) {
+                    print("You killed the " + board[target].value + (board[target].value === "joker" ? "" : (" of " + board[target].suit + "s!")));
+                    if (!special && !(board.some(card => card?.value === "king" && card?.suit === "diamond")) && !(board[target].value === "joker")) {
                         if (symbolMap[hero1] == suits[board[target].suit]) {
                             ammo1[board[target].value] = true;
                         } else if (symbolMap[hero2] == suits[board[target].suit]) {
@@ -2080,8 +2125,8 @@ async function game() {
                 }
             } else {
                 if (damage >= health) {
-                    print("You killed the " + board[target].value + " of " + board[target].suit + "s!");
-                    if (!special && !(board.some(card => card?.value === "king" && card?.suit === "diamond"))) {
+                    print("You killed the " + board[target].value + (board[target].value === "joker" ? "" : (" of " + board[target].suit + "s!")));
+                    if (!special && !(board.some(card => card?.value === "king" && card?.suit === "diamond")) && !(board[target].value === "joker")) {
                         if (symbolMap[hero1] == suits[board[target].suit]) {
                             ammo1[board[target].value] = true;
                         } else if (symbolMap[hero2] == suits[board[target].suit]) {
@@ -2096,7 +2141,7 @@ async function game() {
                     kill = true;
                     board[target] = undefined;
                 } else if (damage >= Math.ceil(health / 2)) {
-                    print("You tapped the " + board[target].value + " of " + board[target].suit + "s!");
+                    print("You tapped the " + board[target].value + (board[target].value === "joker" ? "" : (" of " + board[target].suit + "s!")));
                     board[target].tapped = true;
                 }
             }
