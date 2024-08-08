@@ -34,19 +34,19 @@ lines.forEach((line, i) => {
     });
 });
 
-window.onerror = function(message, source, lineno, colno, error) {
-    // Construct an error message
-    const errorMessage = `
-        Error: ${message}
-        Source: ${source}
-        Line: ${lineno}
-        Column: ${colno}
-        Stack Trace: ${error ? error.stack : 'N/A'}
-    `;
+// window.onerror = function(message, source, lineno, colno, error) {
+//     // Construct an error message
+//     const errorMessage = `
+//         Error: ${message}
+//         Source: ${source}
+//         Line: ${lineno}
+//         Column: ${colno}
+//         Stack Trace: ${error ? error.stack : 'N/A'}
+//     `;
     
-    // Display the error using an alert
-    alert("PLEASE COPY THIS AND SEND TO ME\n\n" + errorMessage);
-};
+//     // Display the error using an alert
+//     alert("PLEASE COPY THIS AND SEND TO ME\n\n" + errorMessage);
+// };
 
 let line = 0;
 let column = 0
