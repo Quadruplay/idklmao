@@ -119,6 +119,7 @@ if (localStorage.getItem('unlocks')) {
 }
 
 let achievementNames = {
+    'kingslayer': 'Kingslayer',
     'piece of cake': 'Piece of Cake',
     'half-baked hero': 'Half-Baked Hero',
     'hard cookie to crack': 'Hard Cookie to Crack',
@@ -132,6 +133,7 @@ let achievementNames = {
 }
 
 let achievementDesc = {
+    'kingslayer': 'Kill a King', //V
     'piece of cake': 'Complete the game on easy mode', //V
     'half-baked hero': 'Complete the game on medium mode', //V
     'hard cookie to crack': 'Complete the game on hard mode', //V
@@ -145,13 +147,14 @@ let achievementDesc = {
 }
 
 let achievementRewards = {
+    'kingslayer': 'Unlock the gem slot', //V
     'piece of cake': 'Change the die rolled to a d7 and unlock medium mode at the shop', //V
     'half-baked hero': 'Change the die rolled to a d8 and unlock hard mode at the shop', //V
     'hard cookie to crack': 'Unlock the Dark Magician at the shop', //V
     'magnificent seven': 'Unlock infinite mode', //V?
     'bad deal': 'Changes the reward of the "New Beggining" achievement to "+2 starting health"', //V
     'true hermit': "Unlock a friend", //V
-    'fool': 'Make the Fool arcana unable to draw itself, doubling the chance for drawin the World arcana', //V
+    'fool': 'Double the chance of the Fool drawing the World arcana by making it unable to draw itself', //V
     'new beginning': '+2 health limit', //V
     'hope': 'Unlock the Bishop hero',
     'bitter aftertaste': 'Enable the quit button in the menu' //V?
@@ -178,6 +181,7 @@ const lose = new Audio('lose.wav'); //V?
 const win = new Audio('win.mp3'); //V?
 
 let achievements = {
+    'kingslayer': false, //kill king
     'piece of cake': false, //easy mode
     'half-baked hero': false, //medium mode
     'hard cookie to crack': false, //hard mode
@@ -418,7 +422,7 @@ let ammoCard = [
 
 let playerCastle = [
     new specialText(["╔════════════════╗"], ['white'], ['black']),
-    new specialText(["║ABCDEFGHIJ      ║"], ['white'], ['black']),
+    new specialText(["║ABCDEFGHIJK     ║"], ['white'], ['black']),
     new specialText(["║WXYZ            ║"], ['white'], ['black']),
     new specialText(["║                ║"], ['white'], ['black']),
     new specialText(["║                ║"], ['white'], ['black']),
@@ -956,7 +960,7 @@ async function time() {
             break;
         case 'a':
             print("Arcanas:");
-            for (let i = 0; i < 30; i++) {
+            for (let i = 0; i < 31; i++) {
                 print("    " + i + "-" + arcanaNames[i] + " - " + (statistics.arcanas[i] ? arcanaDesc[i] : "???"));
             }
             await pause();
@@ -1488,6 +1492,73 @@ async function chooseHeroes() {
     print("Your 1st hero is " + hero1);
     print("Your 2nd hero is " + hero2);
     await pause();
+    achievements.kingslayer ? chooseGem() : game();
+}
+
+let gem = false;
+async function chooseGem() {
+    gem = false;
+    clearScreen();
+    printSpecial(new specialText(["Gems: "+currency.heart+" A  "+currency.spade+" B "+currency.diamond+" C  "+currency.club+" D  "+currency.shield+" E  "+currency.cup+" F"], ["white"], ["black"]).replace("A", ...heart).replace("B", ...spade).replace("C", ...diamond).replace("D", ...club).replace("E", ...shield).replace("F", ...cup));
+    print("Choose a gem to spend for a one-time upgrade:");
+    print("");
+    let inputs = ['n'];
+    if (currency.heart) {
+        printSpecial(new specialText("[A]: +1 health                                                         1 G").replace("G", ...heart));
+        inputs.push('a');
+    }
+    if (currency.spade) {
+        printSpecial(new specialText("[B]: +1 attack from all sources                                        1 G").replace("G", ...spade));
+        inputs.push('b');
+    }
+    if (currency.diamond) {
+        printSpecial(new specialText("[C]: Every time a king appears, no card will appear on the next turn   1 G").replace("G", ...diamond));
+        inputs.push('c');
+    }
+    if (currency.club) {
+        printSpecial(new specialText("[D]: Each non-face enemy card has a chance to spawn tapped             1 G").replace("G", ...club));
+        inputs.push('d');
+    }
+    if (currency.shield) {
+        printSpecial(new specialText("[E]: +1 shield                                                         1 G").replace("G", ...shield));
+        inputs.push('e');
+    }
+    if (currency.cup) {
+        printSpecial(new specialText("[F]: The Dark Magician will advance only 1 space at a time             1 G").replace("G", ...cup));
+        inputs.push('f');
+    }
+    print("[N]: None");
+    let input = '';
+    while (!inputs.includes(input)) {
+        input = await getInput();
+    }
+    switch (input) {
+        case 'a':
+            gem = "heart";
+            currency.heart--;
+            break;
+        case 'b':
+            gem = "spade";
+            currency.spade--;
+            break;
+        case 'c':
+            gem = "diamond";
+            currency.diamond--;
+            break;
+        case 'd':
+            gem = "club";
+            currency.club--;
+            break;
+        case 'e':
+            gem = "shield";
+            currency.shield--;
+            break;
+        case 'f':
+            gem = "cup";
+            currency.cup--;
+            break;
+    }
+    localStorage.setItem("currency", JSON.stringify(currency));
     game();
 }
 
@@ -1636,6 +1707,7 @@ const arcanaNames = {
     27: "The Serpent",
     28: "The Angel",
     29: "Genesis",
+    30: "Eschaton"
 }
 const arcanaDesc = {
     0: "Draw a random Arcana",
@@ -1660,23 +1732,24 @@ const arcanaDesc = {
     19: "Tap untapped, and kill tapped enemies in a chosen column",
     20: "Kill all tapped enemies",
     21: "Draw a chosen Arcana",
-    22: "Use Fire Mage's ability",
-    23: "Use Archer's ability",
-    24: "Use Crossbowman's ability",
-    25: "Use Warhammer Wielder's ability",
-    26: "Use Knight's ability",
-    27: "Use Necromancer's ability",
+    22: "Use Fire Mage's ability for free",
+    23: "Use Archer's ability for free",
+    24: "Use Crossbowman's ability for free",
+    25: "Use Warhammer Wielder's ability for free",
+    26: "Use Knight's ability for free",
+    27: "Use Necromancer's ability for free",
     28: "Upgrade all the ammo cards",
     29: "Discard all your ammo cards and heal that much health up to a maximum of starting health",
+    30: "Surrender"
 }
 
 async function game() {
     achievementsGranted = [];
-    health = 4 + unlocks.health;
+    health = 4 + unlocks.health + +(gem === "heart");
     maxHealth = health;
     if (achievements["new beginning"]) maxHealth += 2;
     if (achievements["bad deal"] && achievements["new beginning"]) health += 2;
-    shields = unlocks.shields;
+    shields = unlocks.shields + +(gem === "shield");
     deckSize = deck.length;
     board = [undefined].multiply(10);
     discard = [];
@@ -1763,8 +1836,8 @@ async function game() {
                 await pause();
             }
             if (board.some(card => card?.value === "joker")) {
-                arcana1 = 0;
-                arcana2 = 0;
+                arcana1 = 31;
+                arcana2 = 31;
                 Object.keys(ammo1).forEach(key => {
                     ammo1[key] = false;
                     ammo2[key] = false;
@@ -2028,6 +2101,7 @@ async function game() {
                     break;
                 case 8:
                     row.join(" Hero 1 hand:");
+                    if (achievements.kingslayer) row.join(" ".multiply(8) + "Gem:");
                     break;
                 case 9:
                     row
@@ -2046,6 +2120,10 @@ async function game() {
                     .join(arcana1
                         ? new specialText([String(arcana1 - 1)], ['yellow'], ['black'])
                         : new specialText(["_"], ['white'], ['black']));
+                    if (achievements.kingslayer) {
+                        row.join(" ".multiply(15 - (arcana1 ? String(arcana1 - 1).length : 1)))
+                        row.join(new specialText(...suits[gem || "none"]));
+                    }
                     break;
                 case 11:
                     row.join(" Hero 2 hand:");
@@ -2074,13 +2152,13 @@ async function game() {
                 case 15:
                     row
                     .join("  ")
-                    .join((board.some(card => (card?.value === "king" && card?.suit === "cup")) && discard.length ? discard : deck).at(-1)
+                    .join(deck.at(-1)
                     ? ammoCard[0].clone()
                     : ammoBlank[0])
-                    if (typeof (board.some(card => (card?.value === "king" && card?.suit === "cup")) && discard.length ? discard : deck).at(-1)?.value === "string") {
+                    if (typeof deck.at(-1)?.value === "string") {
                         row
                         .join(" ")
-                        .join((board.some(card => (card?.value === "king" && card?.suit === "cup")) && (discard.length > 1) ? discard : deck).at(-2)
+                        .join(deck.at(-2) && deck.at(-2)
                         ? ammoCard[0].clone()
                         : ammoBlank[0])
                     }
@@ -2094,7 +2172,7 @@ async function game() {
                     if (typeof deck.at(-1)?.value === "string") {
                         row
                         .join("+")
-                        .join((board.some(card => (card?.value === "king" && card?.suit === "cup")) && (discard.length > 1) ? discard : deck).at(-2)
+                        .join(deck.at(-2) && deck.at(-2)
                         ? ammoCard[1].clone().replace("X", ammoMap[deck.at(-2).value])
                         : ammoBlank[1])
                     }
@@ -2108,7 +2186,7 @@ async function game() {
                     if (typeof deck.at(-1)?.value === "string") {
                         row
                         .join(" ")
-                        .join((board.some(card => (card?.value === "king" && card?.suit === "cup")) && (discard.length > 1) ? discard : deck).at(-2)
+                        .join(deck.at(-2) && deck.at(-2)
                         ? ammoCard[2].clone().replace("Y", ...(suits[deck.at(-2).suit]))
                         : ammoBlank[2])
                     }
@@ -2121,8 +2199,8 @@ async function game() {
         ? ammoCard[3].clone()
         : ammoBlank[3])
         .join(" ")
-        .join(typeof deck.at(-1)?.value === "string"
-        ?((board.some(card => (card?.value === "king" && card?.suit === "cup")) && (discard.length > 1) ? discard : deck).at(-2)
+        .join(typeof deck.at(-1)?.value === "string" && deck.at(-2)
+        ?(deck.at(-2)
         ? ammoCard[3].clone()
         : ammoBlank[3])
         : ""));
@@ -2139,6 +2217,7 @@ async function game() {
             .replace("H", ...(health > 7 ? hp1 : maxHealth > 7 ? hp0 : hpNo))
             .replace("I", ...(health > 8 ? hp1 : maxHealth > 8 ? hp0 : hpNo))
             .replace("J", ...(health > 9 ? hp1 : maxHealth > 9 ? hp0 : hpNo))
+            .replace("K", ...(health > 10 ? hp1 : maxHealth > 10 ? hp0 : hpNo))
             .replace("W", ...(shields > 0 ? hpShield : hpNo))
             .replace("X", ...(shields > 1 ? hpShield : hpNo))
             .replace("Y", ...(shields > 2 ? hpShield : hpNo))
@@ -2221,7 +2300,12 @@ async function game() {
         renderAmmo();
     }
     async function drawCard() {
+        let kingSpawned = false;
+        if ((board.some(card => (card?.value === "king" && card?.suit === "cup")) && discard.length ? discard : deck)?.at(-1)?.value === "king") {
+            kingSpawned = true;
+        }
         let card = (board.some(card => (card?.value === "king" && card?.suit === "cup")) && discard.length ? discard : deck).pop();
+        if (gem === "club" && typeof card?.value === 'number' && Math.random() < 0.25) card.tapped = true;
         board.unshift(card);
         while (board.length > 10) {
             let card = board.pop();
@@ -2250,8 +2334,9 @@ async function game() {
         moveCard.play();
         renderGame();
         await sleep(500);
-        if (typeof card?.value === 'string' || board.some(card => card?.value === "joker")) {
+        if (typeof card?.value === 'string' || (board.some(card => card?.value === "joker") && gem !== "cup")) {
             card = (board.some(card => (card?.value === "king" && card?.suit === "cup")) && discard.length ? discard : deck).pop();
+            if (gem === "club" && typeof card?.value === 'number' && Math.random() < 0.25) card.tapped = true;
             board.unshift(card);
             while (board.length > 10) {
                 let card = board.pop();
@@ -2280,10 +2365,16 @@ async function game() {
             moveCard.play();
             renderGame();
         }
+        if (kingSpawned && gem === "diamond") {
+            deck.push(undefined);
+            renderGame();
+        }
     }
     function renderAmmo() {
         moveTo(0, 38);
-        print("Ammo:");
+        let title = new specialText("Ammo:");
+        if (achievements.kingslayer)
+        printSpecial(title);
         for (let i = 0; i < 4; i++) {
             let row = new specialText();
             for (let [key, value] of Object.entries(ammo1)) {
@@ -2319,7 +2410,6 @@ async function game() {
             }
             let choices = [];
             let specialError = false;
-            let arcanaError = false;
             (turn === 1 ? hero1Deck : hero2Deck).forEach((item, i) => {
                 if (item) {
                     choices.push(ammoMap[item].toLowerCase());
@@ -2341,12 +2431,6 @@ async function game() {
             choices = choices.map(choice => choice === "Ω".toLowerCase() ? "0" : choice);
             if ((turn === 1 ? arcana1 : arcana2) > 0) {
                 choices.push("s")
-                if ([23,24,25,26,27,28].includes(turn === 1 ? arcana1 : arcana2)) {
-                    if (Object.values(ammo1).reduce((acc, val) => acc + val, 0) + Object.values(ammo2).reduce((acc, val) => acc + val, 0) < 1) {
-                        choices.pop();
-                        arcanaError = "[X]: Not enough ammo cards to use this Arcana";
-                    }
-                }
             }
             if (specialError) {
                 print(specialError);
@@ -2360,9 +2444,6 @@ async function game() {
                 ?print("["+choice.toUpperCase()+"]: " + "Attack for " + Object.values(ammo1).reduce((p, c) => p + c, Object.values(ammo2).reduce((p, c) => p + c, 0)) + " + 1d"+getDie()+" damage")
                 :print("["+choice.toUpperCase()+"]: " + "Attack for " + valueMap[invAmmoMap[choice.toUpperCase()]] + " + 1d"+getDie()+" damage");
             });
-            if (arcanaError) {
-                print(arcanaError);
-            }
             let input = '';
                 while (!choices.includes(input)) {
                     input = await getInput();
@@ -2446,6 +2527,7 @@ async function game() {
         });
     }
     function attack(target, damage, special = false) {
+        damage += gem === "spade" ? 1 : 0;
         hitCard.play();
         let kill = false;
         let face = false;
@@ -2471,6 +2553,7 @@ async function game() {
                     }
                     if (board[target].value === "king") {
                         kingKilled = board[target].suit;
+                        grantAchievement('kingslayer');
                     }
                     kill = true;
                     board[target] = undefined;
@@ -2489,6 +2572,7 @@ async function game() {
                     }
                     if (board[target].value === "king") {
                         kingKilled = board[target].suit;
+                        grantAchievement('kingslayer');
                     }
                     kill = true;
                     board[target] = undefined;
@@ -2505,7 +2589,7 @@ async function game() {
         }
         return kill;
     }
-    function specialAttack(hero) {
+    function specialAttack(hero, free = false) {
         return new Promise(async resolve => {
             let ammoMin = 1;
             let ammoMax;
@@ -2526,7 +2610,16 @@ async function game() {
                     ammoMax = Infinity;
                     break;
             }
-            let ammo = await chooseAmmo(ammoMin, ammoMax);
+            let freeAmmo = {
+                "Bishop": [1],
+                "Fire Mage": [1],
+                "Archer": [8],
+                "Crossbowman": [8],
+                "Warhammer Wielder": [10],
+                "Necromancer": [4, 5],
+                "Knight": [6, 6, 6]
+            }
+            let ammo = free ? freeAmmo[hero] : await chooseAmmo(ammoMin, ammoMax);
             switch (hero) {
                 case "Bishop":
                     health++;
@@ -2972,32 +3065,32 @@ async function game() {
                     break;
                 case "The Dragon":
                     {
-                        await specialAttack("Fire Mage");
+                        await specialAttack("Fire Mage", true);
                     }
                     break;
                 case "The Hydra":
                     {
-                        await specialAttack("Archer");
+                        await specialAttack("Archer", true);
                     }
                     break;
                 case "The Eagle":
                     {
-                        await specialAttack("Crossbowman");
+                        await specialAttack("Crossbowman", true);
                     }
                     break;
                 case "The Ox":
                     {
-                        await specialAttack("Warhammer Wielder");
+                        await specialAttack("Warhammer Wielder", true);
                     }
                     break;
                 case "The Lion":
                     {
-                        await specialAttack("Knight");
+                        await specialAttack("Knight", true);
                     }
                     break;
                 case "The Serpent":
                     {
-                        await specialAttack("Necromancer");
+                        await specialAttack("Necromancer", true);
                     }
                     break;
                 case "The Angel":
@@ -3050,6 +3143,9 @@ async function game() {
                         health += lostAmmo;
                         health = Math.min(health, maxHealth);
                     }
+                    break;
+                case "Eschaton":
+                    health = 0;
                     break;
             }
             await sleep(250);
