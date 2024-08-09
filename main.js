@@ -1293,7 +1293,8 @@ async function instructions() {
     print("Face cards represent powerful opponents which never arrive to the battlefield alone. They are always");
     print("accompanied by a second, less powerful card. It is highly unlikely that you will be able to defeat them,");
     print("but fortunately, you hold a rare artifact, the Crystal of Time, which allows you to turn back time and");
-    print("try again. The kings, twisted with dark magic will yield magical gems, which may be spent after each battle.");
+    print("try again. The kings, twisted with dark magic will yield magical gems, which may be spent after");
+    print("each battle to unlock permanent upgrades, or before to gain temporary advantages.");
     print("Only using these, may you hope to finally reach the dark magician.");
     print("Good luck!");
     await pause();
