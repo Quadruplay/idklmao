@@ -2372,9 +2372,7 @@ async function game() {
     }
     function renderAmmo() {
         moveTo(0, 38);
-        let title = new specialText("Ammo:");
-        if (achievements.kingslayer)
-        printSpecial(title);
+        print("Ammo:")
         for (let i = 0; i < 4; i++) {
             let row = new specialText();
             for (let [key, value] of Object.entries(ammo1)) {
@@ -2409,10 +2407,12 @@ async function game() {
                 printSpecial(row);
             }
             let choices = [];
+            let choicesMap = {};
             let specialError = false;
             (turn === 1 ? hero1Deck : hero2Deck).forEach((item, i) => {
                 if (item) {
                     choices.push(ammoMap[item].toLowerCase());
+                    choicesMap[ammoMap[item].toLowerCase()] = i;
                     if (item === 1) {
                         if (Object.values(ammo1).reduce((acc, val) => acc + val, 0) + Object.values(ammo2).reduce((acc, val) => acc + val, 0) < 1) {
                             choices.pop();
@@ -2460,14 +2460,12 @@ async function game() {
                         await useArcana(arcanaNames[(turn === 1 ? arcana1 : arcana2) - 1]);
                         break;
                     default:
-                        with(turn === 1 ? hero1Deck : hero2Deck) {
-                            multiply(1)[indexOf(invAmmoMap[input.toUpperCase()])] = false;
-                        }
+                        if (turn === 1) {
+                            hero1Deck[input === "0" ? hero1Deck.indexOf("priest") : choicesMap[input]] = false
+                        } else
+                            hero2Deck[input === "0" ? hero2Deck.indexOf("priest") : choicesMap[input]] = false
                         let damage = valueMap[invAmmoMap[input.toUpperCase()]];
                         if (input === "0") {
-                            with(turn === 1 ? hero1Deck : hero2Deck) {
-                                multiply(1)[indexOf(0)] = false;
-                            }
                             damage = Object.values(ammo1).reduce((p, c) => p + c, Object.values(ammo2).reduce((p, c) => p + c, 0));
                         }
                         let roll = Math.floor(Math.random() * getDie()) + 1;
@@ -2857,9 +2855,9 @@ async function game() {
                 case "The Hierophant":
                     {
                         if (turn === 1) {
-                            hero1Deck[0] = ["priest"];
+                            hero1Deck[0] = "priest";
                         } else {
-                            hero2Deck[0] = ["priest"];
+                            hero2Deck[0] = "priest";
                         }
                     }
                     break;
