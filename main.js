@@ -16,13 +16,13 @@ String.prototype.replaceAll = function (search, replacement) {
 };
 let divs = [];
 const main = document.getElementById('main');
-for (let i = 0; i < 60; i++) {
+for (let i = 0; i < 80; i++) {
     divs.push(main.appendChild(document.createElement('div')));
 }
 let lines = [];
 divs.forEach((div, i) => {
     let columns = []
-    for (let j=0; j<240; j++) {
+    for (let j=0; j<200; j++) {
         columns.push(div.appendChild(document.createElement('span')));
     }
     lines.push(columns);
@@ -1710,21 +1710,21 @@ async function game() {
                 });
                 renderGame();
                 moveTo(0, 44);
-                clearLines(43, 60);
+                clearLines(43, 80);
                 print("The King of War is healing all the enemies through their anger");
                 await pause();
             }
             if (board.some(card => card?.value === "king" && card?.suit === "spade")) {
                 renderGame();
                 moveTo(0, 44);
-                clearLines(43, 60);
+                clearLines(43, 80);
                 print("The King of Conquest is empowering all the enemies making them deal more damage to your castle");
                 await pause();
             }
             if (board.some(card => card?.value === "king" && card?.suit === "diamond")) {
                 renderGame();
                 moveTo(0, 44);
-                clearLines(43, 60);
+                clearLines(43, 80);
                 print("The King of Famine is making ammo cards harder to come by");
                 await pause();
             }
@@ -1744,21 +1744,21 @@ async function game() {
                 });
                 renderGame();
                 moveTo(0, 44);
-                clearLines(43, 60);
+                clearLines(43, 80);
                 print("The King of Pestilence is making ammo cards break more easily");
                 await pause();
             }
             if (board.some(card => card?.value === "king" && card?.suit === "shield")) {
                 renderGame();
                 moveTo(0, 44);
-                clearLines(43, 60);
+                clearLines(43, 80);
                 print("The King of Madness is making it harder to get control of the board");
                 await pause();
             }
             if (board.some(card => card?.value === "king" && card?.suit === "cup")) {
                 renderGame();
                 moveTo(0, 44);
-                clearLines(43, 60);
+                clearLines(43, 80);
                 print("The King of Death is making already dead enemies come back to life");
                 await pause();
             }
@@ -1771,7 +1771,7 @@ async function game() {
                 });
                 renderGame();
                 moveTo(0, 44);
-                clearLines(43, 60);
+                clearLines(43, 80);
                 print("The Dark Magician is removing all sources of power from the heroes");
                 await pause();
             }
@@ -2305,7 +2305,7 @@ async function game() {
     function heroTurn() {
         return new Promise(async resolve => {
             moveTo(0, 44);
-            clearLines(43, 60);
+            clearLines(43, 80);
             print(turn === 1 ? hero1 + "'s turn!" : hero2 + "'s turn!");
             for (let i = 0; i < 4; i++) {
                 let row = new specialText();
@@ -2353,7 +2353,7 @@ async function game() {
             }
             choices.forEach(choice => {
                 choice === "a"
-                ?print("["+choice.toUpperCase()+"]: " + classAbilityDesc[turn === 1 ? hero1 : hero2])
+                ?print("["+choice.toUpperCase()+"]: " + classAbilityDesc[turn === 1 ? hero1 : hero2].replaceAll("6", getDie()))
                 :choice === "s"
                 ?print("["+choice.toUpperCase()+"]: " + String((turn === 1 ? arcana1 : arcana2) - 1) + "-" + arcanaNames[(turn === 1 ? arcana1 : arcana2) - 1] + " - " + arcanaDesc[(turn === 1 ? arcana1 : arcana2) - 1])
                 :choice === "0"
@@ -2625,7 +2625,7 @@ async function game() {
     function chooseAmmo(min, max) {
         return new Promise(async resolve => {
             moveTo(0, 44);
-            clearLines(43, 60);
+            clearLines(43, 80);
             min !== max
             ? print("Choose " + min + " to " + max + " ammo cards:")
             : min === 1
@@ -2677,7 +2677,7 @@ async function game() {
             let choice2 = Math.floor(Math.random() * (22 + unlocks.arcana));
             let choice3 = Math.floor(Math.random() * (22 + unlocks.arcana));
             moveTo(0, 44);
-            clearLines(43, 60);
+            clearLines(43, 80);
             print("Choose an Arcana:");
             print("[A]: " + choice1 + "-" + arcanaNames[choice1]);
             print("[B]: " + choice2 + "-" + arcanaNames[choice2]);
@@ -3061,7 +3061,7 @@ async function game() {
         return new Promise(async resolve => {
             let choice = 0;
             moveTo(0, 44);
-            clearLines(43, 60);
+            clearLines(43, 80);
             print("Choose an Arcana:");
             print("[A]: " + choice + "-" + arcanaNames[choice]);
             print("[B]: Choose a different Arcana");
@@ -3071,7 +3071,7 @@ async function game() {
                 if (input === 'b') {
                     choice = (choice + 1) % (22 + unlocks.arcana);
                     moveTo(0, 44);
-                    clearLines(43, 60);
+                    clearLines(43, 80);
                     print("Choose an Arcana:");
                     print("[A]: " + choice + "-" + arcanaNames[choice]);
                     print("[B]: Choose a different Arcana");
@@ -3090,7 +3090,7 @@ async function game() {
     function chooseSuit() {
         return new Promise(async resolve => {
             moveTo(0, 44);
-            clearLines(43, 60);
+            clearLines(43, 80);
             print("Choose a suit:");
             print("[A]: Heart");
             print("[B]: Spade");
@@ -3113,7 +3113,7 @@ async function game() {
             while (killCount < 3 && board.some(card => card) && damage > 0) {
                 let target = await chooseTarget("Choose an enemy to target. Remaining damage: " + damage, "single");
                 moveTo(0, 44);
-                clearLines(43, 60);
+                clearLines(43, 80);
                 print("Remaining damage: " + damage);
                 print("Choose how much damage to deal to the " + board[target].value + " of " + board[target].suit + "s:");
                 let inputs = [];
