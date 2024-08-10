@@ -34,10 +34,12 @@ lines.forEach((line, i) => {
     });
 });
 
+let setSeed = false;
 let seed = Date.now();
+const mod = 2**31;
 Math.random = function () {
-    seed = (seed * 9301 + 49297) % 233280;
-    return seed / 233280;
+    seed = (seed * 22695477 + 1) % mod;
+    return seed / mod;
 }
 Math.seed = function (s) {
     seed = s || Date.now();
@@ -175,7 +177,7 @@ function getDie() {
 
 let achievementsGranted = [];
 function grantAchievement(achievement) {
-    if (achievements[achievement]) return false;
+    if (achievements[achievement] || setSeed) return false;
     achievements[achievement] = true;
     achievementsGranted.push(achievement);
     localStorage.setItem('achievements', JSON.stringify(achievements));
@@ -837,6 +839,25 @@ async function getInput() {
     });
 }
 
+async function getString() {
+    let string = '';
+    let currentLine = line;
+    while (true) {
+        moveTo(0, currentLine);
+        clearLine(currentLine);
+        print(string);
+        let key = await getInput();
+        if (key === 'enter') {
+            break;
+        } else if (key === 'backspace') {
+            string = string.slice(0, -1);
+        } else if (key.length === 1) {
+            string += key;
+        }
+    }
+    return string;
+}
+
 async function isLineEmpty(line) {
     return lines[line].every(char => char.textContent === nbsp);
 }
@@ -884,7 +905,7 @@ async function menu() {
     }
     switch (input) {
         case 's':
-            chooseDifficulty();
+            chooseSeed();
             break;
         case 'u':
             shop();
@@ -1298,6 +1319,21 @@ async function instructions() {
     print("Good luck!");
     await pause();
     menu();
+}
+
+async function chooseSeed() {
+    clearScreen();
+    print("Enter seed (leave empty to get a random seed, setting a seed stops you from getting achievements and gems):");
+    let input = await getString();
+    let hash = parseInt(input) || 0;
+    if (hash === 0) for (let i = 0; i < input.length; i++) {
+        let char = input.charCodeAt(i);
+        hash = (hash << 5) - hash + char;
+        hash = hash & hash; // Convert to 32-bit integer
+    }
+    setSeed = input.length || false;
+    Math.seed(Math.abs(hash) || undefined);
+    chooseDifficulty();
 }
 
 let difficulty = '';
@@ -2473,11 +2509,12 @@ async function game() {
                         attack(target, damage + roll);
                         break;
                 }
+                renderGame();
                 await pause();
                 if (kingKilled) {
                     statistics.total[kingKilled]++;
                     localStorage.setItem("statistics", JSON.stringify(statistics));
-                    currency[kingKilled]++;
+                    if (!setSeed) currency[kingKilled]++;
                     kingKilled = false;
                     localStorage.setItem("currency", JSON.stringify(currency));
                     await chooseArcana();
