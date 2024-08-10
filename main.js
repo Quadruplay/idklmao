@@ -37,8 +37,9 @@ lines.forEach((line, i) => {
 let setSeed = false;
 let seed = Date.now();
 const mod = 2**31;
+const mod_1 = 2**31 - 1;
 Math.random = function () {
-    seed = (seed * 22695477 + 1) % mod;
+    seed = (seed * 22695477 + 1) & mod_1;
     return seed / mod;
 }
 Math.seed = function (s) {
