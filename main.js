@@ -34,6 +34,15 @@ lines.forEach((line, i) => {
     });
 });
 
+let seed = Date.now();
+Math.random = function () {
+    seed = (seed * 9301 + 49297) % 233280;
+    return seed / 233280;
+}
+Math.seed = function (s) {
+    seed = s || Date.now();
+}
+
 // window.onerror = function(message, source, lineno, colno, error) {
 //     // Construct an error message
 //     const errorMessage = `
@@ -148,9 +157,9 @@ let achievementDesc = {
 
 let achievementRewards = {
     'kingslayer': 'Unlock the gem slot', //V
-    'piece of cake': 'Change the die rolled to a d7 and unlock medium mode at the shop', //V
-    'half-baked hero': 'Change the die rolled to a d8 and unlock hard mode at the shop', //V
-    'hard cookie to crack': 'Unlock the Dark Magician at the shop', //V
+    'piece of cake': 'Change the die rolled to a d7 and unlock medium mode', //V
+    'half-baked hero': 'Change the die rolled to a d8 and unlock hard mode', //V
+    'hard cookie to crack': 'Unlock the Dark Magician', //V
     'magnificent seven': 'Unlock infinite mode', //V?
     'bad deal': 'Changes the reward of the "New Beggining" achievement to "+2 starting health"', //V
     'true hermit': "Unlock a friend", //V
@@ -999,16 +1008,6 @@ async function shop() {
     clearScreen();
     printSpecial(new specialText(["Gems: "+currency.heart+" A  "+currency.spade+" B "+currency.diamond+" C  "+currency.club+" D  "+currency.shield+" E  "+currency.cup+" F"], ["white"], ["black"]).replace("A", ...heart).replace("B", ...spade).replace("C", ...diamond).replace("D", ...club).replace("E", ...shield).replace("F", ...cup));
     let inputs = ['b'];
-    if (!unlocks.medium && achievements['piece of cake']) {
-        print("");
-        printSpecial(new specialText(["[M]: Unlock medium difficulty.                         2 A  +  2 B"], ["white"], ["black"]).replace("A", ...heart).replace("B", ...spade));
-        inputs.push('m');
-    }
-    if (!unlocks.hard && achievements['half-baked hero']) {
-        print("");
-        printSpecial(new specialText(["[H]: Unlock hard difficulty.                           2 A  +  2 B  +  2 C  +  2 D"], ["white"], ["black"]).replace("A", ...heart).replace("B", ...spade).replace("C", ...diamond).replace("D", ...club));
-        inputs.push('h');
-    }
     if (!unlocks.secret && achievements['hard cookie to crack']) {
         print("");
         printSpecial(new specialText(["[S]: Unlock ??? on hard difficulty.                         2 A  +  2 B  +  2 C  +  2 D  +  2 E  +  2 F"], ["white"], ["black"]).replace("A", ...heart).replace("B", ...spade).replace("C", ...diamond).replace("D", ...club).replace("E", ...shield).replace("F", ...cup));
@@ -1309,9 +1308,9 @@ async function chooseDifficulty() {
     clearScreen();
     print("Choose difficulty:");
     print("[E]asy");
-    if (unlocks.medium) print("[M]edium");
-    if (unlocks.hard) print("[H]ard");
-    if (unlocks.secret) print("[D]ark Magician");
+    if (achievements['piece of cake']) print("[M]edium");
+    if (achievements['half-baked hero']) print("[H]ard");
+    if (achievements['hard cookie to crack']) print("[D]ark Magician");
     if (achievements['magnificent seven']) print("[I]nfinite");
     print("[B]ack");
     let input = '';
