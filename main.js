@@ -937,9 +937,10 @@ async function time() {
     print("");
     print("[P]ast runs");
     print("[A]rcanas");
+    print("[L]ore");
     print("[M]ain menu");
     let input = '';
-    let inputs = ['p', 'a', 'm'];
+    let inputs = ['p', 'a', 'l', 'm'];
     while (!inputs.includes(input)) {
         input = await getInput();
     }
@@ -1000,7 +1001,155 @@ async function time() {
         case 'm':
             menu();
             break;
+        case 'l':
+            lore();
+            break;
     }
+}
+
+async function lore() {
+    clearScreen();
+    print("Lore fragments:");
+    print("Page 1:");
+    print("");
+    print("The Blood-Soaked Crown:");
+    if (statistics.total.heart) {
+        print('    King Armand of the Hearts was once a noble leader, beloved for his courage in battle. But as the years');
+        print("    wore on, the wars he fought in the name of his people consumed him. Whispers of the dark magician");
+        print("    promised endless victories and an empire forged in blood. Armand, driven by his lust for glory, accepted");
+        print("    the dark pact, and his heart turned to iron. Now, he marches at the head of a phantom army, his eyes ");
+        print('    burning with the endless desire for conquest, indifferent to the lives lost under his rule.');
+    } else {
+        print("    Defeat the King of War to unlock this piece of knowledge.");
+    }
+    print("");
+    print("The Unyielding Blade:");
+    if (statistics.total.spade) {
+        // King Valerian of the Spades was known as the Conqueror, his ambition unmatched by any before him. He sought to unite all lands under his rule, believing it to be his divine right. The dark magician saw in Valerian a kindred spirit, and offered him the power to conquer without end. In his hubris, Valerian accepted, unaware that the gift was a curse. Now, he wanders the world as a ghostly tyrant, his conquests never bringing the peace he so desperately craved, his sword forever thirsty for more.
+        print('    King Valerian of the Spades was known as the Conqueror, his ambition unmatched by any before him. He sought');
+        print("    to unite all lands under his rule, believing it to be his divine right. The dark magician saw in Valerian a");
+        print("    kindred spirit, and offered him the power to conquer without end. In his hubris, Valerian accepted, unaware");
+        print("    that the gift was a curse. Now, he wanders the world as a ghostly tyrant, his conquests never bringing the");
+        print('    peace he so desperately craved, his sword forever thirsty for more.');
+    } else {
+        print("    Defeat the King of Conquest to unlock this piece of knowledge.");
+    }
+    print("");
+    print("The Hunger Eternal:");
+    if (statistics.total.diamond) {
+        // King Midas of the Diamonds was a ruler obsessed with wealth, believing that the accumulation of riches would secure his kingdom’s future. But his greed brought ruin. The dark magician promised him the Midas Touch—an ability to turn anything to gold. Blinded by avarice, Midas agreed, but every golden creation siphoned the life from his land. His people starved as their fields turned to dust. Now, Midas roams, a skeletal king surrounded by barren riches, his hunger for wealth an insatiable void that devours all in its path.
+        print('    King Midas of the Diamonds was a ruler obsessed with wealth, believing that the accumulation of riches would');
+        print("    secure his kingdom's future. But his greed brought ruin. The dark magician promised him the Midas Touch—an");
+        print("    ability to turn anything to gold. Blinded by avarice, Midas agreed, but every golden creation siphoned the life");
+        print("    from his land. His people starved as their fields turned to dust. Now, Midas roams, a skeletal king surrounded");
+        print('    by barren riches, his hunger for wealth an insatiable void that devours all in its path.');
+    } else {
+        print("    Defeat the King of Famine to unlock this piece of knowledge.");
+    }
+    print("");
+    print("The Rotting Throne:");
+    if (statistics.total.club) {
+        // King Ulrich of the Clubs was once a healer, revered for his knowledge of medicine and the healing arts. But when a great plague swept through his kingdom, decimating his people, he turned to the dark magician in desperation. The magician offered him a cure—one that would bind him to the disease, giving him control over life and death. But the cure was a lie, and Ulrich became the Plaguebearer, his body a vessel of endless decay. Now, he spreads pestilence with every step, his once-pure intentions twisted into a curse that can never be lifted.
+        print('    King Ulrich of the Clubs was once a healer, revered for his knowledge of medicine and the healing arts. But');
+        print("    when a great plague swept through his kingdom, decimating his people, he turned to the dark magician in");
+        print("    desperation. The magician offered him a cure—one that would bind him to the disease, giving him control over");
+        print("    life and death. But the cure was a lie, and Ulrich became the Plaguebearer, his body a vessel of endless decay.");
+        print("    Now, he spreads pestilence with every step, his once-pure intentions twisted into a curse that can never be lifted.");
+    } else {
+        print("    Defeat the King of Pestilence to unlock this piece of knowledge.");
+    }
+    print("");
+    print("The Shattered Mind:");
+    if (statistics.total.shield) {
+        // King Edmund of the Shields was a wise and just ruler, known for his fairness and his unwavering commitment to justice. But the dark magician preyed upon his deepest fears—the fear of betrayal, of losing his mind. Through insidious whispers, the magician drove Edmund into paranoia and insanity, offering him protection from imagined enemies. Edmund accepted, and his mind shattered, the shield of his sanity splintered beyond repair. Now, he is a mad king, his kingdom a twisted reflection of his broken psyche, where every shadow hides a traitor, and every ally is an enemy.
+        print('    King Edmund of the Shields was a wise and just ruler, known for his fairness and his unwavering commitment to');
+        print("    justice. But the dark magician preyed upon his deepest fears—the fear of betrayal, of losing his mind. Through");
+        print("    insidious whispers, the magician drove Edmund into paranoia and insanity, offering him protection from imagined");
+        print("    enemies. Edmund accepted, and his mind shattered, the shield of his sanity splintered beyond repair. Now, he is");
+        print('    a mad king, his kingdom a twisted reflection of his broken psyche, where every shadow hides a traitor, and every');
+        print("    ally is an enemy.");
+    } else {
+        print("    Defeat the King of Madness to unlock this piece of knowledge.");
+    }
+    print("");
+    print("The Eternal Requiem:");
+    if (statistics.total.cup) {
+        // King Orpheus of the Cups was once a ruler who sought to defy death itself. A man of deep faith and knowledge, he searched for a way to grant his people eternal life. The dark magician, sensing his desperation, offered him the Chalice of Eternity—a cup said to hold the essence of life itself. But when Orpheus drank from it, he found not life, but death eternal. His soul became bound to the realm of the dead, a reaper of souls, forever collecting the lives of others to fuel his own cursed existence. Now, Orpheus wanders the battlefield, his touch draining the life from all he encounters.
+        print('    King Orpheus of the Cups was once a ruler who sought to defy death itself. A man of deep faith and knowledge, he');
+        print("    searched for a way to grant his people eternal life. The dark magician, sensing his desperation, offered him the");
+        print("    Chalice of Eternity—a cup said to hold the essence of life itself. But when Orpheus drank from it, he found not");
+        print("    life, but death eternal. His soul became bound to the realm of the dead, a reaper of souls, forever collecting");
+        print("    the lives of others to fuel his own cursed existence. Now, Orpheus wanders the battlefield, his touch draining");
+        print("    the life from all he encounters.");
+    } else {
+        print("    Defeat the King of Death to unlock this piece of knowledge.");
+    }
+    await pause();
+    clearScreen();
+    print("Lore fragments:");
+    print("Page 2:");
+    print("");
+    print("The Ancient Warning:");
+    if (true) {
+        //    
+        print("    Long before the kingdoms were forged, there existed a prophecy, whispered among the ancient seers. It spoke of a shadow");
+        print("    that would rise from the depths, born of ambition and sorrow, and it would cast the world into eternal night. The seers");
+        print("    foresaw that only through great sacrifice could the shadow be defeated, and the light restored. But as time passed, the");
+        print("    prophecy was forgotten, buried beneath the sands of history, waiting for the day it would be fulfilled.");
+    }
+    print("");
+    print("The Ambitious Scholar:");
+    if (statistics.easy.wins) {
+        //    
+        print("    In a forgotten village, there lived a scholar who sought the truth hidden in the darkest corners of the world. He");
+        print("    was a man of unparalleled intellect and curiosity, known for his desire to uncover the mysteries that others feared.");
+        print("    His pursuit of knowledge led him to ancient ruins, where he discovered a tome of forbidden magic. Though warned");
+        print("    of the dangers, he could not resist its lure. The scholar's name has been lost to time, but the echoes of his deeds");
+        print("    still resonate in the shadowed places of the world.");
+    } else {
+        print("    Beat the game on easy mode to unlock this piece of knowledge.");
+    }
+    print("");
+    print("The Descent:");
+    if (statistics.medium.wins) {
+        //     
+        print("    The scholar, now consumed by the power of the forbidden tome, found himself changing. His once noble heart");
+        print("    grew cold, and the light that had guided him dimmed. Those who had once been his friends and allies turned away,");
+        print("    sensing the darkness that now clung to him. But one remained—a sorceress, bound to him by love and shared");
+        print("    knowledge. She tried to pull him back from the brink, but in his desperation to master the dark magic,");
+        print("    he struck her down. Her death shattered what little humanity he had left, and in that moment, the scholar");
+        print("    was no more. In his place stood the dark magician, a being of pure shadow.");
+    } else {
+        print("    Beat the game on medium mode to unlock this piece of knowledge.");
+    }
+    print("");
+    print("The Rise of Darkness:");
+    if (statistics.hard.wins) {
+        //    
+        print("    With his humanity gone, the dark magician set his sights on the kingdoms of the world. He sought to bend");
+        print("    them to his will, and to do so, he needed allies as powerful and twisted as himself. Using his dark");
+        print("    arts, he corrupted six mighty kings, each representing a force of nature—war, conquest, famine, pestilence,");
+        print("    madness, and death. These cursed kings became his generals, spreading terror and chaos in his name.");
+        print("    As their power grew, so too did the magician's, until the world trembled beneath his shadow.");
+    } else {
+        print("    Beat the game on hard mode to unlock this piece of knowledge.");
+    }
+    print("");
+    print("The Last Stand:");
+    if (statistics.darkMagician.wins) {
+        //     
+        print("    The dark magician's reign seemed unassailable, his power unmatched. But the prophecy of old had");
+        print("    not been forgotten by all. A group of brave heroes, armed with ancient knowledge and the blessings of the light,");
+        print("    rose to challenge him. The battle was fierce, and the cost was great, but in the end, the magician was brought");
+        print("    low. The cursed kings were defeated, their souls freed from his grip, and the magician himself was sealed away,");
+        print("    his dark magic bound by the same forces he had once sought to control. Though the shadow was vanquished, its");
+        print("    remnants still linger, a reminder of the darkness that nearly consumed the world.");
+    } else {
+        print("    Defeat the Dark Magician to unlock this piece of knowledge.");
+    }
+
+    await pause();
+    time();
 }
 
 async function achievementScreen() {
