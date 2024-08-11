@@ -2155,6 +2155,8 @@ async function game() {
                 print(achievementNames[achievement]);
             });
         }
+        print("");
+        print("Seed: " + chosenSeed);
         await pause();
     } else {
         statistics.total.wins++;
@@ -2186,6 +2188,8 @@ async function game() {
                 print(achievementNames[achievement]);
             });
         }
+        print("");
+        print("Seed: " + chosenSeed);
         await pause();
     }
     statistics.total.games++;
@@ -2193,10 +2197,9 @@ async function game() {
     statistics.total.faceCards += faceCardsKilled;
     statistics.total.kings += bossesKilled;
     localStorage.setItem("statistics", JSON.stringify(statistics));
-    print("Seed: " + chosenSeed);
-    await pause();
     menu();
     function renderGame() {
+        console.log(board);
         clearLines(0, 37);
         moveTo(0, 0);
         opponentCastle.forEach((text, index) => {
@@ -2941,10 +2944,10 @@ async function game() {
                     chosen.push(input);
                     if (ammo1[invAmmoMap[input.toUpperCase()]]) {
                         ammo1[invAmmoMap[input.toUpperCase()]] = false;
-                        discard.push({value: invAmmoMap[input.toUpperCase()], suit: symbolMap[hero1], tapped: true});
+                        discard.push({value: invAmmoMap[input.toUpperCase()], suit: suitNameMap[hero1], tapped: true});
                     } else {
                         ammo2[invAmmoMap[input.toUpperCase()]] = false;
-                        discard.push({value: invAmmoMap[input.toUpperCase()], suit: symbolMap[hero2], tapped: true});
+                        discard.push({value: invAmmoMap[input.toUpperCase()], suit: suitNameMap[hero2], tapped: true});
                     }
                 }
             }
