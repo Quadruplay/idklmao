@@ -2199,7 +2199,6 @@ async function game() {
     localStorage.setItem("statistics", JSON.stringify(statistics));
     menu();
     function renderGame() {
-        console.log(board);
         clearLines(0, 37);
         moveTo(0, 0);
         opponentCastle.forEach((text, index) => {
