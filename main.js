@@ -1504,9 +1504,9 @@ async function chooseDifficulty() {
     print("[B]ack");
     let input = '';
     let inputs = ['e', 'b'];
-    if (unlocks.medium) inputs.push('m');
-    if (unlocks.hard) inputs.push('h');
-    if (unlocks.secret) inputs.push('d');
+    if (achievements['piece of cake']) inputs.push('m');
+    if (achievements['half-baked hero']) inputs.push('h');
+    if (achievements['hard cookie to crack']) inputs.push('d');
     if (achievements['magnificent seven']) inputs.push('i');
     while (!inputs.includes(input)) {
         input = await getInput();
