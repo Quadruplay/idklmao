@@ -1039,10 +1039,10 @@ async function shop() {
         print("");
         switch (unlocks.fool) {
             case 0:
-                printSpecial(new specialText(["[F]: Have the first hero start with the Fool arcana.   1 A  +  1 B  +  1 C"], ["white"], ["black"]).replace("A", ...heart).replace("B", ...diamond).replace("C", ...shield));
+                printSpecial(new specialText(["[F]: Have the first hero start with the Fool arcana.   1 A  +  1 B"], ["white"], ["black"]).replace("A", ...diamond).replace("B", ...club));
                 break;
             case 1:
-                printSpecial(new specialText(["[F]: Have the second hero start with the Fool arcana.  1 A  +  1 B  +  1 C"], ["white"], ["black"]).replace("A", ...spade).replace("B", ...club).replace("C", ...cup));
+                printSpecial(new specialText(["[F]: Have the second hero start with the Fool arcana.  1 A  +  1 B  +  1 C  +  1 D"], ["white"], ["black"]).replace("A", ...diamond).replace("B", ...club).replace("C", ...shield).replace("D", ...cup));
                 break;
         }
         inputs.push('f');
@@ -1156,18 +1156,18 @@ async function shop() {
                 break;
             case 'f':
                 if (unlocks.fool === 0) {
-                    if (currency.heart >= 1 && currency.diamond >= 1 && currency.shield >= 1) {
-                        currency.heart -= 1;
+                    if (currency.diamond >= 1 && currency.club >= 1) {
                         currency.diamond -= 1;
-                        currency.shield -= 1;
+                        currency.club -= 1;
                         unlocks.fool = 1;
                         statistics.arcanas[0] = true;
                         localStorage.setItem("statistics", JSON.stringify(statistics));
                     }
                 } else {
-                    if (currency.spade >= 1 && currency.club >= 1 && currency.cup >= 1) {
-                        currency.spade -= 1;
+                    if (currency.diamond >= 1 && currency.club >= 1 && currency.shield >= 1 && currency.cup >= 1) {
+                        currency.diamond -= 1;
                         currency.club -= 1;
+                        currency.shield -= 1;
                         currency.cup -= 1;
                         unlocks.fool = 2;
                     }
@@ -1290,6 +1290,7 @@ async function shop() {
 async function credits() {
     clearScreen();
     print("Made by Quadruplay");
+    print("Tested by Insula-e");
     print("Idea by https://youtu.be/O3bXsD7r0g8");
     await pause();
     menu();
