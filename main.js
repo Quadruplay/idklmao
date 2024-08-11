@@ -1322,6 +1322,7 @@ async function instructions() {
     menu();
 }
 
+let chosenSeed = 0;
 async function chooseSeed() {
     clearScreen();
     print("Enter seed (leave empty to get a random seed, setting a seed stops you from getting achievements and gems):");
@@ -1334,6 +1335,7 @@ async function chooseSeed() {
     }
     setSeed = input.length || false;
     Math.seed(Math.abs(hash) || undefined);
+    chosenSeed = seed;
     chooseDifficulty();
 }
 
@@ -2041,6 +2043,8 @@ async function game() {
     statistics.total.faceCards += faceCardsKilled;
     statistics.total.kings += bossesKilled;
     localStorage.setItem("statistics", JSON.stringify(statistics));
+    print("Seed: " + chosenSeed);
+    await pause();
     menu();
     function renderGame() {
         clearLines(0, 37);
