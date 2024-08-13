@@ -208,7 +208,7 @@ let achievements = {
 if (localStorage.getItem('achievements')) {
     let achievementsLoaded = JSON.parse(localStorage.getItem('achievements'));
     for (let key in achievementsLoaded) {
-        achievements[key] = achievementsLoaded[key];
+        if (achievements[key] !== undefined) achievements[key] = achievementsLoaded[key];
     }
     if (Object.keys(achievements).length !== Object.keys(achievementsLoaded).length) {
         localStorage.setItem('achievements', JSON.stringify(achievements));
