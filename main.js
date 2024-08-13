@@ -11,12 +11,6 @@ Array.prototype.shuffle = function () {
 Array.prototype.random = function () {
     return this[Math.floor(Math.random() * this.length)];
 };
-Array.prototype.swap = function (i, j) {
-    let temp = this[i];
-    this[i] = this[j];
-    this[j] = temp;
-    return this;
-};
 String.prototype.replaceAll = function (search, replacement) {
     return this.split(search).join(replacement);
 };
@@ -147,8 +141,7 @@ let achievementNames = {
     'fool': 'Fool',
     'new beginning': 'New Beginning',
     'hope': 'Hope',
-    'bitter aftertaste': 'Bitter Aftertaste',
-    'the end': 'The End'
+    'bitter aftertaste': 'Bitter Aftertaste'
 }
 
 let achievementDesc = {
@@ -162,8 +155,7 @@ let achievementDesc = {
     'fool': 'Draw the Fool arcana using the Fool arcana', //V
     'new beginning': 'Heal to 8 health using the Genesis arcana', //V
     'hope': 'Attack a King with an attack of power 1', //V
-    'bitter aftertaste': 'Die after defeating all six bosses', //V
-    'the end': "Free the Dark Magician's victims from their eternal torment" //NYI
+    'bitter aftertaste': 'Die after defeating all six bosses' //V
 }
 
 let achievementRewards = {
@@ -171,14 +163,13 @@ let achievementRewards = {
     'piece of cake': 'Change the die rolled to a d7 and unlock medium mode', //V
     'half-baked hero': 'Change the die rolled to a d8 and unlock hard mode', //V
     'hard cookie to crack': 'Unlock the Dark Magician', //V
-    'magnificent seven': 'Unlock infinite and absolution modes', //V?
+    'magnificent seven': 'Unlock infinite mode', //V?
     'bad deal': 'Changes the reward of the "New Beggining" achievement to "+2 starting health"', //V
     'true hermit': "Unlock a friend", //V
     'fool': 'Double the chance of the Fool drawing the World arcana by making it unable to draw itself', //V
     'new beginning': '+2 health limit', //V
     'hope': 'Unlock the Bishop hero',
-    'bitter aftertaste': 'Enable the quit button in the menu', //V?
-    'the end': 'NYI'
+    'bitter aftertaste': 'Enable the quit button in the menu' //V?
 }
 
 function getDie() {
@@ -213,7 +204,6 @@ let achievements = {
     'new beginning': false, //heal to full health using genesis
     'hope': false, //attack king with 0+1
     'bitter aftertaste': false, //die after defeating all six bosses
-    'the end': false, //beat the dlc
 }
 if (localStorage.getItem('achievements')) {
     let achievementsLoaded = JSON.parse(localStorage.getItem('achievements'));
@@ -526,48 +516,6 @@ const queen = [
     new specialText(["◣≡=⁃-⁃=≡{}≡=⁃-⁃=≡◢"], ['black'], ['white']),
 ]
 
-const queenDark = [
-    new specialText(["┌────────────────┐"], ['white'], ['black']),
-    new specialText(["│XQ     /\\      X│"], ['white'], ['black']),
-    new specialText(["│  . . //\\\\ . .  │"], ['white'], ['black']),
-    new specialText(["│  |\\|\\'\\/'/|/|  │"], ['white'], ['black']),
-    new specialText(["│  |="+'""""""""'+"=|  │"], ['white'], ['black']),
-    new specialText(["│  //-._  _.-\\\\  │"], ['white'], ['black']),
-    new specialText(['│ ||"\\ʘ), (ʘ/"│| │'], ['white'], ['black']),
-    new specialText(["│ ||    │,    │| │"], ['white'], ['black']),
-    new specialText(["│ │|\\  .==.  /|│ │"], ['white'], ['black']),
-    new specialText(["│ │|.-"+'"===="'+"-.|│ │"], ['white'], ['black']),
-    new specialText(["│ |│ \\\\≡≡≡≡// _' │"], ['white'], ['black']),
-    new specialText(["│ |│  \\\\##/ / °.\\│"], ['white'], ['black']),
-    new specialText(["│ ||   ├≡≡┤ \\_  /│"], ['white'], ['black']),
-    new specialText(["│ │|   ╞##╡  «↔» │"], ['white'], ['black']),
-    new specialText(["│ │'   ├≡≡┤   §  │"], ['white'], ['black']),
-    new specialText(["│      ╞##╡   §  │"], ['white'], ['black']),
-    new specialText(["│X     ├≡≡┤   §QX│"], ['white'], ['black']),
-    new specialText(["└────────────────┘"], ['white'], ['black']),
-]
-
-const anyDark = [
-    new specialText(["┌────────────────┐"], ['white'], ['black']),
-    new specialText(["│X?             X│"], ['white'], ['black']),
-    new specialText(["│                │"], ['white'], ['black']),
-    new specialText(["│                │"], ['white'], ['black']),
-    new specialText(["│                │"], ['white'], ['black']),
-    new specialText(["│                │"], ['white'], ['black']),
-    new specialText(['│                │'], ['white'], ['black']),
-    new specialText(["│                │"], ['white'], ['black']),
-    new specialText(["│                │"], ['white'], ['black']),
-    new specialText(["│                │"], ['white'], ['black']),
-    new specialText(["│                │"], ['white'], ['black']),
-    new specialText(["│                │"], ['white'], ['black']),
-    new specialText(["│                │"], ['white'], ['black']),
-    new specialText(["│                │"], ['white'], ['black']),
-    new specialText(["│                │"], ['white'], ['black']),
-    new specialText(["│                │"], ['white'], ['black']),
-    new specialText(["│X             ?X│"], ['white'], ['black']),
-    new specialText(["└────────────────┘"], ['white'], ['black']),
-]
-
 const knight = [
     new specialText(["◤≡=⁃-⁃=≡{}≡=⁃-⁃=≡◥"], ['black'], ['white']),
     new specialText(["§XN  _.-¡¡-._   X§"], ['black'], ['white']),
@@ -632,24 +580,24 @@ const blank = [
 ]
 
 const joker = [
-    new specialText(["┌────────────────┐"], ['white'], ['black']),
-    new specialText(["│ J              │"], ['white'], ['black']),
-    new specialText(["│ O              │"], ['white'], ['black']),
-    new specialText(["│ K              │"], ['white'], ['black']),
-    new specialText(["│ E              │"], ['white'], ['black']),
-    new specialText(["│ R              │"], ['white'], ['black']),
-    new specialText(['│                │'], ['white'], ['black']),
-    new specialText(["│                │"], ['white'], ['black']),
-    new specialText(["│                │"], ['white'], ['black']),
-    new specialText(["│                │"], ['white'], ['black']),
-    new specialText(["│                │"], ['white'], ['black']),
-    new specialText(["│                │"], ['white'], ['black']),
-    new specialText(["│              J │"], ['white'], ['black']),
-    new specialText(["│              O │"], ['white'], ['black']),
-    new specialText(["│              K │"], ['white'], ['black']),
-    new specialText(["│              E │"], ['white'], ['black']),
-    new specialText(["│              R │"], ['white'], ['black']),
-    new specialText(["└────────────────┘"], ['white'], ['black']),
+    new specialText(["◤≡=⁃-⁃=≡{}≡=⁃-⁃=≡◥"], ['black'], ['white']),
+    new specialText(["§ J              §"], ['black'], ['white']),
+    new specialText(["║ O              ║"], ['black'], ['white']),
+    new specialText(["│ K              │"], ['black'], ['white']),
+    new specialText([": E              :"], ['black'], ['white']),
+    new specialText(["│ R              │"], ['black'], ['white']),
+    new specialText(['║                ║'], ['black'], ['white']),
+    new specialText(["§                §"], ['black'], ['white']),
+    new specialText(["∩                ∩"], ['black'], ['white']),
+    new specialText(["Ü                Ü"], ['black'], ['white']),
+    new specialText(["§                §"], ['black'], ['white']),
+    new specialText(["║                ║"], ['black'], ['white']),
+    new specialText(["│              J │"], ['black'], ['white']),
+    new specialText([":              O :"], ['black'], ['white']),
+    new specialText(["│              K │"], ['black'], ['white']),
+    new specialText(["║              E ║"], ['black'], ['white']),
+    new specialText(["§              R §"], ['black'], ['white']),
+    new specialText(["◣≡=⁃-⁃=≡{}≡=⁃-⁃=≡◢"], ['black'], ['white']),
 ]
 
 const cardsSpecial = {page, knight, queen, king, blank, joker};
@@ -866,19 +814,12 @@ const shield = ["♡", "red", "white"];
 const cup = ["♢", "black", "white"];
 const none = [" ", "black", "white"];
 
-const moon = ["☾", "blue", "white"]; //queen
-const star = ["★", "yellow", "white"]; //king
-const tree = ["☆", "green", "white"]; //king
-const skull = ["☠", "black", "white"]; //knight
-const sword = ["⚔", "red", "white"]; //page
-const fog = ["░", "gray", "white"]; //king
-
 const hp1 = ["♥", "red", "black"];
 const hp0 = ["♥", "gray", "black"];
 const hpShield = ["♡", "yellow", "black"];
 const hpNo = [" ", "black", "black"];
 
-let suits = {heart, spade, diamond, club, shield, cup, none, moon, star, tree, skull, sword, fog};
+let suits = {heart, spade, diamond, club, shield, cup, none};
 
 let suitsGray = {
     heart: ["♥", "red", "lightgray"],
@@ -887,29 +828,6 @@ let suitsGray = {
     club: ["♣", "black", "lightgray"],
     shield: ["♡", "red", "lightgray"],
     cup: ["♢", "black", "lightgray"],
-    none: [" ", "black", "lightgray"],
-    moon: ["☾", "blue", "lightgray"],
-    star: ["★", "yellow", "lightgray"],
-    tree: ["☆", "green", "lightgray"],
-    skull: ["☠", "black", "lightgray"],
-    sword: ["⚔", "red", "lightgray"],
-    fog: ["░", "gray", "lightgray"]
-}
-
-let suitsBlack = {
-    heart: ["♥", "red", "black"],
-    spade: ["♠", "white", "black"],
-    diamond: ["♦", "red", "black"],
-    club: ["♣", "white", "black"],
-    shield: ["♡", "red", "black"],
-    cup: ["♢", "white", "black"],
-    none: [" ", "black", "black"],
-    moon: ["☾", "blue", "black"],
-    star: ["★", "yellow", "black"],
-    tree: ["☆", "green", "black"],
-    skull: ["☠", "white", "black"],
-    sword: ["⚔", "red", "black"],
-    fog: ["░", "gray", "black"]
 }
 
 let deck = [];
@@ -1583,7 +1501,6 @@ async function chooseDifficulty() {
     if (achievements['half-baked hero']) print("[H]ard");
     if (achievements['hard cookie to crack']) print("[D]ark Magician");
     if (achievements['magnificent seven']) print("[I]nfinite");
-    if (achievements['magnificent seven']) print("[A]bsolution");
     print("[B]ack");
     let input = '';
     let inputs = ['e', 'b'];
@@ -1591,7 +1508,6 @@ async function chooseDifficulty() {
     if (achievements['half-baked hero']) inputs.push('h');
     if (achievements['hard cookie to crack']) inputs.push('d');
     if (achievements['magnificent seven']) inputs.push('i');
-    if (achievements['magnificent seven']) inputs.push('a');
     while (!inputs.includes(input)) {
         input = await getInput();
     }
@@ -1643,37 +1559,23 @@ async function chooseDifficulty() {
                             kingDeck.push({value: i, suit: j, tapped: false});
                         }
                     }
-                    break;
-                case 'a':
-                    for (let j of ["moon", "star", "tree", "skull", "sword", "fog"]) {
-                        for (let i of [4, 5, 6, 7, 8, 9, 10]) {
-                            valueDeck.push({value: i, suit: j, tapped: false});
-                        }
-                        for (let i of ["page", "knight", "queen", "king"]) {
-                            let altBosses = [["moon", "queen"], ["star", "king"], ["tree", "king"], ["skull", "knight"], ["sword", "page"], ["fog", "king"]];
-                            if (altBosses.some(boss => boss[0] === j && boss[1] === i)) {
-                                kingDeck.push({value: i, suit: j, tapped: false});
-                            } else {
-                                faceDeck.push({value: i, suit: j, tapped: false});
-                            }
-                        }
+                    valueDeck.shuffle();
+                    kingDeck.shuffle();
+                    faceDeck.shuffle();
+                    while (valueDeck.length > 0) {
+                        deck.push(valueDeck.pop());
+                        deck.push(kingDeck.pop());
+                        deck.push(valueDeck.pop());
+                        deck.push(valueDeck.pop());
+                        deck.push(faceDeck.pop());
+                        deck.push(valueDeck.pop());
+                        deck.push(valueDeck.pop());
+                        deck.push(faceDeck.pop());
+                        deck.push(valueDeck.pop());
+                        deck.push(valueDeck.pop());
+                        deck.push(faceDeck.pop());
                     }
-                }
-            valueDeck.shuffle();
-            kingDeck.shuffle();
-            faceDeck.shuffle();
-            while (valueDeck.length > 0) {
-                deck.push(valueDeck.pop());
-                deck.push(kingDeck.pop());
-                deck.push(valueDeck.pop());
-                deck.push(valueDeck.pop());
-                deck.push(faceDeck.pop());
-                deck.push(valueDeck.pop());
-                deck.push(valueDeck.pop());
-                deck.push(faceDeck.pop());
-                deck.push(valueDeck.pop());
-                deck.push(valueDeck.pop());
-                deck.push(faceDeck.pop());
+                    break;
             }
             chooseHeroes();
             break;
@@ -1686,7 +1588,7 @@ async function chooseHeroes() {
     clearScreen();
     let heroPool = [];
     let choices = [];
-    if (difficulty !== 'a' && achievements['hope']) {
+    if (difficulty !== 'i' && achievements['hope']) {
         heroPool.push(new specialText(...none).join("[B]ishop"));
         choices.push("b");
     }
@@ -1706,15 +1608,6 @@ async function chooseHeroes() {
             heroPool.push(new specialText(...spade).join("[A]rcher"));
             choices.push("f", "a");
             break;
-        case 'a':
-            heroPool.push(new specialText(...moon).join("[S]hapeshifter"));
-            heroPool.push(new specialText(...star).join("[E]nchanter"));
-            heroPool.push(new specialText(...tree).join("[T]ide Sorcerer"));
-            heroPool.push(new specialText(...skull).join("[A]ssassin"));
-            heroPool.push(new specialText(...sword).join("[W]arlord"));
-            heroPool.push(new specialText(...fog).join("[I]llusionist"));
-            choices.push("s", "e", "t", "a", "w", "i");
-            break
     }
     print("Choose the 1st hero:");
     print("");
@@ -1726,26 +1619,14 @@ async function chooseHeroes() {
         input = await getInput();
     }
     switch (input) {
-        case 's':
-            hero1 = "Shapeshifter";
-            break;
-        case 'e':
-            hero1 = "Enchanter";
-            break;
-        case 'i':
-            hero1 = "Illusionist";
-            break;
-        case 't':
-            hero1 = "Tide Sorcerer";
-            break;
         case 'f':
             hero1 = "Fire Mage";
             break;
         case 'a':
-            hero1 = difficulty === 'a' ? "Assassin" : "Archer";
+            hero1 = "Archer";
             break;
         case 'w':
-            hero1 = difficulty === 'a' ? "Warlord" : "Warhammer Wielder";
+            hero1 = "Warhammer Wielder";
             break;
         case 'c':
             hero1 = "Crossbowman";
@@ -1774,26 +1655,14 @@ async function chooseHeroes() {
         input = await getInput();
     }
     switch (input) {
-        case 's':
-            hero2 = "Shapeshifter";
-            break;
-        case 'e':
-            hero2 = "Enchanter";
-            break;
-        case 'i':
-            hero2 = "Illusionist";
-            break;
-        case 't':
-            hero2 = "Tide Sorcerer";
-            break;
         case 'f':
             hero2 = "Fire Mage";
             break;
         case 'a':
-            hero2 = difficulty === 'a' ? "Assassin" : "Archer";
+            hero2 = "Archer";
             break;
         case 'w':
-            hero2 = difficulty === 'a' ? "Warlord" : "Warhammer Wielder";
+            hero2 = "Warhammer Wielder";
             break;
         case 'c':
             hero2 = "Crossbowman";
@@ -1958,12 +1827,6 @@ let symbolMap = {
     "Necromancer": cup,
     "Knight": shield,
     "Bishop": none,
-    "Shapeshifter": moon,
-    "Enchanter": star,
-    "Tide Sorcerer": tree,
-    "Assassin": skull,
-    "Warlord": sword,
-    "Illusionist": fog
 }
 let suitNameMap = {
     "Fire Mage": "heart",
@@ -1972,13 +1835,6 @@ let suitNameMap = {
     "Crossbowman": "diamond",
     "Necromancer": "cup",
     "Knight": "shield",
-    "Bishop": "none",
-    "Shapeshifter": "moon",
-    "Enchanter": "star",
-    "Tide Sorcerer": "tree",
-    "Assassin": "skull",
-    "Warlord": "sword",
-    "Illusionist": "fog"
 }
 
 let valueMap = {
@@ -2002,18 +1858,12 @@ let valueMap = {
 
 const classAbilityDesc = {
     "Fire Mage": "Discard 1 ammo card to tap frontmost card in every column",
-    "Archer": "Discard 1 ammo card to deal its value + 1d6 to frontmost enemy in chosen column and neighboring columns",
+    "Archer": "Discard 1 ammo card to deal its value + 1d"+getDie()+" to frontmost enemy in chosen column and neighboring columns",
     "Warhammer Wielder": "Discard up to 2 ammo cards to deal their value to chosen enemy. If the enemy is killed, deal same damage to adjacent cards",
-    "Crossbowman": "Discard 1 ammo card to deal its value + 2d6 to all enemies in chosen column",
+    "Crossbowman": "Discard 1 ammo card to deal its value + 2d"+getDie()+" to all enemies in chosen column",
     "Necromancer": "Discard up to 3 ammo cards to swap your hand with them",
     "Knight": "Discard any number of ammo cards to deal their value split freely among up to 3 chosen enemies",
-    "Bishop": "Discard 1 ammo card to heal 1 health",
-    "Shapeshifter": "You shouldn't be reading this (really, if you are, something went wrong)",
-    "Enchanter": "Discard any amount of ammo cards. If their total value is 10 or more, draw a Fool arcana",
-    "Tide Sorcerer": "Discard 1 ammo card to push back all enemies",
-    "Assassin": "Discard 1 ammo card to attack a chosen enemy for its value + 1d6. If the enemy is killed, your turn continues",
-    "Warlord": "Discard any amount of ammo cards to deal twice the amount of damage to all enemies",
-    "Illusionist": "Discard 1 ammo card to force enemies in every column to attack each other"
+    "Bishop": "Discard 1 ammo card to heal 1 health"
 }
 const arcanaNames = {
     0: "The Fool",
@@ -2187,59 +2037,6 @@ async function game() {
                 print("The Dark Magician is removing all sources of power from the heroes");
                 await pause();
             }
-            if (board.some(card => card?.value === "queen" && card?.suit === "moon")) {
-                renderGame();
-                moveTo(0, 44);
-                clearLines(43, 80);
-                print("The Queen of Sorrow is eclipsing the moonlight, making it harder to see the enemies"); //V
-                await pause();
-            }
-            if (board.some(card => card?.value === "king" && card?.suit === "star")) {
-                renderGame();
-                moveTo(0, 44);
-                clearLines(43, 80);
-                print("The King of Truth is deflecting your attacks towards your arcana cards"); //V
-                await pause();
-            }
-            if (board.some(card => card?.value === "king" && card?.suit === "tree")) {
-                renderGame();
-                moveTo(0, 44);
-                clearLines(43, 80);
-                print("The King of Thorns is covering the enemies in thorns, making them deal damage back if not killed instantly"); //V
-                await pause();
-            }
-            if (board.some(card => card?.value === "knight" && card?.suit === "skull")) {
-                for (let i = 0; i < 10; i++) {
-                    if (board[i]?.value === "knight" && board[i]?.suit === "skull") {
-                        board[i].tapped = false;
-                    }
-                }
-                renderGame();
-                moveTo(0, 44);
-                clearLines(43, 80);
-                print("The Knight of Undeath is healing himself"); //V
-                await pause();
-            }
-            if (board.some(card => card?.value === "page" && card?.suit === "sword")) {
-                renderGame();
-                moveTo(0, 44);
-                clearLines(43, 80);
-                print("The Page of Carnage is rushing towards the castle"); //V
-                await pause();
-            }
-            if (board.some(card => card?.value === "king" && card?.suit === "fog")) {
-                if (shields) {
-                    shields--;
-                } else {
-                    health--;
-                }
-                hitCastle.play();
-                renderGame();
-                moveTo(0, 44);
-                clearLines(43, 80);
-                print("The Forlorn King is spreading a poisonous fog, making you take damage every turn"); //V
-                await pause();
-            }
         } else {
             arcanaUsed = false;
             turn = 3 - turn;
@@ -2382,8 +2179,6 @@ async function game() {
             grantAchievement('magnicifent seven');
             statistics.darkMagician.total++;
             statistics.darkMagician.wins++;
-        } else if (difficulty === 'a') {
-            grantAchievement('the end');
         }
         if (achievementsGranted.length > 0) {
             print("");
@@ -2395,36 +2190,6 @@ async function game() {
         }
         print("");
         print("Seed: " + chosenSeed);
-        print("");
-        switch (difficulty) {
-            case 'e':
-                print("The first shadows have fallen, and the path ahead grows darker. You sense the stirring of greater");
-                print("powers, as the veil begins to lift. The true challenge lies beyond the next horizon, where the night grows");
-                print("long and the light fades.");
-                break;
-            case 'm':
-                print("Four kings lie in ruin, their curses broken, but the echoes of their dark ruler resound louder still. The");
-                print("darkness deepens, and a foreboding presence looms on the edge of your journey. Only by confronting");
-                print("the heart of the storm will the truth reveal itself.");
-                break;
-            case 'h':
-                print("Six kings have fallen, their twisted domains laid to waste, yet the darkness does not recede. Instead, it");
-                print("converges, coiling around a figure at the center of it all—the architect of your trials. The time has come");
-                print("to face the dark magician himself, where shadows are born and destinies are rewritten.");
-                break;
-            case 'd':
-                print("The dark magician is no more, his reign of terror brought to an end. But as the dust settles and the");
-                print("dawn breaks, you sense a lingering weight—echoes of a past not yet fully silenced. There are specters");
-                print("yet to be faced, shadows of the dark magician’s earliest conquests. The final chapter awaits, beyond");
-                print("absolution.");
-                break;
-            case 'a':
-                print("The final shadows have been vanquished, and with them, the remnants of a dark legacy that once");
-                print("threatened all. You have unraveled the darkest secrets, faced the oldest evils, and emerged triumphant.");
-                print("The circle is complete, and the dawn of a new era begins. Your journey has reached its end—but the");
-                print("legend of your deeds will echo through eternity.");
-                break;
-        }
         await pause();
     }
     statistics.total.games++;
@@ -2449,29 +2214,17 @@ async function game() {
                     row.join("   ");
                 }
                 if (board[i]) {
-                    if (board.some(card => card?.value === "queen" && card?.suit === "moon")) {
-                        if (board[i].value === "queen" && board[i].suit === "moon") {
+                    switch (typeof board[i].value) {
+                        case 'number':
                             row
-                            .join(queenDark[index].clone().recolor(board[i].tapped ? "lightgray" : "white", "black"))
-                            .replace("X", ...suitsBlack[board[i].suit]);
-                        } else {
+                            .join(cards[board[i].value][index].clone().recolor("black", board[i].tapped ? "lightgray" : "white"))
+                            .replace("X", ...((board[i].tapped ? suitsGray : suits)[board[i].suit]));
+                            break;
+                        case 'string':
                             row
-                            .join(anyDark[index].clone().recolor(board[i].tapped ? "lightgray" : "white", "black"))
-                            .replace("X", ...suitsBlack[board[i].suit]);
-                        }
-                    } else {
-                        switch (typeof board[i].value) {
-                            case 'number':
-                                row
-                                .join(cards[board[i].value][index].clone().recolor("black", board[i].tapped ? "lightgray" : "white"))
-                                .replace("X", ...((board[i].tapped ? suitsGray : suits)[board[i].suit]));
-                                break;
-                            case 'string':
-                                row
-                                .join(cardsSpecial[board[i].value][index].clone().recolor("black", board[i].tapped ? "lightgray" : "white"))
-                                .replace("X", ...((board[i].tapped ? suitsGray : suits)[board[i].suit]));
-                                break;
-                        }
+                            .join(cardsSpecial[board[i].value][index].clone().recolor("black", board[i].tapped ? "lightgray" : "white"))
+                            .replace("X", ...((board[i].tapped ? suitsGray : suits)[board[i].suit]));
+                            break;
                     }
                 } else {
                     row.join(blank[index]);
@@ -2488,107 +2241,53 @@ async function game() {
                     row.join("┌──────────────────────────────────────────┐");
                     break;
                 case 1:
-                    if (difficulty !== 'a') {
-                        row
-                        .join("│X")
-                        .replace("X", ...heart)
-                        .join(board.some(card => (card?.value === "king" && card?.suit === "heart"))
-                        ? new specialText(["The King of War effect is active","  "], ['white','black'], ['red','black'])
-                        : new specialText(["The King of War effect is inactive"], ['white'], ['black']))
-                        .join("       │");
-                    } else {
-                        row.join("│X")
-                        .replace("X", ...moon)
-                        .join(board.some(card => (card?.value === "queen" && card?.suit === "moon"))
-                        ? new specialText(["The Queen of Sorrow effect is active","  "], ['blue','black'], ['black','black'])
-                        : new specialText(["The Queen of Sorrow effect is inactive"], ['white'], ['black']))
-                        .join("   │");
-                    }
+                    row
+                    .join("│X")
+                    .replace("X", ...heart)
+                    .join(board.some(card => (card?.value === "king" && card?.suit === "heart"))
+                    ? new specialText(["The King of War effect is active","  "], ['white','black'], ['red','black'])
+                    : new specialText(["The King of War effect is inactive"], ['white'], ['black']))
+                    .join("       │");
                     break;
                 case 2:
-                    if (difficulty !== 'a') {
-                        row.join("│X")
-                        .replace("X", ...spade)
-                        .join(board.some(card => (card?.value === "king" && card?.suit === "spade"))
-                        ? new specialText(["The King of Conquest effect is active","  "], ['yellow','black'], ['black','black'])
-                        : new specialText(["The King of Conquest effect is inactive"], ['white'], ['black']))
-                        .join("  │");
-                    } else {
-                        row.join("│X")
-                        .replace("X", ...star)
-                        .join(board.some(card => (card?.value === "king" && card?.suit === "star"))
-                        ? new specialText(["The King of Truth effect is active","  "], ['yellow','black'], ['black','black'])
-                        : new specialText(["The King of Truth effect is inactive"], ['white'], ['black']))
-                        .join("     │");
-                    }
+                    row.join("│X")
+                    .replace("X", ...spade)
+                    .join(board.some(card => (card?.value === "king" && card?.suit === "spade"))
+                    ? new specialText(["The King of Conquest effect is active","  "], ['yellow','black'], ['black','black'])
+                    : new specialText(["The King of Conquest effect is inactive"], ['white'], ['black']))
+                    .join("  │");
                     break;
                 case 3:
-                    if (difficulty !== 'a') {
-                        row.join("│X")
-                        .replace("X", ...diamond)
-                        .join(board.some(card => (card?.value === "king" && card?.suit === "diamond"))
-                        ? new specialText(["The King of Famine effect is active","  "], ['white','black'], ['gray','black'])
-                        : new specialText(["The King of Famine effect is inactive"], ['white'], ['black']))
-                        .join("    │");
-                    } else {
-                        row.join("│X")
-                        .replace("X", ...tree)
-                        .join(board.some(card => (card?.value === "king" && card?.suit === "tree"))
-                        ? new specialText(["The King of Thorns effect is active","  "], ['green','black'], ['black','black'])
-                        : new specialText(["The King of Thorns effect is inactive"], ['white'], ['black']))
-                        .join("    │");
-                    }
+                    row.join("│X")
+                    .replace("X", ...diamond)
+                    .join(board.some(card => (card?.value === "king" && card?.suit === "diamond"))
+                    ? new specialText(["The King of Famine effect is active","  "], ['white','black'], ['gray','black'])
+                    : new specialText(["The King of Famine effect is inactive"], ['white'], ['black']))
+                    .join("    │");
                     break;
                 case 4:
-                    if (difficulty !== 'a') {
-                        row.join("│X")
-                        .replace("X", ...club)
-                        .join(board.some(card => (card?.value === "king" && card?.suit === "club"))
-                        ? new specialText(["The King of Pestilence effect is active","  "], ['white','black'], ['green','black'])
-                        : new specialText(["The King of Pestilence effect is inactive"], ['white'], ['black']))
-                        .join("│");
-                    } else {
-                        row.join("│X")
-                        .replace("X", ...skull)
-                        .join(board.some(card => (card?.value === "knight" && card?.suit === "skull"))
-                        ? new specialText(["The Knight of Undeath effect is active","  "], ['black','black'], ['white','black'])
-                        : new specialText(["The Knight of Undeath effect is inactive"], ['white'], ['black']))
-                        .join(" │");
-                    }
+                    row.join("│X")
+                    .replace("X", ...club)
+                    .join(board.some(card => (card?.value === "king" && card?.suit === "club"))
+                    ? new specialText(["The King of Pestilence effect is active","  "], ['white','black'], ['green','black'])
+                    : new specialText(["The King of Pestilence effect is inactive"], ['white'], ['black']))
+                    .join("│");
                     break;
                 case 5:
-                    if (difficulty !== 'a') {
-                        row.join("│X")
-                        .replace("X", ...shield)
-                        .join(board.some(card => (card?.value === "king" && card?.suit === "shield"))
-                        ? new specialText(["The King of Madness effect is active","  "], ['black','black'], ['red','black'])
-                        : new specialText(["The King of Madness effect is inactive"], ['white'], ['black']))
-                        .join("   │");
-                    } else {
-                        row.join("│X")
-                        .replace("X", ...sword)
-                        .join(board.some(card => (card?.value === "page" && card?.suit === "sword"))
-                        ? new specialText(["The Page of Carnage effect is active","  "], ['white','black'], ['red','black'])
-                        : new specialText(["The Page of Carnage effect is inactive"], ['white'], ['black']))
-                        .join("   │");
-                    }
+                    row.join("│X")
+                    .replace("X", ...shield)
+                    .join(board.some(card => (card?.value === "king" && card?.suit === "shield"))
+                    ? new specialText(["The King of Madness effect is active","  "], ['black','black'], ['red','black'])
+                    : new specialText(["The King of Madness effect is inactive"], ['white'], ['black']))
+                    .join("   │");
                     break;
                 case 6:
-                    if (difficulty !== 'a') {
-                        row.join("│X")
-                        .replace("X", ...cup)
-                        .join(board.some(card => (card?.value === "king" && card?.suit === "cup"))
-                        ? new specialText(["The King of Death effect is active","  "], ['black','black'], ['white','black'])
-                        : new specialText(["The King of Death effect is inactive"], ['white'], ['black']))
-                        .join("     │");
-                    } else {
-                        row.join("│X")
-                        .replace("X", ...fog)
-                        .join(board.some(card => (card?.value === "king" && card?.suit === "fog"))
-                        ? new specialText(["The Forlorn King effect is active","  "], ['black','black'], ['white','black'])
-                        : new specialText(["The Forlorn King effect is inactive"], ['white'], ['black']))
-                        .join("      │");
-                    }
+                    row.join("│X")
+                    .replace("X", ...cup)
+                    .join(board.some(card => (card?.value === "king" && card?.suit === "cup"))
+                    ? new specialText(["The King of Death effect is active","  "], ['black','black'], ['white','black'])
+                    : new specialText(["The King of Death effect is inactive"], ['white'], ['black']))
+                    .join("     │");
                     break;
                 case 7:
                     row.join("└──────────────────────────────────────────┘");
@@ -2649,7 +2348,7 @@ async function game() {
                     .join(deck.at(-1)
                     ? ammoCard[0].clone()
                     : ammoBlank[0])
-                    if (typeof deck.at(-1)?.value === "string" || board.some(card => card?.value === "page" && card?.suit === "sword")) {
+                    if (typeof deck.at(-1)?.value === "string") {
                         row
                         .join(" ")
                         .join(deck.at(-2) && deck.at(-2)
@@ -2663,7 +2362,7 @@ async function game() {
                     .join(deck.at(-1)
                     ? ammoCard[1].clone().replace("X", ammoMap[deck.at(-1).value])
                     : ammoBlank[1])
-                    if (typeof deck.at(-1)?.value === "string" || board.some(card => card?.value === "page" && card?.suit === "sword")) {
+                    if (typeof deck.at(-1)?.value === "string") {
                         row
                         .join("+")
                         .join(deck.at(-2) && deck.at(-2)
@@ -2677,7 +2376,7 @@ async function game() {
                     .join(deck.at(-1)
                     ? ammoCard[2].clone().replace("Y", ...(suits[deck.at(-1).suit]))
                     : ammoBlank[2])
-                    if (typeof deck.at(-1)?.value === "string" || board.some(card => card?.value === "page" && card?.suit === "sword")) {
+                    if (typeof deck.at(-1)?.value === "string") {
                         row
                         .join(" ")
                         .join(deck.at(-2) && deck.at(-2)
@@ -2693,7 +2392,7 @@ async function game() {
         ? ammoCard[3].clone()
         : ammoBlank[3])
         .join(" ")
-        .join((typeof deck.at(-1)?.value === "string" || board.some(card => card?.value === "page" && card?.suit === "sword")) && deck.at(-2)
+        .join(typeof deck.at(-1)?.value === "string" && deck.at(-2)
         ?(deck.at(-2)
         ? ammoCard[3].clone()
         : ammoBlank[3])
@@ -2723,29 +2422,17 @@ async function game() {
                     row.join("   ");
                 }
                 if (board[9 - i]) {
-                    if (board.some(card => card?.value === "queen" && card?.suit === "moon")) {
-                        if (board[9 - i].value === "queen" && board[9 - i].suit === "moon") {
+                    switch (typeof board[9 - i].value) {
+                        case 'number':
                             row
-                            .join(queenDark[index].clone().recolor(board[9 - i].tapped ? "lightgray" : "white", "black"))
-                            .replace("X", ...suitsBlack[board[9 - i].suit]);
-                        } else {
+                            .join(cards[board[9 - i].value][index].clone().recolor("black", board[9 - i].tapped ? "lightgray" : "white"))
+                            .replace("X", ...((board[9 - i].tapped ? suitsGray : suits)[board[9 - i].suit]));
+                            break;
+                        case 'string':
                             row
-                            .join(anyDark[index].clone().recolor(board[9 - i].tapped ? "lightgray" : "white", "black"))
-                            .replace("X", ...suitsBlack[board[9 - i].suit]);
-                        }
-                    } else {
-                        switch (typeof board[9 - i].value) {
-                            case 'number':
-                                row
-                                .join(cards[board[9 - i].value][index].clone().recolor("black", board[9 - i].tapped ? "lightgray" : "white"))
-                                .replace("X", ...((board[9 - i].tapped ? suitsGray : suits)[board[9 - i].suit]));
-                                break;
-                            case 'string':
-                                row
-                                .join(cardsSpecial[board[9 - i].value][index].clone().recolor("black", board[9 - i].tapped ? "lightgray" : "white"))
-                                .replace("X", ...((board[9 - i].tapped ? suitsGray : suits)[board[9 - i].suit]));
-                                break;
-                        }
+                            .join(cardsSpecial[board[9 - i].value][index].clone().recolor("black", board[9 - i].tapped ? "lightgray" : "white"))
+                            .replace("X", ...((board[9 - i].tapped ? suitsGray : suits)[board[9 - i].suit]));
+                            break;
                     }
                 } else {
                     row.join(blank[index]);
@@ -2840,7 +2527,7 @@ async function game() {
         moveCard.play();
         renderGame();
         await sleep(500);
-        if (typeof card?.value === 'string' || (board.some(card => card?.value === "joker") && gem !== "cup") || (board.some(card => card?.value === "page" && card?.suit === "sword"))) {
+        if (typeof card?.value === 'string' || (board.some(card => card?.value === "joker") && gem !== "cup")) {
             card = (board.some(card => (card?.value === "king" && card?.suit === "cup")) && discard.length ? discard : deck).pop();
             if (gem === "club" && typeof card?.value === 'number' && Math.random() < 0.25) card.tapped = true;
             board.unshift(card);
@@ -2901,8 +2588,7 @@ async function game() {
         return new Promise(async resolve => {
             moveTo(0, 44);
             clearLines(43, 80);
-            let heroName = turn === 1 ? hero1 : hero2;
-            print(heroName + "'s turn!");
+            print(turn === 1 ? hero1 + "'s turn!" : hero2 + "'s turn!");
             for (let i = 0; i < 4; i++) {
                 let row = new specialText();
                 for (let item of (turn === 1 ? hero1Deck : hero2Deck)) {
@@ -2932,7 +2618,6 @@ async function game() {
                             }
                         }
                         choices.push("1");
-                        choicesMap["1"] = i;
                     }
                 }
             });
@@ -2945,7 +2630,7 @@ async function game() {
             }
             choices.forEach(choice => {
                 choice === "a"
-                ?print("["+choice.toUpperCase()+"]: " + classAbilityDesc[heroName === "Shapeshifter" ? turn === 1 ? hero2 : hero1 : heroName].replaceAll("6", getDie()))
+                ?print("["+choice.toUpperCase()+"]: " + classAbilityDesc[turn === 1 ? hero1 : hero2].replaceAll("6", getDie()))
                 :choice === "s"
                 ?print("["+choice.toUpperCase()+"]: " + String((turn === 1 ? arcana1 : arcana2) - 1) + "-" + arcanaNames[(turn === 1 ? arcana1 : arcana2) - 1] + " - " + arcanaDesc[(turn === 1 ? arcana1 : arcana2) - 1])
                 :choice === "0"
@@ -2961,7 +2646,7 @@ async function game() {
                         with(turn === 1 ? hero1Deck : hero2Deck) {
                             multiply(1)[indexOf(1)] = false;
                         }
-                        await specialAttack(heroName === "Shapeshifter" ? turn === 1 ? hero2 : hero1 : heroName);
+                        await specialAttack(turn === 1 ? hero1 : hero2);
                         renderGame();
                         break;
                     case 's':
@@ -3034,7 +2719,6 @@ async function game() {
         });
     }
     function attack(target, damage, special = false) {
-        let altBosses = [["moon", "queen"], ["star", "king"], ["tree", "king"], ["skull", "knight"], ["sword", "page"], ["fog", "king"]];
         damage += gem === "spade" ? 1 : 0;
         hitCard.play();
         let kill = false;
@@ -3046,17 +2730,6 @@ async function game() {
             grantAchievement('hope');
         }
         if (board[target]) {
-            if (board[target].value === "king" && board[target].suit === "star") {
-                if (arcana1 || arcana2) {
-                    if (arcana1) {
-                        arcana1 = 0;
-                    } else {
-                        arcana2 = 0;
-                    }
-                    print("The King of Truth deflects your attack!");
-                    return false;
-                }
-            }
             let health = valueMap[board[target].value];
             if (board[target].tapped) {
                 if (damage >= Math.ceil(health / 2)) {
@@ -3070,10 +2743,7 @@ async function game() {
                     } else {
                         discard.push({value: board[target].value, suit: board[target].suit, tapped: true});
                     }
-                    if (difficulty !== 'a' && board[target].value === "king") {
-                        kingKilled = board[target].suit;
-                        grantAchievement('kingslayer');
-                    } else if (difficulty === 'a' && altBosses.some(boss => boss[0] === board[target].suit && board[target].value === boss[1])) {
+                    if (board[target].value === "king") {
                         kingKilled = board[target].suit;
                         grantAchievement('kingslayer');
                     }
@@ -3092,24 +2762,13 @@ async function game() {
                     } else {
                         discard.push({value: board[target].value, suit: board[target].suit, tapped: true});
                     }
-                    if (difficulty !== 'a' && board[target].value === "king") {
-                        kingKilled = board[target].suit;
-                        grantAchievement('kingslayer');
-                    } else if (difficulty === 'a' && altBosses.some(boss => boss[0] === board[target].suit && board[target].value === boss[1])) {
+                    if (board[target].value === "king") {
                         kingKilled = board[target].suit;
                         grantAchievement('kingslayer');
                     }
                     kill = true;
                     board[target] = undefined;
                 } else if (damage >= Math.ceil(health / 2)) {
-                    if (board.some(card => card?.value === "king" && card?.suit === "tree")) {
-                        if (shields) {
-                            shields--;
-                        } else {
-                            health--;
-                        }
-                        hitCastle.play();
-                    }
                     print("You tapped the " + (board[target].value === "joker" ? "Dark Magician" : board[target].value) + (board[target].value === "joker" ? "" : (" of " + board[target].suit + "s!")));
                     board[target].tapped = true;
                 }
@@ -3131,9 +2790,6 @@ async function game() {
                 case "Fire Mage":
                 case "Archer":
                 case "Crossbowman":
-                case "Tide Sorcerer":
-                case "Assassin":
-                case "Illusionist":
                     ammoMax = 1;
                     break;
                 case "Warhammer Wielder":
@@ -3143,8 +2799,6 @@ async function game() {
                     ammoMax = 3;
                     break;
                 case "Knight":
-                case "Enchanter":
-                case "Warlord":
                     ammoMax = Infinity;
                     break;
             }
@@ -3159,112 +2813,6 @@ async function game() {
             }
             let ammo = free ? freeAmmo[hero] : await chooseAmmo(ammoMin, ammoMax);
             switch (hero) {
-                case "Illusionist":
-                    {
-                        let i = 0;
-                        while (i < 5) {
-                            let valueFront = board[9 - i]?.value;
-                            let valueBack = board[i]?.value;
-                            if (valueBack === undefined) {
-                                board.swap(9 - i, i);
-                            } else if (valueFront === undefined) {
-                            } else {
-                                let isFaceFront = typeof valueFront === 'string';
-                                let isFaceBack = typeof valueBack === 'string';
-                                let isTappedFront = board[9 - i].tapped;
-                                let isTappedBack = board[i].tapped;
-                                let strengthFront = valueMap[valueFront];
-                                let strengthBack = valueMap[valueBack];
-                                if (isFaceFront === isFaceBack) {
-                                    if (isTappedFront === isTappedBack) {
-                                        if (strengthFront > strengthBack) {
-                                            board.swap(9 - i, i);
-                                            board[9 - i] = undefined
-                                        } else {
-                                            board[9 - i] = undefined;
-                                        }
-                                    } else {
-                                        if (isTappedFront) {
-                                            board[9 - i] = undefined;
-                                            board[i].tapped = true;
-                                        } else {
-                                            board.swap(9 - i, i);
-                                            board[9 - i] = undefined;
-                                            board[i].tapped = true;
-                                        }
-                                    }
-                                } else {
-                                    if (isFaceFront) {
-                                        board.swap(9 - i, i);
-                                        board[9 - i] = undefined;
-                                    } else {
-                                        board[9 - i] = undefined;
-                                    }
-                                }
-                            }
-                            i++;
-                        }
-                    }
-                    break;
-                case "Warlord":
-                    {
-                        let damage = ammo.length * 2;
-                        for (let i = 0; i < 10; i++) {
-                            if (board[i]) {
-                                attack(i, damage, true);
-                            }
-                        }
-                    }
-                    break;
-                case "Assassin":
-                    {
-                        let damage = ammo.reduce((acc, val) => acc + valueMap[val], 0);
-                        let roll = Math.floor(Math.random() * getDie()) + 1;
-                        let target = await chooseTarget("Choose a target to attack for " + damage + " + " + roll + " damage", "single");
-                        if (attack(target, damage + roll, true)) {
-                            arcanaUsed = true;
-                        }
-                    }
-                    break;
-                case "Tide Sorcerer":
-                    {
-                        let i = 0;
-                        while (i < 10) {
-                            if (board[i] !== undefined) {
-                                let j = i;
-                                while (j > 0 && board[j - 1] === undefined) {
-                                    board.swap(j, j - 1);
-                                    j--;
-                                    moveCard.play();
-                                    renderGame();
-                                    await sleep(125);
-                                }
-                            }
-                            i++
-                        }
-                        deck.push(board.shift());
-                        await sleep(250);
-                        moveCard.play();
-                        renderGame();
-                        deck.push(board.shift());
-                        await sleep(250);
-                        moveCard.play();
-                        renderGame();
-                        
-                    }
-                    break;
-                case "Enchanter":
-                    {
-                        let damage = ammo.reduce((acc, val) => acc + valueMap[val], 0);
-                        if (damage >= 10) {
-                            if (turn === 1) {
-                                arcana1 = 1;
-                            } else {
-                                arcana2 = 1;
-                            }
-                        }
-                    }
-                    break;
                 case "Bishop":
                     health++;
                     health = Math.min(health, maxHealth);
