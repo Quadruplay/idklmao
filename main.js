@@ -2070,9 +2070,6 @@ async function game() {
     if (achievements["bad deal"] && achievements["new beginning"]) health += 2;
     shields = unlocks.shields + +(gem === "spade");
     deckSize = deck.length;
-
-    deck = [deck[0]];
-
     board = [undefined].multiply(10);
     discard = [];
     Object.keys(ammo1).forEach(key => {
