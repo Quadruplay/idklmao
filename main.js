@@ -60,6 +60,133 @@ Math.seed = function (s) {
 //     alert("PLEASE COPY THIS AND SEND TO ME\n\n" + errorMessage);
 // };
 
+let songsLoaded = 0;
+
+const main_menu = new Audio();
+main_menu.oncanplaythrough = () => {
+    songsLoaded++;
+    main_menu.oncanplaythrough = null;
+}
+main_menu.src = 'main_menu.wav';
+const battle_start = new Audio();
+battle_start.oncanplaythrough = () => {
+    songsLoaded++;
+    battle_start.oncanplaythrough = null;
+}
+battle_start.src = 'battle_start.wav';
+const battle_loop = new Audio();
+battle_loop.oncanplaythrough = () => {
+    songsLoaded++;
+    battle_loop.oncanplaythrough = null;
+}
+battle_loop.src = 'battle_loop.wav';
+const battle_climax = new Audio();
+battle_climax.oncanplaythrough = () => {
+    songsLoaded++;
+    battle_climax.oncanplaythrough = null;
+}
+battle_climax.src = 'battle_climax.wav';
+const phase1_start = new Audio();
+phase1_start.oncanplaythrough = () => {
+    songsLoaded++;
+    phase1_start.oncanplaythrough = null;
+}
+phase1_start.src = 'phase1_start.wav';
+const phase1_loop = new Audio();
+phase1_loop.oncanplaythrough = () => {
+    songsLoaded++;
+    phase1_loop.oncanplaythrough = null;
+}
+phase1_loop.src = 'phase1_loop.wav';
+const phase2_start = new Audio();
+phase2_start.oncanplaythrough = () => {
+    songsLoaded++;
+    phase2_start.oncanplaythrough = null;
+}
+phase2_start.src = 'phase2_start.wav';
+const phase2_loop = new Audio();
+phase2_loop.oncanplaythrough = () => {
+    songsLoaded++;
+    phase2_loop.oncanplaythrough = null;
+}
+phase2_loop.src = 'phase2_loop.wav';
+
+const musicLibrary = {main_menu, battle_start, battle_loop, battle_climax, phase1_start, phase1_loop, phase2_start, phase2_loop};
+
+async function musicLoaded() {
+    return new Promise(resolve => {
+        if (songsLoaded === 4) {
+            resolve();
+        } else {
+            setTimeout(() => resolve(musicLoaded()), 100);
+        }
+    });
+}
+
+const musicPlayer = {
+    loop: true,
+    skip: false,
+    currentSong: 'main_menu',
+    queue: [],
+    play: async function () {
+        isPlaying = true;
+        return new Promise(async resolve => {
+            if (this.queue.length > 0) {
+                this.currentSong = this.queue.shift();
+            }
+            let playedSong = musicLibrary[this.currentSong];
+            let skipCheck = setInterval(() => {
+                if (this.skip) {
+                    this.skip = false;
+                    playedSong.pause();
+                    playedSong.currentTime = 0;
+                    playedSong.ended = true;
+                    clearInterval(skipCheck);
+                    clearInterval(loopCheck);
+                    resolve(this.loop ? this.play() : undefined);
+                }
+            }, 100);
+            let loopCheck = setInterval(() => {
+                if (this.queue.length) {
+                    playedSong.loop = false;
+                } else {
+                    playedSong.loop = this.loop;
+                }
+            }, 100);
+            let bufferTime = 0.2;
+            playedSong.addEventListener('timeupdate', function() {
+                if (playedSong.currentTime >= playedSong.duration - bufferTime) {
+                    if (playedSong.loop) {
+                        playedSong.currentTime = 0;
+                        playedSong.play();
+                    } else if (this.loop) {
+                        clearInterval(skipCheck);
+                        clearInterval(loopCheck);
+                        resolve(this.play());
+                    } else {
+                        clearInterval(skipCheck);
+                        clearInterval(loopCheck);
+                        resolve();
+                    }
+                }
+            });
+            playedSong.currentTime = 0;
+            playedSong.play();
+            playedSong.onended = () => {
+                if (this.loop) {
+                    clearInterval(skipCheck);
+                    clearInterval(loopCheck);
+                    resolve(this.play());
+                } else {
+                    clearInterval(skipCheck);
+                    clearInterval(loopCheck);
+                    resolve();
+                }
+            }
+        });
+    }
+}
+
 let dieFaces = {
     1: "⚀", 
     2: "⚁", 
@@ -973,6 +1100,10 @@ function clearLines(start, end) {
 }
 
 descent = async () => {
+
+clearScreen();
+await pause();
+musicPlayer.play();
 
 async function menu() {
     clearScreen();
@@ -2063,6 +2194,9 @@ const arcanaDesc = {
 }
 
 async function game() {
+    musicPlayer.queue.push(difficulty === 'd' ? 'phase1_start' : 'battle_start');
+    musicPlayer.queue.push(difficulty === 'd' ? 'phase1_loop' : 'battle_loop');
+    musicPlayer.skip = true;
     achievementsGranted = [];
     health = 4 + unlocks.health + +(gem === "heart");
     maxHealth = health;
@@ -2323,6 +2457,10 @@ async function game() {
             }
         }
     }
+    musicPlayer.loop = false;
+    musicPlayer.skip = true;
+    await sleep(150);
+    musicPlayer.loop = true;
     if (health <= 0) {
         statistics.total.losses++;
         clearScreen();
@@ -2431,6 +2569,9 @@ async function game() {
     statistics.total.faceCards += faceCardsKilled;
     statistics.total.kings += bossesKilled;
     localStorage.setItem("statistics", JSON.stringify(statistics));
+    musicPlayer.currentSong = 'main_menu';
+    musicPlayer.loop = true;
+    musicPlayer.play();
     menu();
     function renderGame() {
         clearLines(0, 37);
@@ -2894,6 +3035,19 @@ async function game() {
             deck.push(undefined);
             renderGame();
         }
+        if (musicPlayer.queue.length === 0 && difficulty !== 'd' && difficulty !== '2') {
+            if (board.some(card => card?.value === "king")) {
+                if (musicPlayer.currentSong !== 'battle_climax') {
+                    musicPlayer.queue.push('battle_climax');
+                    musicPlayer.skip = true;
+                }
+            } else {
+                if (musicPlayer.currentSong !== 'battle_loop' && musicPlayer.currentSong !== 'battle_start') {
+                    musicPlayer.queue.push('battle_loop');
+                    musicPlayer.skip = true;
+                }
+            }
+        }
     }
     function renderAmmo() {
         moveTo(0, 38);
@@ -3136,6 +3290,10 @@ async function game() {
             if (king) bossesKilled++;
             if (face) faceCardsKilled++;
             if (isPhase1) {
+                musicPlayer.loop = false;
+                musicPlayer.skip = true;
+                await sleep(150);
+                musicPlayer.loop = true;
                 clearScreen();
                 win.play();
                 print("You have won");
@@ -3181,6 +3339,10 @@ async function game() {
                 await pause();
                 silence.pause();
                 rumble.pause();
+                musicPlayer.queue = [];
+                musicPlayer.queue.push('phase2_start');
+                musicPlayer.queue.push('phase2_loop');
+                musicPlayer.play();
 
                 let normalCards = [];
                 let faceCards = [];
@@ -3236,6 +3398,19 @@ async function game() {
             }
             hitCastle.play();
             print("The King of Pride makes you pay for your inability!");
+        }
+        if (musicPlayer.queue.length === 0 && difficulty !== 'd' && difficulty !== '2') {
+            if (board.some(card => card?.value === "king")) {
+                if (musicPlayer.currentSong !== 'battle_climax') {
+                    musicPlayer.queue.push('battle_climax');
+                    musicPlayer.skip = true;
+                }
+            } else {
+                if (musicPlayer.currentSong !== 'battle_loop' && musicPlayer.currentSong !== 'battle_start') {
+                    musicPlayer.queue.push('battle_loop');
+                    musicPlayer.skip = true;
+                }
+            }
         }
         return kill;
     }
