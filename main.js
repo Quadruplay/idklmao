@@ -2591,7 +2591,7 @@ async function game() {
                     row.join("   ");
                 }
                 if (board[i]) {
-                    if (board.some(card => card?.value === "king" && card?.suit === "shield")) {
+                    if (board.some(card => card?.value === "king" && card?.suit === "shield" && difficulty === '2')) {
                         if (board[i].value === "king" && board[i].suit === "shield") {
                             row
                             .join(kingDark[index].clone().recolor(board[i].tapped ? "lightgray" : "white", "black"))
@@ -2878,7 +2878,7 @@ async function game() {
                     row.join("   ");
                 }
                 if (board[9 - i]) {
-                    if (board.some(card => card?.value === "king" && card?.suit === "shield")) {
+                    if (board.some(card => card?.value === "king" && card?.suit === "shield" && difficulty === '2')) {
                         if (board[9 - i].value === "king" && board[9 - i].suit === "shield") {
                             row
                             .join(kingDark[index].clone().recolor(board[9 - i].tapped ? "lightgray" : "white", "black"))
