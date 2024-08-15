@@ -1071,13 +1071,20 @@ descent = async () => {
 clearScreen();
 print("Press any key to start...");
 await getInput();
-clearScreen();
-print("Loading music...");
+let loadingInterval = setInterval(() => {
+    clearScreen();
+    print("Loading...");
+    let max = Object.keys(files).length;
+    let loaded = songsLoaded;
+    let string = "[" + "=".repeat(loaded) + " ".repeat(max - loaded) + "]";
+    print(string);
+}, 0);
 // Initialize and load music library
 audioContext = new (window.AudioContext || window.webkitAudioContext)();
 await (async () => {
     await loadMusicLibrary();
     await musicLoaded();
+    clearInterval(loadingInterval);
     // Now you can call playMusic('main_menu') or other functions to control playback
 })();
 clearScreen();
