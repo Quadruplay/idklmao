@@ -46,6 +46,9 @@ Math.seed = function (s) {
     seed = s || Date.now();
 }
 
+let musicMuted = localStorage.getItem('musicMuted') || false;
+localStorage.setItem('musicMuted', musicMuted);
+
 // window.onerror = function(message, source, lineno, colno, error) {
 //     // Construct an error message
 //     const errorMessage = `
@@ -112,10 +115,13 @@ phase2_loop.oncanplaythrough = () => {
 phase2_loop.src = 'phase2_loop.wav';
 
 const musicLibrary = {main_menu, battle_start, battle_loop, battle_climax, phase1_start, phase1_loop, phase2_start, phase2_loop};
+for (let key in musicLibrary) {
+    musicLibrary[key].volume = +!musicMuted;
+}
 
 async function musicLoaded() {
     return new Promise(resolve => {
-        if (songsLoaded === 4) {
+        if (songsLoaded === Object.keys(musicLibrary).length) {
             resolve();
         } else {
             setTimeout(() => resolve(musicLoaded()), 100);
@@ -1117,10 +1123,11 @@ async function menu() {
     print("[I]nstructions");
     print("[T]ime Crystal");
     print("[C]redits");
+    print("[M]usic: " + (musicMuted ? "off" : "on"));
     print("[Q]uit");
 
     let input = '';
-    let inputs = ['s', 'u', 'a', 'i', 'c', 'q', 't'];
+    let inputs = ['s', 'u', 'a', 'i', 'c', 'q', 't', 'm'];
     while (!inputs.includes(input)) {
         input = await getInput();
     }
@@ -1146,6 +1153,15 @@ async function menu() {
         case 'q':
             if (achievements['bitter aftertaste']) window.close();
             else menu();
+            break;
+        case 'm':
+            musicMuted = !musicMuted;
+            musicPlayer.skip = true;
+            for (let key in musicLibrary) {
+                musicLibrary[key].volume = +!musicMuted;
+            }
+            localStorage.setItem('musicMuted', musicMuted);
+            menu();
             break;
     }
 };
