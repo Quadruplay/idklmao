@@ -1102,7 +1102,9 @@ function clearLines(start, end) {
 descent = async () => {
 
 clearScreen();
-await pause();
+print("Press any key to start...");
+await getInput();
+clearScreen();
 musicPlayer.play();
 
 async function menu() {
