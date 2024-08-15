@@ -3719,7 +3719,7 @@ async function game() {
                         }
                         let roll = gem === "shield" && input === "1" ? Math.max(Math.floor(Math.random() * getDie()) + 1, Math.floor(Math.random() * getDie()) + 1) : Math.floor(Math.random() * getDie()) + 1;
                         let target = await chooseTarget("Choose a target to attack for " + damage + " + " + roll + " damage", "single");
-                        if (await attack(target, damage + roll, false) && input !== "0" && gem === "cup") arcanaUsed = true;
+                        if (await attack(target, damage + roll, false, true) && input !== "0" && gem === "cup") arcanaUsed = true;
                         break;
                 }
                 renderGame();
@@ -3745,7 +3745,7 @@ async function game() {
             resolve();
         });
     }
-    function chooseTarget(message, mode, isSpecial = true) {
+    function chooseTarget(message, mode) {
         return new Promise(async resolve => {
             moveTo(0, 44);
             clearLines(43, 54);
@@ -3762,22 +3762,11 @@ async function game() {
                 choices.push("0", "9", "8", "7", "6");
             }
             let input = '';
-            let inputNo = undefined;
-            if (!isSpecial && difficulty === '2') {
-                board.forEach((card, index) => {
-                    if (card?.value === "king" && card?.suit === "magick") {
-                        inputNo = index;
-                    }
-                });
-            }
             while (!choices.includes(input)) {
                 input = await getInput();
                 if (choices.includes(input) 
                  && mode === "single"
-                 && (
-                        !(board[(parseInt(input) + 9) % 10])
-                     || (parseInt(input) + 9) % 10 === inputNo)
-                    ) 
+                 && !(board[(parseInt(input) + 9) % 10]))
                 {
                     input = '';
                 }
@@ -3786,8 +3775,12 @@ async function game() {
             resolve(input);
         });
     }
-    async function attack(target, damage, special = false) {
+    async function attack(target, damage, special = false, normal) {
         hitCard.play();
+        if (normal && board[target]?.value === "king" && board[target]?.suit === "magick") {
+            print("The King of Lust cannot be hurt by normal attacks!");
+            return false;
+        }
         let kill = false;
         let face = false;
         let king = false;
