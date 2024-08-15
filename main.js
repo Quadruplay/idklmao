@@ -82,9 +82,13 @@ const files = {
 
 // Function to load and decode audio data
 async function loadAudio(file) {
-    const response = await fetch(file);
-    const arrayBuffer = await response.arrayBuffer();
-    const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+    const response = await fetch(file)
+    .catch(error => {
+        console.error('Failed to load audio file:', error);
+        return null;
+    });
+    const arrayBuffer = response && await response.arrayBuffer();
+    const audioBuffer = arrayBuffer && await audioContext.decodeAudioData(arrayBuffer);
     return audioBuffer;
 }
 
@@ -113,6 +117,7 @@ let nextSongTimeout = null;
 // Function to play music
 function playMusic(music) {
     stopMusic(); // Stop any currently playing music
+    if (!audioBuffers[music]) return; // Don't try to play music that hasn't loaded
     
     const bufferSource = audioContext.createBufferSource();
     bufferSource.buffer = audioBuffers[music];
@@ -1710,7 +1715,584 @@ async function instructions() {
     print("each battle to unlock permanent upgrades, or before to gain temporary advantages.");
     print("Only using these, may you hope to finally reach the dark magician.");
     print("Good luck!");
-    await pause();
+    print("");
+    print("[D]etailed instructions");
+    print("[B]ack");
+    let input = '';
+    while (!['b', 'd'].includes(input)) {
+        input = await getInput();
+    }
+    if (input === 'd') {
+        clearScreen();
+        opponentCastle.forEach(line => {
+            let row = line.clone();
+            row
+            .replace("W", "1")
+            .replace("X", "6")
+            .replace("Y", "4")
+            .replace("Z", "4");
+            printSpecial(row);
+        });
+        print("");
+        print("The enemy castle. The numbers in the upper left corner represent enemies yet to come and total amount of enemies.");
+        await pause();
+
+        clearScreen();
+        opponentCastle.forEach(line => {
+            let row = line.clone();
+            row
+            .replace("W", "1")
+            .replace("X", "6")
+            .replace("Y", "4")
+            .replace("Z", "4");
+            printSpecial(row);
+        });
+        print("");
+        print("");
+        playerCastle.forEach(line => {
+            let row = line.clone();
+            row
+            .replace("A", ...hp1)
+            .replace("B", ...hp1)
+            .replace("C", ...hp1)
+            .replace("D", ...hp1)
+            .replace("E", ...hp0)
+            .replace("F", ...hp0)
+            .replace("G", ...hpNo)
+            .replace("H", ...hpNo)
+            .replace("I", ...hpNo)
+            .replace("J", ...hpNo)
+            .replace("K", ...hpNo)
+            .replace("W", ...hpShield)
+            .replace("X", ...hpShield)
+            .replace("Y", ...hpNo)
+            .replace("Z", ...hpNo);
+            printSpecial(row);
+        });
+        print("");
+        print("Your castle. Red hearts represent health, gray hearts represent lost health, yellow shields represent shields.");
+        print("Each heart is worth 1 hit point, each shield protects you from all damage from a single hit.");
+        await pause();
+
+        clearScreen();
+        opponentCastle.forEach((line, index) => {
+            let row = line.clone();
+            row
+            .replace("W", "1")
+            .replace("X", "6")
+            .replace("Y", "4")
+            .replace("Z", "4");
+
+            for (let i = 0; i < 5; i++) {
+                row.join(index === 9 ? "-->" : "   ");
+                row.join(blank[index].clone());
+            }
+
+            printSpecial(row);
+        });
+        print(" ".multiply(114)+"|");
+        print(" ".multiply(114)+"V");
+        playerCastle.forEach((line, index) => {
+            let row = line.clone();
+            row
+            .replace("A", ...hp1)
+            .replace("B", ...hp1)
+            .replace("C", ...hp1)
+            .replace("D", ...hp1)
+            .replace("E", ...hp0)
+            .replace("F", ...hp0)
+            .replace("G", ...hpNo)
+            .replace("H", ...hpNo)
+            .replace("I", ...hpNo)
+            .replace("J", ...hpNo)
+            .replace("K", ...hpNo)
+            .replace("W", ...hpShield)
+            .replace("X", ...hpShield)
+            .replace("Y", ...hpNo)
+            .replace("Z", ...hpNo);
+
+            for (let i = 0; i < 5; i++) {
+                row.join(index === 9 ? "-->" : "   ");
+                row.join(blank[index].clone());
+            }
+
+            printSpecial(row);
+        });
+        print("");
+        print("The battlefield. The arrows indicate the enemies' direction of movement.");
+        print("Once an enemy reaches your castle, they will inflict damage on your castle.");
+        await pause();
+
+        clearScreen();
+        opponentCastle.forEach((line, index) => {
+            let row = line.clone();
+            row
+            .replace("W", "1")
+            .replace("X", "6")
+            .replace("Y", "4")
+            .replace("Z", "4");
+
+            row.join(index === 9 ? "-->" : "   ");
+            row.join(cards[7][index].clone().replace("X", ...heart));
+
+            row.join(index === 9 ? "-->" : "   ");
+            row.join(cardsSpecial.knight[index].clone().replace("X", ...spade));
+
+            row.join(index === 9 ? "-->" : "   ");
+            row.join(blank[index].clone());
+
+            row.join(index === 9 ? "-->" : "   ");
+            row.join(cards[9][index].clone().recolor("black", "lightgray").replace("X", ...suitsGray.diamond));
+
+            row.join(index === 9 ? "-->" : "   ");
+            row.join(blank[index].clone());
+
+            printSpecial(row);
+        });
+        print(" ".multiply(114)+"|");
+        print(" ".multiply(114)+"V");
+        playerCastle.forEach((line, index) => {
+            let row = line.clone();
+            row
+            .replace("A", ...hp1)
+            .replace("B", ...hp1)
+            .replace("C", ...hp1)
+            .replace("D", ...hp1)
+            .replace("E", ...hp0)
+            .replace("F", ...hp0)
+            .replace("G", ...hpNo)
+            .replace("H", ...hpNo)
+            .replace("I", ...hpNo)
+            .replace("J", ...hpNo)
+            .replace("K", ...hpNo)
+            .replace("W", ...hpShield)
+            .replace("X", ...hpShield)
+            .replace("Y", ...hpNo)
+            .replace("Z", ...hpNo);
+
+            for (let i = 0; i < 5; i++) {
+                row.join(index === 9 ? "-->" : "   ");
+                row.join(blank[index].clone());
+            }
+
+            printSpecial(row);
+        });
+        print("");
+        print("The enemies. The first card is a 7 of hearts - a normal enemy. The second card is a knight of spades - a face card.");
+        print("Face cards always arrive on the battlefield followed by a normal enemy, thus moving the battlefield by 2 spaces.");
+        print("Face cards deal 2 damage to your castle, while normal enemies deal 1.");
+        print("");
+        print("The third card is a tapped 9 of diamonds as can be deduced by its slight discoloration. Tapped enemies require half the damage to kill.");
+        print("To tap an enemy, you must deal damage equal to at least half their value rounded up.");
+        print("Enemies can only be tapped or killed, damage too small to do either will be wasted.");
+        await pause();
+
+        clearScreen();
+        opponentCastle.forEach((line, index) => {
+            let row = line.clone();
+            row
+            .replace("W", "1")
+            .replace("X", "6")
+            .replace("Y", "4")
+            .replace("Z", "4");
+
+            row.join(index === 9 ? "-->" : "   ");
+            row.join(cards[7][index].clone().replace("X", ...heart));
+
+            row.join(index === 9 ? "-->" : "   ");
+            row.join(cardsSpecial.knight[index].clone().replace("X", ...spade));
+
+            row.join(index === 9 ? "-->" : "   ");
+            row.join(blank[index].clone());
+
+            row.join(index === 9 ? "-->" : "   ");
+            row.join(cards[9][index].clone().recolor("black", "lightgray").replace("X", ...suitsGray.diamond));
+
+            row.join(index === 9 ? "-->" : "   ");
+            row.join(blank[index].clone());
+
+            printSpecial(row);
+        });
+        print(" ".multiply(114)+"|");
+        print(" ".multiply(114)+"V");
+        playerCastle.forEach((line, index) => {
+            let row = line.clone();
+            row
+            .replace("A", ...hp1)
+            .replace("B", ...hp1)
+            .replace("C", ...hp1)
+            .replace("D", ...hp1)
+            .replace("E", ...hp0)
+            .replace("F", ...hp0)
+            .replace("G", ...hpNo)
+            .replace("H", ...hpNo)
+            .replace("I", ...hpNo)
+            .replace("J", ...hpNo)
+            .replace("K", ...hpNo)
+            .replace("W", ...hpShield)
+            .replace("X", ...hpShield)
+            .replace("Y", ...hpNo)
+            .replace("Z", ...hpNo);
+
+            for (let i = 0; i < 5; i++) {
+                row.join(index === 9 ? "-->" : "   ");
+                row.join(blank[index].clone());
+            }
+
+            printSpecial(row);
+        });
+        print("Ammo:");
+        for (let i = 0; i < 4; i++) {
+            let row = new specialText();
+            for (let j = 0; j < 11; j++) {
+                row.join(![0,4,5].includes(j) ? ammoBlank[i].clone() : ammoCard[i].clone().replace("X", String(j+4)).replace("Y", ...heart));
+                row.join(" ");
+            }
+            row.join(" ");
+            for (let j = 0; j < 11; j++) {
+                row.join(![5,7,8,10].includes(j) ? ammoBlank[i].clone() : ammoCard[i].clone().replace("X", {5:"9",7:"P",8:"N",10:"K"}[j]).replace("Y", ...club));
+                row.join(" ");
+            }
+            printSpecial(row);
+        }
+        print("");
+        print("Ammo cards. Ammo cards are gained by defeating enemies of a suit matching one of your heroes.");
+        print("The first section holds ammo cards matching the suit of the first hero, the second section the second hero.");
+        print("Ammo cards can be spent by either hero regardless of the suit.");
+        await pause();
+
+        clearScreen();
+        opponentCastle.forEach((line, index) => {
+            let row = line.clone();
+            row
+            .replace("W", "1")
+            .replace("X", "6")
+            .replace("Y", "4")
+            .replace("Z", "4");
+
+            row.join(index === 9 ? "-->" : "   ");
+            row.join(cards[7][index].clone().replace("X", ...heart));
+
+            row.join(index === 9 ? "-->" : "   ");
+            row.join(cardsSpecial.knight[index].clone().replace("X", ...spade));
+
+            row.join(index === 9 ? "-->" : "   ");
+            row.join(blank[index].clone());
+
+            row.join(index === 9 ? "-->" : "   ");
+            row.join(cards[9][index].clone().recolor("black", "lightgray").replace("X", ...suitsGray.diamond));
+
+            row.join(index === 9 ? "-->" : "   ");
+            row.join(blank[index].clone());
+
+            printSpecial(row);
+        });
+        print(" ".multiply(114)+"|");
+        print(" ".multiply(114)+"V");
+        playerCastle.forEach((line, index) => {
+            let row = line.clone();
+            row
+            .replace("A", ...hp1)
+            .replace("B", ...hp1)
+            .replace("C", ...hp1)
+            .replace("D", ...hp1)
+            .replace("E", ...hp0)
+            .replace("F", ...hp0)
+            .replace("G", ...hpNo)
+            .replace("H", ...hpNo)
+            .replace("I", ...hpNo)
+            .replace("J", ...hpNo)
+            .replace("K", ...hpNo)
+            .replace("W", ...hpShield)
+            .replace("X", ...hpShield)
+            .replace("Y", ...hpNo)
+            .replace("Z", ...hpNo);
+
+            for (let i = 0; i < 5; i++) {
+                row.join(index === 9 ? "-->" : "   ");
+                row.join(blank[index].clone());
+            }
+
+            printSpecial(row);
+        });
+        print("Ammo:");
+        for (let i = 0; i < 4; i++) {
+            let row = new specialText();
+            for (let j = 0; j < 11; j++) {
+                row.join(![0,4,5].includes(j) ? ammoBlank[i].clone() : ammoCard[i].clone().replace("X", String(j+4)).replace("Y", ...heart));
+                row.join(" ");
+            }
+            row.join(" ");
+            for (let j = 0; j < 11; j++) {
+                row.join(![5,7,8,10].includes(j) ? ammoBlank[i].clone() : ammoCard[i].clone().replace("X", {5:"9",7:"P",8:"N",10:"K"}[j]).replace("Y", ...club));
+                row.join(" ");
+            }
+            printSpecial(row);
+        }
+        print("");
+
+        print("Fire Mage's turn!");
+        for (let i = 0; i < 4; i++) {
+            let row = new specialText();
+            for (let j = 0; j < 3; j++) {
+                row.join(ammoCard[i].clone().replace("X", "A23"[j]).replace("Y", ...heart));
+                row.join(" ");
+            }
+            row.join(" ");
+            row.join(ammoCard[i].clone().replace("X", "0").replace("Y", "0").recolor("yellow", "black"));
+            printSpecial(row);
+        }
+        print("[A]: Discard 1 ammo card to tap frontmost card in every column")
+        print("[1]: Attack for 1 + 1d6 damage");
+        print("[2]: Attack for 2 + 1d6 damage");
+        print("[3]: Attack for 3 + 1d6 damage");
+        print("[S]: 0-The Fool - Draw a random Arcana");
+
+        print("");
+        print("Hero's cards. During each hero's turn, they may use their class abilities, normal attacks or arcana cards.");
+        print("Class abilities require ammo cards and an ace to use and are unique to each hero, the drawback being that they can't be used to gain ammo cards.");
+        print("Normal attacks deal damage equal to the value of the card plus a die roll.");
+        print("Arcana cards are powerful artifacts that are dropped by kings.");
+        print("Their usage does not consume a turn, but once used, they are discarded, while normal attacks and class abilities come back after the hand is depleted.");
+        await pause();
+
+        clearScreen();
+        opponentCastle.forEach((line, index) => {
+            let row = line.clone();
+            row
+            .replace("W", "1")
+            .replace("X", "6")
+            .replace("Y", "4")
+            .replace("Z", "4");
+
+            row.join(index === 9 ? "-->" : "   ");
+            row.join(cards[7][index].clone().replace("X", ...heart));
+
+            row.join(index === 9 ? "-->" : "   ");
+            row.join(cardsSpecial.knight[index].clone().replace("X", ...spade));
+
+            row.join(index === 9 ? "-->" : "   ");
+            row.join(blank[index].clone());
+
+            row.join(index === 9 ? "-->" : "   ");
+            row.join(cards[9][index].clone().recolor("black", "lightgray").replace("X", ...suitsGray.diamond));
+
+            row.join(index === 9 ? "-->" : "   ");
+            row.join(blank[index].clone());
+
+            switch (index) {
+                case 0:
+                    row.join("┌──────────────────────────────────────────┐");
+                    break;
+                case 1:
+                        row.join("│X")
+                        .replace("X", ...heart)
+                        .join(new specialText(["The King of War effect is inactive"], ['white'], ['black']))
+                        .join("       │");
+                    break;
+                case 2:
+                        row.join("│X")
+                        .replace("X", ...spade)
+                        .join(new specialText(["The King of Conquest effect is inactive"], ['white'], ['black']))
+                        .join("  │");
+                    break;
+                case 3:
+                        row.join("│X")
+                        .replace("X", ...diamond)
+                        .join(new specialText(["The King of Famine effect is inactive"], ['white'], ['black']))
+                        .join("    │");
+                    break;
+                case 4:
+                        row.join("│X")
+                        .replace("X", ...club)
+                        .join(new specialText(["The King of Pestilence effect is inactive"], ['white'], ['black']))
+                        .join("│");
+                    break;
+                case 5:
+                        row.join("│X")
+                        .replace("X", ...shield)
+                        .join(new specialText(["The King of Madness effect is inactive"], ['white'], ['black']))
+                        .join("   │");
+                    break;
+                case 6:
+                        row.join("│X")
+                        .replace("X", ...cup)
+                        .join(new specialText(["The King of Death effect is inactive"], ['white'], ['black']))
+                        .join("     │");
+                    break;
+                case 7:
+                    row.join("└──────────────────────────────────────────┘");
+                    break;
+                case 9:
+                    row.join(" Hero 1 hand:");
+                    row.join(" ".multiply(8) + "Gem:");
+                    break;
+                case 10:
+                    row
+                    .join(" ")
+                    .join(new specialText(...heart))
+                    .join(new specialText(["A"], ['black'], ['white']))
+                    .join(new specialText(["2"], ['black'], ['white']))
+                    .join(new specialText(["3"], ['black'], ['white']))
+                    .join(" ")
+                    .join(new specialText(["0"], ['yellow'], ['black']));
+                        row.join(" ".multiply(14))
+                        row.join(new specialText(...spade));
+                    break;
+                case 12:
+                    row.join(" Hero 2 hand:");
+                    break;
+                case 13:
+                    row
+                    .join(" ")
+                    .join(new specialText(...club))
+                    .join(new specialText(["A"], ['black'], ['white']))
+                    .join(new specialText(["2"], ['black'], ['white']))
+                    .join(new specialText(["3"], ['black'], ['white']))
+                    .join(" ")
+                    .join(new specialText(["_"], ['white'], ['black']));
+                    break;
+                case 15:
+                    row.join(" Next up:");
+                    break;
+                case 16:
+                    row
+                    .join("  ")
+                    .join(ammoCard[0].clone())
+                    break;
+                case 17:
+                    row
+                    .join("  ")
+                    .join(ammoCard[1].clone().replace("X", "6"));
+                    break;
+            }
+
+            printSpecial(row);
+        });
+        printSpecial( new specialText([" ".multiply(114)+"|"+" ".multiply(10)], ["white"], ["black"])
+        .join(ammoCard[2].clone().replace("Y", ...diamond)));
+        printSpecial( new specialText([" ".multiply(114)+"V"+" ".multiply(10)], ["white"], ["black"])
+        .join(ammoCard[3].clone()));
+        playerCastle.forEach((line, index) => {
+            let row = line.clone();
+            row
+            .replace("A", ...hp1)
+            .replace("B", ...hp1)
+            .replace("C", ...hp1)
+            .replace("D", ...hp1)
+            .replace("E", ...hp0)
+            .replace("F", ...hp0)
+            .replace("G", ...hpNo)
+            .replace("H", ...hpNo)
+            .replace("I", ...hpNo)
+            .replace("J", ...hpNo)
+            .replace("K", ...hpNo)
+            .replace("W", ...hpShield)
+            .replace("X", ...hpShield)
+            .replace("Y", ...hpNo)
+            .replace("Z", ...hpNo);
+
+            for (let i = 0; i < 5; i++) {
+                row.join(index === 9 ? "-->" : "   ");
+                row.join(blank[index].clone());
+            }
+
+            switch (index) {
+                case 1:
+                    row.join(" Card Values:");
+                    break;
+                case 2:
+                    row.join("  A (Ace)    - 1");
+                    break;
+                case 3:
+                    row.join("  2          - 2");
+                    break;
+                case 4:
+                    row.join("  3          - 3");
+                    break;
+                case 5:
+                    row.join("  4          - 4");
+                    break;
+                case 6:
+                    row.join("  5          - 5");
+                    break;
+                case 7:
+                    row.join("  6          - 6");
+                    break;
+                case 8:
+                    row.join("  7          - 7");
+                    break;
+                case 9:
+                    row.join("  8          - 8");
+                    break;
+                case 10:
+                    row.join("  9          - 9");
+                    break;
+                case 11:
+                    row.join("  T (10)     - 10");
+                    break;
+                case 12:
+                    row.join("  P (Page)   - 10");
+                    break;
+                case 13:
+                    row.join("  N (Knight) - 11");
+                    break;
+                case 14:
+                    row.join("  Q (Queen)  - 12");
+                    break;
+                case 15:
+                    row.join("  K (King)   - 13");
+                    break;
+                case 16:
+                    row.join("  Ω (Priest) - amount of ammo cards");
+                    break;
+            }
+
+            printSpecial(row);
+        });
+        print("Ammo:");
+        for (let i = 0; i < 4; i++) {
+            let row = new specialText();
+            for (let j = 0; j < 11; j++) {
+                row.join(![0,4,5].includes(j) ? ammoBlank[i].clone() : ammoCard[i].clone().replace("X", String(j+4)).replace("Y", ...heart));
+                row.join(" ");
+            }
+            row.join(" ");
+            for (let j = 0; j < 11; j++) {
+                row.join(![5,7,8,10].includes(j) ? ammoBlank[i].clone() : ammoCard[i].clone().replace("X", {5:"9",7:"P",8:"N",10:"K"}[j]).replace("Y", ...club));
+                row.join(" ");
+            }
+            printSpecial(row);
+        }
+        print("");
+
+        print("Fire Mage's turn!");
+        for (let i = 0; i < 4; i++) {
+            let row = new specialText();
+            for (let j = 0; j < 3; j++) {
+                row.join(ammoCard[i].clone().replace("X", "A23"[j]).replace("Y", ...heart));
+                row.join(" ");
+            }
+            row.join(" ");
+            row.join(ammoCard[i].clone().replace("X", "0").replace("Y", "0").recolor("yellow", "black"));
+            printSpecial(row);
+        }
+        print("[A]: Discard 1 ammo card to tap frontmost card in every column")
+        print("[1]: Attack for 1 + 1d6 damage");
+        print("[2]: Attack for 2 + 1d6 damage");
+        print("[3]: Attack for 3 + 1d6 damage");
+        print("[S]: 0-The Fool - Draw a random Arcana");
+
+        print("");
+        print("Various indicators. From the top there are:");
+        print("- Boss indicators. The kings are face cards and have special effects that apply when they're present on the board.");
+        print("- Hero 1 hand. Their suit and the cards the first hero has in their hand.");
+        print("- Gem slot. Currently equipped gem.");
+        print("- Hero 2 hand. Their suit and the cards the second hero has in their hand.");
+        print("- Next up. The next card to enter the battlefield.");
+        print("- Card values. A lookup table for the values of the cards.");
+        await pause();
+    }
     menu();
 }
 
