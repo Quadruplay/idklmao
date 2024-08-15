@@ -46,7 +46,7 @@ Math.seed = function (s) {
     seed = s || Date.now();
 }
 
-let musicMuted = localStorage.getItem('musicMuted') || false;
+let musicMuted = JSON.parse(localStorage.getItem('musicMuted')) || false;
 localStorage.setItem('musicMuted', musicMuted);
 
 // window.onerror = function(message, source, lineno, colno, error) {
@@ -71,48 +71,65 @@ main_menu.oncanplaythrough = () => {
     main_menu.oncanplaythrough = null;
 }
 main_menu.src = 'main_menu.wav';
+main_menu.loop = true;
 const battle_start = new Audio();
 battle_start.oncanplaythrough = () => {
     songsLoaded++;
     battle_start.oncanplaythrough = null;
 }
 battle_start.src = 'battle_start.wav';
+battle_start.loop = false;
+battle_start.onended = () => {
+    battle_loop.play();
+}
 const battle_loop = new Audio();
 battle_loop.oncanplaythrough = () => {
     songsLoaded++;
     battle_loop.oncanplaythrough = null;
 }
 battle_loop.src = 'battle_loop.wav';
+battle_loop.loop = true;
 const battle_climax = new Audio();
 battle_climax.oncanplaythrough = () => {
     songsLoaded++;
     battle_climax.oncanplaythrough = null;
 }
 battle_climax.src = 'battle_climax.wav';
+battle_climax.loop = true;
 const phase1_start = new Audio();
 phase1_start.oncanplaythrough = () => {
     songsLoaded++;
     phase1_start.oncanplaythrough = null;
 }
 phase1_start.src = 'phase1_start.wav';
+phase1_start.loop = false;
+phase1_start.onended = () => {
+    phase1_loop.play();
+}
 const phase1_loop = new Audio();
 phase1_loop.oncanplaythrough = () => {
     songsLoaded++;
     phase1_loop.oncanplaythrough = null;
 }
 phase1_loop.src = 'phase1_loop.wav';
+phase1_loop.loop = true;
 const phase2_start = new Audio();
 phase2_start.oncanplaythrough = () => {
     songsLoaded++;
     phase2_start.oncanplaythrough = null;
 }
 phase2_start.src = 'phase2_start.wav';
+phase2_start.loop = false;
+phase2_start.onended = () => {
+    phase2_loop.play();
+}
 const phase2_loop = new Audio();
 phase2_loop.oncanplaythrough = () => {
     songsLoaded++;
     phase2_loop.oncanplaythrough = null;
 }
 phase2_loop.src = 'phase2_loop.wav';
+phase2_loop.loop = true;
 
 const musicLibrary = {main_menu, battle_start, battle_loop, battle_climax, phase1_start, phase1_loop, phase2_start, phase2_loop};
 for (let key in musicLibrary) {
@@ -129,68 +146,22 @@ async function musicLoaded() {
     });
 }
 
-const musicPlayer = {
-    loop: true,
-    skip: false,
-    currentSong: 'main_menu',
-    queue: [],
-    play: async function () {
-        isPlaying = true;
-        return new Promise(async resolve => {
-            if (this.queue.length > 0) {
-                this.currentSong = this.queue.shift();
-            }
-            let playedSong = musicLibrary[this.currentSong];
-            let skipCheck = setInterval(() => {
-                if (this.skip) {
-                    this.skip = false;
-                    playedSong.pause();
-                    playedSong.currentTime = 0;
-                    playedSong.ended = true;
-                    clearInterval(skipCheck);
-                    clearInterval(loopCheck);
-                    resolve(this.loop ? this.play() : undefined);
-                }
-            }, 100);
-            let loopCheck = setInterval(() => {
-                if (this.queue.length) {
-                    playedSong.loop = false;
-                } else {
-                    playedSong.loop = this.loop;
-                }
-            }, 100);
-            let bufferTime = 0.2;
-            playedSong.addEventListener('timeupdate', function() {
-                if (playedSong.currentTime >= playedSong.duration - bufferTime) {
-                    if (playedSong.loop) {
-                        playedSong.currentTime = 0;
-                        playedSong.play();
-                    } else if (this.loop) {
-                        clearInterval(skipCheck);
-                        clearInterval(loopCheck);
-                        resolve(this.play());
-                    } else {
-                        clearInterval(skipCheck);
-                        clearInterval(loopCheck);
-                        resolve();
-                    }
-                }
-            });
-            playedSong.currentTime = 0;
-            playedSong.play();
-            playedSong.onended = () => {
-                if (this.loop) {
-                    clearInterval(skipCheck);
-                    clearInterval(loopCheck);
-                    resolve(this.play());
-                } else {
-                    clearInterval(skipCheck);
-                    clearInterval(loopCheck);
-                    resolve();
-                }
-            }
-        });
+let currentSong = null;
+
+function playMusic(music) {
+    for (let key in musicLibrary) {
+        musicLibrary[key].pause();
     }
+    musicLibrary[music].currentTime = 0;
+    musicLibrary[music].play();
+    currentSong = music;
+}
+
+function stopMusic() {
+    for (let key in musicLibrary) {
+        musicLibrary[key].pause();
+    }
+    currentSong = null;
 }
 
 let dieFaces = {
@@ -1111,7 +1082,9 @@ clearScreen();
 print("Press any key to start...");
 await getInput();
 clearScreen();
-musicPlayer.play();
+if (!musicMuted) {
+    playMusic('main_menu');
+}
 
 async function menu() {
     clearScreen();
@@ -1156,10 +1129,10 @@ async function menu() {
             break;
         case 'm':
             musicMuted = !musicMuted;
-            musicPlayer.skip = true;
             for (let key in musicLibrary) {
                 musicLibrary[key].volume = +!musicMuted;
             }
+            musicMuted ? stopMusic() : playMusic('main_menu');
             localStorage.setItem('musicMuted', musicMuted);
             menu();
             break;
@@ -2212,9 +2185,7 @@ const arcanaDesc = {
 }
 
 async function game() {
-    musicPlayer.queue.push(difficulty === 'd' ? 'phase1_start' : 'battle_start');
-    musicPlayer.queue.push(difficulty === 'd' ? 'phase1_loop' : 'battle_loop');
-    musicPlayer.skip = true;
+    playMusic(difficulty === 'd' ? 'phase1_start' : 'battle_start')
     achievementsGranted = [];
     health = 4 + unlocks.health + +(gem === "heart");
     maxHealth = health;
@@ -2475,10 +2446,7 @@ async function game() {
             }
         }
     }
-    musicPlayer.loop = false;
-    musicPlayer.skip = true;
-    await sleep(150);
-    musicPlayer.loop = true;
+    stopMusic();
     if (health <= 0) {
         statistics.total.losses++;
         clearScreen();
@@ -2587,9 +2555,7 @@ async function game() {
     statistics.total.faceCards += faceCardsKilled;
     statistics.total.kings += bossesKilled;
     localStorage.setItem("statistics", JSON.stringify(statistics));
-    musicPlayer.currentSong = 'main_menu';
-    musicPlayer.loop = true;
-    musicPlayer.play();
+    playMusic('main_menu');
     menu();
     function renderGame() {
         clearLines(0, 37);
@@ -3053,16 +3019,14 @@ async function game() {
             deck.push(undefined);
             renderGame();
         }
-        if (musicPlayer.queue.length === 0 && difficulty !== 'd' && difficulty !== '2') {
+        if (difficulty !== 'd' && difficulty !== '2') {
             if (board.some(card => card?.value === "king")) {
-                if (musicPlayer.currentSong !== 'battle_climax') {
-                    musicPlayer.queue.push('battle_climax');
-                    musicPlayer.skip = true;
+                if (currentSong !== 'battle_climax') {
+                    playMusic('battle_climax');
                 }
             } else {
-                if (musicPlayer.currentSong !== 'battle_loop' && musicPlayer.currentSong !== 'battle_start') {
-                    musicPlayer.queue.push('battle_loop');
-                    musicPlayer.skip = true;
+                if (currentSong !== 'battle_loop' && currentSong !== 'battle_start') {
+                    playMusic('battle_loop');
                 }
             }
         }
@@ -3308,10 +3272,8 @@ async function game() {
             if (king) bossesKilled++;
             if (face) faceCardsKilled++;
             if (isPhase1) {
-                musicPlayer.loop = false;
-                musicPlayer.skip = true;
+                stopMusic();
                 await sleep(150);
-                musicPlayer.loop = true;
                 clearScreen();
                 win.play();
                 print("You have won");
@@ -3357,10 +3319,7 @@ async function game() {
                 await pause();
                 silence.pause();
                 rumble.pause();
-                musicPlayer.queue = [];
-                musicPlayer.queue.push('phase2_start');
-                musicPlayer.queue.push('phase2_loop');
-                musicPlayer.play();
+                playMusic('phase2_start');
 
                 let normalCards = [];
                 let faceCards = [];
@@ -3417,16 +3376,14 @@ async function game() {
             hitCastle.play();
             print("The King of Pride makes you pay for your inability!");
         }
-        if (musicPlayer.queue.length === 0 && difficulty !== 'd' && difficulty !== '2') {
+        if (difficulty !== 'd' && difficulty !== '2') {
             if (board.some(card => card?.value === "king")) {
-                if (musicPlayer.currentSong !== 'battle_climax') {
-                    musicPlayer.queue.push('battle_climax');
-                    musicPlayer.skip = true;
+                if (currentSong !== 'battle_climax') {
+                    playMusic('battle_climax');
                 }
             } else {
-                if (musicPlayer.currentSong !== 'battle_loop' && musicPlayer.currentSong !== 'battle_start') {
-                    musicPlayer.queue.push('battle_loop');
-                    musicPlayer.skip = true;
+                if (currentSong !== 'battle_loop' && currentSong !== 'battle_start') {
+                    playMusic('battle_loop');
                 }
             }
         }
