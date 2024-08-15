@@ -63,82 +63,42 @@ localStorage.setItem('musicMuted', musicMuted);
 //     alert("PLEASE COPY THIS AND SEND TO ME\n\n" + errorMessage);
 // };
 
+let audioContext;
 let songsLoaded = 0;
 
-const main_menu = new Audio();
-main_menu.oncanplaythrough = () => {
-    songsLoaded++;
-    main_menu.oncanplaythrough = null;
-}
-main_menu.src = 'main_menu.wav';
-main_menu.loop = true;
-const battle_start = new Audio();
-battle_start.oncanplaythrough = () => {
-    songsLoaded++;
-    battle_start.oncanplaythrough = null;
-}
-battle_start.src = 'battle_start.wav';
-battle_start.loop = false;
-battle_start.onended = () => {
-    battle_loop.play();
-}
-const battle_loop = new Audio();
-battle_loop.oncanplaythrough = () => {
-    songsLoaded++;
-    battle_loop.oncanplaythrough = null;
-}
-battle_loop.src = 'battle_loop.wav';
-battle_loop.loop = true;
-const battle_climax = new Audio();
-battle_climax.oncanplaythrough = () => {
-    songsLoaded++;
-    battle_climax.oncanplaythrough = null;
-}
-battle_climax.src = 'battle_climax.wav';
-battle_climax.loop = true;
-const phase1_start = new Audio();
-phase1_start.oncanplaythrough = () => {
-    songsLoaded++;
-    phase1_start.oncanplaythrough = null;
-}
-phase1_start.src = 'phase1_start.wav';
-phase1_start.loop = false;
-phase1_start.onended = () => {
-    phase1_loop.play();
-}
-const phase1_loop = new Audio();
-phase1_loop.oncanplaythrough = () => {
-    songsLoaded++;
-    phase1_loop.oncanplaythrough = null;
-}
-phase1_loop.src = 'phase1_loop.wav';
-phase1_loop.loop = true;
-const phase2_start = new Audio();
-phase2_start.oncanplaythrough = () => {
-    songsLoaded++;
-    phase2_start.oncanplaythrough = null;
-}
-phase2_start.src = 'phase2_start.wav';
-phase2_start.loop = false;
-phase2_start.onended = () => {
-    phase2_loop.play();
-}
-const phase2_loop = new Audio();
-phase2_loop.oncanplaythrough = () => {
-    songsLoaded++;
-    phase2_loop.oncanplaythrough = null;
-}
-phase2_loop.src = 'phase2_loop.wav';
-phase2_loop.loop = true;
+const musicLibrary = {};
+const audioBuffers = {};  // Holds decoded audio data
 
-const musicLibrary = {main_menu, battle_start, battle_loop, battle_climax, phase1_start, phase1_loop, phase2_start, phase2_loop};
-for (let key in musicLibrary) {
-    musicLibrary[key].volume = +!musicMuted;
+const files = {
+    main_menu: 'main_menu.wav',
+    battle_start: 'battle_start.wav',
+    battle_loop: 'battle_loop.wav',
+    battle_climax: 'battle_climax.wav',
+    phase1_start: 'phase1_start.wav',
+    phase1_loop: 'phase1_loop.wav',
+    phase2_start: 'phase2_start.wav',
+    phase2_loop: 'phase2_loop.wav',
+};
+
+// Function to load and decode audio data
+async function loadAudio(file) {
+    const response = await fetch(file);
+    const arrayBuffer = await response.arrayBuffer();
+    const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+    return audioBuffer;
+}
+
+// Load all audio files
+async function loadMusicLibrary() {
+    for (let key in files) {
+        audioBuffers[key] = await loadAudio(files[key]);
+        songsLoaded++;
+    }
 }
 
 async function musicLoaded() {
     return new Promise(resolve => {
-        if (songsLoaded === Object.keys(musicLibrary).length) {
+        if (songsLoaded === Object.keys(files).length) {
             resolve();
         } else {
             setTimeout(() => resolve(musicLoaded()), 100);
@@ -146,23 +106,53 @@ async function musicLoaded() {
     });
 }
 
+let currentSource = null;
 let currentSong = null;
+let nextSongTimeout = null;
 
+// Function to play music
 function playMusic(music) {
-    for (let key in musicLibrary) {
-        musicLibrary[key].pause();
-    }
-    musicLibrary[music].currentTime = 0;
-    musicLibrary[music].play();
+    stopMusic(); // Stop any currently playing music
+    
+    const bufferSource = audioContext.createBufferSource();
+    bufferSource.buffer = audioBuffers[music];
+    bufferSource.loop = !music.includes('start'); // Automatically loop if 'start' isn't in the name
+    
+    const gainNode = audioContext.createGain();
+    gainNode.gain.value = +!musicMuted;
+    
+    bufferSource.connect(gainNode).connect(audioContext.destination);
+    bufferSource.start(0);
+    
+    currentSource = bufferSource;
     currentSong = music;
+
+    // If there's a start track, set an 'onended' event to transition to the loop track
+    if (music.includes('start')) {
+        nextSongTimeout = setTimeout(() => {
+            playMusic(music.replace('start', 'loop'));
+        }, bufferSource.buffer.duration * 1000);
+    }
 }
 
 function stopMusic() {
-    for (let key in musicLibrary) {
-        musicLibrary[key].pause();
+    clearTimeout(nextSongTimeout);
+    if (currentSource) {
+        currentSource.stop(0);
+        currentSource.disconnect();
+        currentSource = null;
     }
-    currentSong = null;
 }
+
+// Adjust music volume based on mute state
+function updateMusicVolume() {
+    if (currentSource) {
+        const gainNode = audioContext.createGain();
+        gainNode.gain.value = +!musicMuted;
+        currentSource.connect(gainNode).connect(audioContext.destination);
+    }
+}
+
 
 let dieFaces = {
     1: "⚀", 
@@ -1081,6 +1071,13 @@ descent = async () => {
 clearScreen();
 print("Press any key to start...");
 await getInput();
+// Initialize and load music library
+audioContext = new (window.AudioContext || window.webkitAudioContext)();
+await (async () => {
+    await loadMusicLibrary();
+    await musicLoaded();
+    // Now you can call playMusic('main_menu') or other functions to control playback
+})();
 clearScreen();
 if (!musicMuted) {
     playMusic('main_menu');
@@ -1129,9 +1126,8 @@ async function menu() {
             break;
         case 'm':
             musicMuted = !musicMuted;
-            for (let key in musicLibrary) {
-                musicLibrary[key].volume = +!musicMuted;
-            }
+            const gainNode = audioContext.createGain();
+            gainNode.gain.value = +!musicMuted;
             musicMuted ? stopMusic() : playMusic('main_menu');
             localStorage.setItem('musicMuted', musicMuted);
             menu();
