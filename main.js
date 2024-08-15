@@ -1071,6 +1071,8 @@ descent = async () => {
 clearScreen();
 print("Press any key to start...");
 await getInput();
+clearScreen();
+print("Loading music...");
 // Initialize and load music library
 audioContext = new (window.AudioContext || window.webkitAudioContext)();
 await (async () => {
