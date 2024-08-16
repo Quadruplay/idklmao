@@ -1084,7 +1084,7 @@ let loadingInterval = setInterval(() => {
     let loaded = songsLoaded;
     let string = "[" + "=".repeat(loaded) + " ".repeat(max - loaded) + "]";
     print(string);
-}, 0);
+}, 10);
 // Initialize and load music library
 audioContext = new (window.AudioContext || window.webkitAudioContext)();
 await (async () => {
