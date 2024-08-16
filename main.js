@@ -225,6 +225,7 @@ let unlocks = {
     'arcana': 0,
     'secret': false,
     'world': 0,
+    'slot2': false,
 }
 if (localStorage.getItem('unlocks')) {
     let unlocksLoaded = JSON.parse(localStorage.getItem('unlocks'));
@@ -545,7 +546,7 @@ let ammoCard = [
 
 let playerCastle = [
     new specialText(["╔════════════════╗"], ['white'], ['black']),
-    new specialText(["║ABCDEFGHIJK     ║"], ['white'], ['black']),
+    new specialText(["║ABCDEFGHIJKL    ║"], ['white'], ['black']),
     new specialText(["║WXYZ            ║"], ['white'], ['black']),
     new specialText(["║                ║"], ['white'], ['black']),
     new specialText(["║                ║"], ['white'], ['black']),
@@ -1398,11 +1399,6 @@ async function shop() {
     clearScreen();
     printSpecial(new specialText(["Gems: "+currency.heart+" A  "+currency.spade+" B "+currency.diamond+" C  "+currency.club+" D  "+currency.shield+" E  "+currency.cup+" F  "+currency.magick+" H"], ["white"], ["black"]).replace("A", ...heart).replace("B", ...spade).replace("C", ...diamond).replace("D", ...club).replace("E", ...shield).replace("F", ...cup).replace("H", ...magick));
     let inputs = ['b'];
-    if (!unlocks.secret && achievements['hard cookie to crack']) {
-        print("");
-        printSpecial(new specialText(["[S]: Unlock ??? on hard difficulty.                         2 A  +  2 B  +  2 C  +  2 D  +  2 E  +  2 F"], ["white"], ["black"]).replace("A", ...heart).replace("B", ...spade).replace("C", ...diamond).replace("D", ...club).replace("E", ...shield).replace("F", ...cup));
-        inputs.push('s');
-    }
     if (unlocks.fool !== 2) {
         print("");
         switch (unlocks.fool) {
@@ -1486,6 +1482,11 @@ async function shop() {
         }
         inputs.push('a');
     }
+    if (!unlocks.slot2 && achievements['kingslayer']) {
+        print("");
+        printSpecial(new specialText(["[2]: Unlock the second gem slot.                               1 A"], ["white"], ["black"]).replace("A", ...magick));
+        inputs.push('2');
+    }
     if (inputs.length === 1) {
         print("");
         print("Nothing left to unlock.");
@@ -1499,6 +1500,13 @@ async function shop() {
             input = await getInput();
         }
         switch (input) {
+            case '2':
+                if (currency.magick >= 1) {
+                    currency.magick -= 1;
+                    unlocks.slot2 = true;
+                }
+                shop();
+                break;
             case 'b':
                 localStorage.setItem("currency", JSON.stringify(currency));
                 localStorage.setItem("unlocks", JSON.stringify(unlocks));
@@ -1763,6 +1771,7 @@ async function instructions() {
             .replace("I", ...hpNo)
             .replace("J", ...hpNo)
             .replace("K", ...hpNo)
+            .replace("L", ...hpNo)
             .replace("W", ...hpShield)
             .replace("X", ...hpShield)
             .replace("Y", ...hpNo)
@@ -1806,6 +1815,7 @@ async function instructions() {
             .replace("I", ...hpNo)
             .replace("J", ...hpNo)
             .replace("K", ...hpNo)
+            .replace("L", ...hpNo)
             .replace("W", ...hpShield)
             .replace("X", ...hpShield)
             .replace("Y", ...hpNo)
@@ -1865,6 +1875,7 @@ async function instructions() {
             .replace("I", ...hpNo)
             .replace("J", ...hpNo)
             .replace("K", ...hpNo)
+            .replace("L", ...hpNo)
             .replace("W", ...hpShield)
             .replace("X", ...hpShield)
             .replace("Y", ...hpNo)
@@ -1929,6 +1940,7 @@ async function instructions() {
             .replace("I", ...hpNo)
             .replace("J", ...hpNo)
             .replace("K", ...hpNo)
+            .replace("L", ...hpNo)
             .replace("W", ...hpShield)
             .replace("X", ...hpShield)
             .replace("Y", ...hpNo)
@@ -2003,6 +2015,7 @@ async function instructions() {
             .replace("I", ...hpNo)
             .replace("J", ...hpNo)
             .replace("K", ...hpNo)
+            .replace("L", ...hpNo)
             .replace("W", ...hpShield)
             .replace("X", ...hpShield)
             .replace("Y", ...hpNo)
@@ -2187,6 +2200,7 @@ async function instructions() {
             .replace("I", ...hpNo)
             .replace("J", ...hpNo)
             .replace("K", ...hpNo)
+            .replace("L", ...hpNo)
             .replace("W", ...hpShield)
             .replace("X", ...hpShield)
             .replace("Y", ...hpNo)
@@ -2513,7 +2527,7 @@ async function chooseGem() {
     gem = false;
     clearScreen();
     printSpecial(new specialText(["Gems: "+currency.heart+" A  "+currency.spade+" B "+currency.diamond+" C  "+currency.club+" D  "+currency.shield+" E  "+currency.cup+" F  "+currency.magick+" H"], ["white"], ["black"]).replace("A", ...heart).replace("B", ...spade).replace("C", ...diamond).replace("D", ...club).replace("E", ...shield).replace("F", ...cup).replace("H", ...magick));
-    print("Choose a gem to spend for a one-time upgrade:");
+    print("Choose a gem to equip:");
     print("");
     let inputs = ['n'];
     if (currency.heart) {
@@ -2583,6 +2597,99 @@ async function chooseGem() {
             break;
         case 'g':
             gem = "magick";
+            currency.magick--;
+            break;
+    }
+    localStorage.setItem("currency", JSON.stringify(currency));
+    unlocks.slot2 && input !== 'n' ? chooseGem2() : game();
+}
+
+let gem2 = false;
+async function chooseGem2() {
+    gem2 = false;
+    clearScreen();
+    printSpecial(new specialText(["Gems: "+currency.heart+" A  "+currency.spade+" B "+currency.diamond+" C  "+currency.club+" D  "+currency.shield+" E  "+currency.cup+" F  "+currency.magick+" H"], ["white"], ["black"]).replace("A", ...heart).replace("B", ...spade).replace("C", ...diamond).replace("D", ...club).replace("E", ...shield).replace("F", ...cup).replace("H", ...magick));
+    printSpecial(new specialText("1st gem: A").replace("A", ...suits[gem]));
+    print("Choose a gem to equip:");
+    print("");
+    let inputs = ['n'];
+    if (currency.heart) {
+        printSpecial(new specialText("[A]: +1 health                                                                     1 G").replace("G", ...heart));
+        inputs.push('a');
+        print("");
+    }
+    if (currency.spade) {
+        printSpecial(new specialText("[B]: +1 shield                                                                     1 G").replace("G", ...spade));
+        inputs.push('b');
+        print("");
+    }
+    if (currency.diamond) {
+        gem === "diamond"
+        ?   printSpecial(new specialText("[C]: Every time a king appears, no card will follow it                             1 G").replace("G", ...diamond))
+        :   printSpecial(new specialText("[C]: Every time a king appears, no card will appear on the next turn               1 G").replace("G", ...diamond));
+        inputs.push('c');
+        print("");
+    }
+    if (currency.club) {
+        gem === "club"
+        ?   printSpecial(new specialText("[D]: Each non-king enemy card has a chance to spawn tapped                         1 G").replace("G", ...club))
+        :   printSpecial(new specialText("[D]: Each non-face enemy card has a chance to spawn tapped                         1 G").replace("G", ...club));
+        inputs.push('d');
+        print("");
+    }
+    if (currency.shield) {
+        gem === "shield"
+        ?   printSpecial(new specialText('[E]: Normal attacks performed with 2s get an advantage roll                        1 G').replace("G", ...shield))
+        :   printSpecial(new specialText('[E]: Normal attacks performed with aces get an advantage roll                      1 G').replace("G", ...shield));
+        inputs.push('e');
+        print("");
+    }
+    if (currency.cup) {
+        gem === "cup"
+        ?   printSpecial(new specialText("[F]: Perform another turn upon killing an enemy with a normal attack               1 G").replace("G", ...cup))
+        :   printSpecial(new specialText("[F]: Perform another turn upon killing an untapped enemy with a normal attack      1 G").replace("G", ...cup));
+        inputs.push('f');
+        print("");
+    }
+    if (currency.magick) {
+        gem === "magick"
+        ?   printSpecial(new specialText("[G]: Equip a gem of your choosing before phase 2 of dark magician                  1 H").replace("H", ...magick))
+        :   printSpecial(new specialText("[G]: Replenish health, shields, and starting arcanas on phase 2 of dark magician   1 H").replace("H", ...magick));
+        inputs.push('g');
+        print("");
+    }
+    print("[N]: None");
+    let input = '';
+    while (!inputs.includes(input)) {
+        input = await getInput();
+    }
+    switch (input) {
+        case 'a':
+            gem2 = "heart";
+            currency.heart--;
+            break;
+        case 'b':
+            gem2 = "spade";
+            currency.spade--;
+            break;
+        case 'c':
+            gem2 = "diamond";
+            currency.diamond--;
+            break;
+        case 'd':
+            gem2 = "club";
+            currency.club--;
+            break;
+        case 'e':
+            gem2 = "shield";
+            currency.shield--;
+            break;
+        case 'f':
+            gem2 = "cup";
+            currency.cup--;
+            break;
+        case 'g':
+            gem2 = "magick";
             currency.magick--;
             break;
     }
@@ -2774,11 +2881,11 @@ const arcanaDesc = {
 async function game() {
     playMusic(difficulty === 'd' ? 'phase1_start' : 'battle_start')
     achievementsGranted = [];
-    health = 4 + unlocks.health + +(gem === "heart");
+    health = 4 + unlocks.health + +(gem === "heart") + +(gem2 === "heart");
     maxHealth = health;
     if (achievements["new beginning"]) maxHealth += 2;
     if (achievements["bad deal"] && achievements["new beginning"]) health += 2;
-    shields = unlocks.shields + +(gem === "spade");
+    shields = unlocks.shields + +(gem === "spade") + +(gem2 === "spade");
     deckSize = deck.length;
     board = [undefined].multiply(10);
     discard = [];
@@ -3324,7 +3431,7 @@ async function game() {
                     break;
                 case 9:
                     row.join(" Hero 1 hand:");
-                    if (achievements.kingslayer) row.join(" ".multiply(8) + "Gem:");
+                    if (achievements.kingslayer) row.join(" ".multiply(8) + (unlocks.slot2 ? "Gems:" : "Gem:"));
                     break;
                 case 10:
                     row
@@ -3346,6 +3453,10 @@ async function game() {
                     if (achievements.kingslayer) {
                         row.join(" ".multiply(15 - (arcana1 ? String(arcana1 - 1).length : 1)))
                         row.join(new specialText(...suits[gem || "none"]));
+                        if (unlocks.slot2) {
+                            row.join(" ");
+                            row.join(new specialText(...suits[gem2 || "none"]));
+                        }
                     }
                     break;
                 case 12:
@@ -3436,6 +3547,7 @@ async function game() {
             .replace("I", ...(health > 8 ? hp1 : maxHealth > 8 ? hp0 : hpNo))
             .replace("J", ...(health > 9 ? hp1 : maxHealth > 9 ? hp0 : hpNo))
             .replace("K", ...(health > 10 ? hp1 : maxHealth > 10 ? hp0 : hpNo))
+            .replace("L", ...(health > 11 ? hp1 : maxHealth > 11 ? hp0 : hpNo))
             .replace("W", ...(shields > 0 ? hpShield : hpNo))
             .replace("X", ...(shields > 1 ? hpShield : hpNo))
             .replace("Y", ...(shields > 2 ? hpShield : hpNo))
@@ -3541,7 +3653,9 @@ async function game() {
             kingSpawned = true;
         }
         let card = (board.some(card => (card?.value === "king" && card?.suit === "cup" && difficulty !== '2')) && discard.length ? discard : deck).pop();
-        if (gem === "club" && typeof card?.value === 'number' && Math.random() < 0.25) card.tapped = true;
+        if (gem === "diamond" && gem2 === "diamond" && kingSpawned) deck.push(undefined);
+        if ((gem === "club" || gem2 === "club") && typeof card?.value === 'number' && Math.random() < 0.25) card.tapped = true;
+        if (gem === "club" && gem2 === "club" && typeof ["page","knight","queen"].includes(card?.value) && Math.random() < 0.25) card.tapped = true;
         board.unshift(card);
         while (board.length > 10) {
             let card = board.pop();
@@ -3573,7 +3687,8 @@ async function game() {
         await sleep(500);
         if (typeof card?.value === 'string' || board.some(card => card?.value === "king" && card?.suit === "cup" && difficulty === '2')) {
             card = (board.some(card => (card?.value === "king" && card?.suit === "cup" && difficulty !== '2')) && discard.length ? discard : deck).pop();
-            if (gem === "club" && typeof card?.value === 'number' && Math.random() < 0.25) card.tapped = true;
+            if ((gem === "club" || gem2 === "club") && typeof card?.value === 'number' && Math.random() < 0.25) card.tapped = true;
+            if (gem === "club" && gem2 === "club" && typeof ["page","knight","queen"].includes(card?.value) && Math.random() < 0.25) card.tapped = true;
             board.unshift(card);
             while (board.length > 10) {
                 let card = board.pop();
@@ -3602,7 +3717,7 @@ async function game() {
             moveCard.play();
             renderGame();
         }
-        if (kingSpawned && gem === "diamond") {
+        if (kingSpawned && (gem === "diamond" || gem2 === "diamond")) {
             deck.push(undefined);
             renderGame();
         }
@@ -3691,7 +3806,7 @@ async function game() {
                 ?print("["+choice.toUpperCase()+"]: " + String((turn === 1 ? arcana1 : arcana2) - 1) + "-" + arcanaNames[(turn === 1 ? arcana1 : arcana2) - 1] + " - " + arcanaDesc[(turn === 1 ? arcana1 : arcana2) - 1])
                 :choice === "0"
                 ?print("["+choice.toUpperCase()+"]: " + "Attack for " + Object.values(ammo1).reduce((p, c) => p + c, Object.values(ammo2).reduce((p, c) => p + c, 0)) + " + 1d"+getDie()+" damage")
-                :print("["+choice.toUpperCase()+"]: " + "Attack for " + valueMap[invAmmoMap[choice.toUpperCase()]] + " + 1d"+getDie()+(gem === "shield" && choice === "1" ? "+" : "")+" damage");
+                :print("["+choice.toUpperCase()+"]: " + "Attack for " + valueMap[invAmmoMap[choice.toUpperCase()]] + " + 1d"+getDie()+(((gem === "shield" || gem2 === "shield") && choice === "1") || ((gem === "shield" && gem2 === "shield") && choice === "2") ? "+" : "")+" damage");
             });
             let input = '';
                 while (!choices.includes(input)) {
@@ -3717,9 +3832,12 @@ async function game() {
                         if (input === "0") {
                             damage = Object.values(ammo1).reduce((p, c) => p + c, Object.values(ammo2).reduce((p, c) => p + c, 0));
                         }
-                        let roll = gem === "shield" && input === "1" ? Math.max(Math.floor(Math.random() * getDie()) + 1, Math.floor(Math.random() * getDie()) + 1) : Math.floor(Math.random() * getDie()) + 1;
+                        let roll = ((gem === "shield" || gem2 === "shield") && input === "1") || ((gem === "shield" && gem2 === "shield") && input === "2") ? Math.max(Math.floor(Math.random() * getDie()) + 1, Math.floor(Math.random() * getDie()) + 1) : Math.floor(Math.random() * getDie()) + 1;
                         let target = await chooseTarget("Choose a target to attack for " + damage + " + " + roll + " damage", "single");
-                        if (await attack(target, damage + roll, false, true) && input !== "0" && gem === "cup") arcanaUsed = true;
+                        let tapped = board[target]?.tapped;
+                        let kill = await attack(target, damage + roll, false, true);
+                        if (kill && input !== "0" && (gem === "cup" && gem2 === "cup")) arcanaUsed = true;
+                        else if (kill && !tapped && input === "0" && (gem === "cup" || gem2 === "cup")) arcanaUsed = true;
                         break;
                 }
                 renderGame();
@@ -3932,19 +4050,58 @@ async function game() {
                 jokerSpawned = false;
                 arcana1 = 0;
                 arcana2 = 0;
-                if (gem === "magick") {
+                let newGem = false;
+                if (gem === "magick" && gem2 === "magick") {
+                    await new Promise(async resolve => {
+                        clearScreen();
+                        print("Choose a new gem:");
+                        printSpecial(new specialText(...heart).join(" [A]: +1 health"));
+                        printSpecial(new specialText(...spade).join(" [B]: +1 shield"));
+                        printSpecial(new specialText(...diamond).join(" [C]: Every time a king appears, no card will appear on the next turn"));
+                        printSpecial(new specialText(...club).join(" [D]: Each non-face enemy card has a chance to spawn tapped"));
+                        printSpecial(new specialText(...shield).join(" [E]: Normal attacks performed with aces get an advantage roll"));
+                        printSpecial(new specialText(...cup).join(" [F]: Perform another turn upon killing an untapped enemy with a normal attack"));
+                        let input = '';
+                        while (!["a", "b", "c", "d", "e", "f"].includes(input)) {
+                            input = await getInput();
+                        }
+                        switch (input) {
+                            case "a":
+                                newGem = "heart";
+                                break;
+                            case "b":
+                                newGem = "spade";
+                                break;
+                            case "c":
+                                newGem = "diamond";
+                                break;
+                            case "d":
+                                newGem = "club";
+                                break;
+                            case "e":
+                                newGem = "shield";
+                                break;
+                            case "f":
+                                newGem = "cup";
+                                break;
+                        }
+                        resolve();
+                    });
+                }
+                if (gem === "magick" || gem2 === "magick") {
                     arcana1 = unlocks.fool > 0 ? 1 : 0;
                     arcana2 = unlocks.fool > 1 ? 1 : 0;
                     arcana1 = unlocks.world > 0 ? 22 : arcana1;
                     arcana2 = unlocks.world > 1 ? 22 : arcana2;
-                    health = 4 + unlocks.health + +(gem === "heart");
+                    health = 4 + unlocks.health + +(newGem === "heart");
                     maxHealth = health;
                     if (achievements["new beginning"]) maxHealth += 2;
                     if (achievements["bad deal"] && achievements["new beginning"]) health += 2;
-                    shields = unlocks.shields + +(gem === "spade");
+                    shields = unlocks.shields + +(newGem === "spade");
                 }
                 deckSize = deck.length;
-                gem = false;
+                gem = newGem;
+                gem2 = false;
                 difficulty = '2';
             }
         } else if (board.some(card => card?.value === "king" && card?.suit === "spade" && difficulty === '2')) {
