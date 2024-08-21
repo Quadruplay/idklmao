@@ -3837,7 +3837,7 @@ async function game() {
                         let tapped = board[target]?.tapped;
                         let kill = await attack(target, damage + roll, false, true);
                         if (kill && input !== "0" && (gem === "cup" && gem2 === "cup")) arcanaUsed = true;
-                        else if (kill && !tapped && input === "0" && (gem === "cup" || gem2 === "cup")) arcanaUsed = true;
+                        else if (kill && !tapped && input !== "0" && (gem === "cup" || gem2 === "cup")) arcanaUsed = true;
                         break;
                 }
                 renderGame();
